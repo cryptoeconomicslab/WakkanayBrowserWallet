@@ -35,20 +35,20 @@ import {
   SMALL,
   LARGE,
   XLARGE,
-  LARGER,
   XXSMALL,
-  LARGERPLUS,
   NORMAL
 } from '../fonts'
 
 const OrderRequestModal = props => {
   const router = useRouter()
   const amountInput = useRef('')
+  const amountRef = useRef('')
   const [requestedAmountToExchange, setRequestedAmountToExchnage] = useState(0)
   const requestedTokenToExchange = props.requestedTokenToExchange
   const requestedTokenToReceive = props.requestedTokenToReceive
   const orderRequestPage = props.orderRequestPage
   const tokenBalanceList = props.tokenBalanceList
+  const ETHtoUSD = props.ETHtoUSD
 
   return (
     <div className="modal-bg">
@@ -106,7 +106,7 @@ const OrderRequestModal = props => {
                     ref={amountInput}
                   />
                   <div className="amount-in-usd">
-                    {props.ETHtoUSD * amountInput} USD
+                    {ETHtoUSD * amountInput.current.value} USD
                   </div>
                   <div className="insufficient-fund">Insufficient Fund</div>
                 </div>
@@ -149,13 +149,13 @@ const OrderRequestModal = props => {
                   <input
                     className="amount-input"
                     type="number"
-                    ref={amountInput}
+                    ref={amountRef}
                     onChange={e => {
                       setRequestedAmountToExchnage(e.target.value)
                     }}
                   />
                   <div className="amount-in-usd">
-                    {props.ETHtoUSD * amountInput} USD
+                    {ETHtoUSD * amountRef.current.value} USD
                   </div>
                   <div className="insufficient-fund">Insufficient Fund</div>
                 </div>
@@ -192,6 +192,7 @@ const OrderRequestModal = props => {
                   className="cancel-button"
                   onClick={() => {
                     amountInput.current.value = ''
+                    amountRef.current.value = ''
                     setRequestedAmountToExchnage(0)
                   }}
                 >
@@ -466,7 +467,8 @@ const mapStateToProps = state => ({
   requestedAmountToExchange: state.exchangeState.requestedAmountToExchange,
   requestedTokenToReceive: state.exchangeState.requestedTokenToReceive,
   requestedAmountToReceive: state.exchangeState.requestedAmountToReceive,
-  orderRequestPage: state.exchangeState.orderRequestPage
+  orderRequestPage: state.exchangeState.orderRequestPage,
+  ETHtoUSD: state.balance.ETHtoUSD
 })
 
 const mapDispatchToProps = {

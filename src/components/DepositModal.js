@@ -6,9 +6,9 @@ import { connect } from 'react-redux'
 //react-font-awesome import
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faTimes, faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-library.add(fab, faTimes, faArrowLeft)
+library.add(fab, faArrowLeft)
 
 import { setDepositedToken, setDepositPage, deposit } from '../store/deposit'
 import { shortenAddress } from '../utils'
@@ -21,16 +21,13 @@ import {
   SMALL,
   SMALLPLUS,
   MEDIUM,
-  LARGE,
   LARGER,
-  LARGERPLUS,
   BOLD,
   XLARGE,
   NORMAL,
   SMALLER
 } from '../fonts'
 import {
-  Black,
   White,
   MODAL_BACKGROUND,
   MODAL_MAIN_BACKGROUND,
@@ -45,9 +42,10 @@ const TOKEN_CURRENCY_MAP = {
 }
 
 const DepositModal = props => {
-  const router = useRouter()
   const depositedToken = props.depositedToken
   const depositPage = props.depositPage
+  const ETHtoUSD = props.ETHtoUSD
+  const router = useRouter()
   const [tokenAmount, setTokenAmount] = useState(0)
   const amountInput = useRef('')
 
@@ -70,7 +68,7 @@ const DepositModal = props => {
                   Deposit Funds from Mainchain Account
                 </SectionTitle>
               </div>
-              <div className="deposit-input-contents-box">
+              <div className="input-contents-box">
                 <div className="token-select-box-wrapper">
                   <Dropdown
                     onSelected={props.setDepositedToken}
@@ -115,7 +113,7 @@ const DepositModal = props => {
                   </div>
                 </div>
                 <div className="deposited-token-confirm">
-                  = {props.ETHtoUSD * amountInput} USD / from{' '}
+                  = {ETHtoUSD * amountInput.current.value} USD / from{' '}
                   {shortenAddress(props.address)}
                 </div>
                 <div className="cancel-deposit-buttons">
@@ -167,7 +165,7 @@ const DepositModal = props => {
                       {TOKEN_CURRENCY_MAP[depositedToken]}
                     </span>
                     <div className="balance-in-usd">
-                      {Math.round(tokenAmount * props.ETHtoUSD * 100) / 100} USD
+                      {Math.round(tokenAmount * ETHtoUSD * 100) / 100} USD
                     </div>
                   </div>
                 </div>
@@ -243,7 +241,7 @@ const DepositModal = props => {
           margin: 60px 40px 0px 40px;
           margin-right: 40px;
         }
-        .deposit-input-contents-box {
+        .input-contents-box {
           margin-top: 30px;
           display: flex;
           flex-direction: column;
