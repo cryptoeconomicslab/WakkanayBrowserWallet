@@ -41,7 +41,6 @@ import {
   setEditedAddress,
   setEditedName
 } from '../store/edited_address_list_item.js'
-import { getBalance, getETHtoUSD } from '../store/tokenBalanceList'
 import { getAddress } from '../store/address'
 import { setTransferredToken } from '../store/transfer'
 
@@ -543,8 +542,6 @@ const mapDispatchToProps = {
   removeAddressListItem,
   setEditedAddress,
   setEditedName,
-  getBalance,
-  getETHtoUSD,
   getAddress,
   setTransferredToken
 }

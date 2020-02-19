@@ -29,6 +29,7 @@ const TransferModal = props => {
   const transferredAmount = props.transferredAmount
   const recepientAddress = props.recepientAddress
   const transferPage = props.transferPage
+  const ETHtoUSD = props.ETHtoUSD
 
   return (
     <div className="modal-bg">
@@ -74,9 +75,7 @@ const TransferModal = props => {
                       {TOKEN_CURRENCY_MAP[transferredToken]}
                     </span>
                     <div className="balance-in-usd">
-                      {Math.round(transferredAmount * props.ETHtoUSD * 100) /
-                        100}{' '}
-                      USD
+                      {Math.round(transferredAmount * ETHtoUSD * 100) / 100} USD
                     </div>
                   </div>
                 </div>

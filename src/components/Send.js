@@ -9,7 +9,6 @@ library.add(faSignOutAlt)
 
 import { connect } from 'react-redux'
 import Dropdown from './Dropdown'
-import { getBalance, getETHtoUSD } from '../store/tokenBalanceList'
 import {
   setTransferredToken,
   setTransferredAmount,
@@ -27,6 +26,7 @@ const Send = props => {
   const amountRef = useRef('')
   const transferredToken = props.transferredToken
   const tokenBalanceList = props.tokenBalanceList
+  const ETHtoUSD = props.ETHtoUSD
 
   const tokenBalance = tokenBalanceList.find(
     ({ tokenAddress }) => tokenAddress === transferredToken
@@ -35,20 +35,6 @@ const Send = props => {
   return (
     <div className="send-section" id="send">
       <SectionTitle>Send Token</SectionTitle>
-      {/* <div className="balance-box">
-            <div className="total-balance-box">
-              <span className="total-balance-number">
-                {tokenBalance ? tokenBalance.amount : ''}
-              </span>
-              <span className="total-balance-unit">
-                {TOKEN_CURRENCY_MAP[transferredToken]}
-              </span>
-              <div className="balance-in-usd">
-                {props.ETHtoUSD * props.balance} USD
-              </div>
-            </div>
-          </div>
-       */}
       <div className="address-box">
         <div className="address-title">Address</div>
         <input
@@ -92,11 +78,13 @@ const Send = props => {
         <div className="amount-box">
           <input className="amount-input" type="number" ref={amountRef} />
           <span className="sent-amount-in-usd">
-            ={props.ETHtoUSD * amountRef} USD
+            ={ETHtoUSD * amountRef.current.value} USD
           </span>
         </div>
         <div className="current-balance-box">
-          <span className="current-balance-number">/1.2</span>
+          <span className="current-balance-number">
+            /{tokenBalance ? tokenBalance.amount : ''}
+          </span>
           <span className="your-current-balance">(your current balance)</span>
         </div>
       </div>
@@ -238,8 +226,6 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = {
-  getBalance,
-  getETHtoUSD,
   setTransferredToken,
   setTransferredAmount,
   setRecepientAddress
