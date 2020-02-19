@@ -1,15 +1,13 @@
+import { useRouter } from 'next/router'
+import ClickOutside from 'react-click-outside'
+import { connect } from 'react-redux'
+import { useState, useRef } from 'react'
+
 //react-font-awesome import
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faArrowsAltH, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 library.add(faArrowsAltH, faTimes)
-
-import { useRouter } from 'next/router'
-import ClickOutside from 'react-click-outside'
-import { connect } from 'react-redux'
-import { useState, useRef } from 'react'
-import Dropdown from './Dropdown'
-import { shortenAddress, TOKEN_CURRENCY_MAP } from '../utils'
 
 import {
   setRequestedTokenToExchange,
@@ -18,8 +16,13 @@ import {
   setRequestedAmountToReceive,
   setOrderRequestPage
 } from '../store/exchange'
+import { shortenAddress, TOKEN_CURRENCY_MAP } from '../utils'
+import Dropdown from './Dropdown'
+import { PrimaryButton } from './PrimaryButton'
+import { TokenSelectButton } from './TokenSelectButton'
 import {
   MODAL_BACKGROUND,
+  MODAL_MAIN_BACKGROUND,
   SUBTEXT,
   BORDER,
   PRIMARY_BUTTON_TEXT,
@@ -34,14 +37,13 @@ import {
   XLARGE,
   LARGER,
   XXSMALL,
-  LARGERPLUS
+  LARGERPLUS,
+  NORMAL
 } from '../fonts'
-import { PrimaryButton } from './PrimaryButton'
-import { TokenSelectButton } from './TokenSelectButton'
 
 const OrderRequestModal = props => {
   const router = useRouter()
-  const amountRef = useRef('')
+  const amountInput = useRef('')
   const [requestedAmountToExchange, setRequestedAmountToExchnage] = useState(0)
   const requestedTokenToExchange = props.requestedTokenToExchange
   const requestedTokenToReceive = props.requestedTokenToReceive
@@ -59,17 +61,6 @@ const OrderRequestModal = props => {
           props.setOrderRequestPage('input-page')
         }}
       >
-        <div
-          className="close-button"
-          onClick={e => {
-            e.preventDefault()
-            const href = `${router.route}`
-            router.push(href)
-            props.setOrderRequestPage('input-page')
-          }}
-        >
-          <FontAwesomeIcon icon="times" />
-        </div>
         <div className="contents">
           {orderRequestPage === 'input-page' ? (
             <div className="order-request-page" id="order-request">
@@ -112,10 +103,10 @@ const OrderRequestModal = props => {
                   <input
                     className="amount-input"
                     type="number"
-                    ref={amountRef}
+                    ref={amountInput}
                   />
                   <div className="amount-in-usd">
-                    {props.ETHtoUSD * amountRef} USD
+                    {props.ETHtoUSD * amountInput} USD
                   </div>
                   <div className="insufficient-fund">Insufficient Fund</div>
                 </div>
@@ -137,6 +128,7 @@ const OrderRequestModal = props => {
                             ></img>
                           </div>
                           <div className="token-name">
+                            {/* FIXME */}
                             {/* {shortenAddress(requestedTokenToReceive)} (
                             {TOKEN_CURRENCY_MAP[requestedTokenToReceive]}) */}
                             ETH
@@ -144,6 +136,7 @@ const OrderRequestModal = props => {
                         </div>
                       }
                       items={tokenBalanceList.map(({ tokenAddress }) => ({
+                        // FIXME
                         // name: shortenAddress(tokenAddress),
                         name: 'ETH',
                         value: tokenAddress
@@ -156,10 +149,13 @@ const OrderRequestModal = props => {
                   <input
                     className="amount-input"
                     type="number"
-                    ref={amountRef}
+                    ref={amountInput}
+                    onChange={e => {
+                      setRequestedAmountToExchnage(e.target.value)
+                    }}
                   />
                   <div className="amount-in-usd">
-                    {props.ETHtoUSD * amountRef} USD
+                    {props.ETHtoUSD * amountInput} USD
                   </div>
                   <div className="insufficient-fund">Insufficient Fund</div>
                 </div>
@@ -192,7 +188,13 @@ const OrderRequestModal = props => {
                 </div>
               </div>
               <div className="cancel-confirm-buttons">
-                <div className="cancel-button">
+                <div
+                  className="cancel-button"
+                  onClick={() => {
+                    amountInput.current.value = ''
+                    setRequestedAmountToExchnage(0)
+                  }}
+                >
                   <a className="cancel">Cancel</a>
                 </div>
                 <div className="create-button">
@@ -256,24 +258,13 @@ const OrderRequestModal = props => {
           top: calc(10% + 10px);
           min-width: 438px;
           min-height: 440px;
-          background-color: rgba(32, 32, 32, 0.9);
+          background-color: ${MODAL_MAIN_BACKGROUND};
           opacity: 1;
           border-radius: 10px;
           display: flex;
           flex-direction: column;
           align-items: center;
           overflow: scroll;
-        }
-        .close-button {
-          text-align: end;
-          font-size: ${LARGERPLUS};
-          position: absolute;
-          top: 0px;
-          right: 0px;
-          margin-top: 18px;
-          margin-right: 26px;
-          color: darkgray;
-          cursor: pointer;
         }
         .mordal-page-title {
           margin: 60px 40px 12px 40px;
@@ -337,11 +328,6 @@ const OrderRequestModal = props => {
           font-size: ${SMALL};
           font-weight: 400;
         }
-        .token-select-box-wrapper :global(.dropdown-content) {
-          left: -7px;
-          top: calc(100% - 0.5rem);
-          width: 144px;
-        }
         .l2-token-img-bg {
           width: 32px;
           height: 32px;
@@ -361,12 +347,13 @@ const OrderRequestModal = props => {
           width: 129px;
           height: 47px;
           font-size: ${XLARGE};
-          font-weight: 300;
-          color: white;
+          font-weight: ${NORMAL};
+          color: #ffffff;
           border: none;
-          background-color: ${White(0.04)};
+          background: ${White(0.04)};
           border-radius: 4px;
           margin-top: 10px;
+          padding: 8px;
         }
         .amount-in-usd {
           font-size: ${XSMALL};

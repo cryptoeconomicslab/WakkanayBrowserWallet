@@ -7,6 +7,7 @@ export const Black = opacity => {
 export const BACKGROUND = '#1B191A'
 export const SECTION_BACKGROUND = White(0.08)
 export const MODAL_BACKGROUND = Black(0.8)
+export const MODAL_MAIN_BACKGROUND = 'rgba(32, 32, 32, 0.9)'
 export const BORDER_DARK = White(0.1)
 export const BORDER = White(0.2)
 export const TEXT = '#fff'

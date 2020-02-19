@@ -78,10 +78,12 @@ const Dropdown = ({ width, onSelected, buttonName, renderItem, items }) => {
         .dropdown-content {
           color: ${SUBTEXT};
           position: absolute;
-          top: calc(100% - 0.5rem);
           border-bottom: none;
           background: ${Black(0.9)};
           border-radius: 3px;
+          left: -7px;
+          top: calc(100% - 0.5rem);
+          width: calc(100% + 1rem);
         }
         .dropdown-item:hover {
           color: ${TEXT};

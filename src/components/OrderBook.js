@@ -217,12 +217,6 @@ const OrderBook = props => {
           font-size: ${SMALL};
           font-weight: 400;
         }
-        .paid-token-select-box-wrapper :global(.dropdown-content) {
-          left: 0px;
-          top: calc(100% - 0.2rem);
-          width: 136px;
-        }
-
         .exchanged-token-img-bg {
           width: 32px;
           height: 32px;
@@ -285,11 +279,6 @@ const OrderBook = props => {
         .received-token-select-box-wrapper :global(.dropdown-button) {
           font-size: ${SMALL};
           font-weight: 400;
-        }
-        .received-token-select-box-wrapper :global(.dropdown-content) {
-          left: 0px;
-          top: calc(100% - 0.2rem);
-          width: 136px;
         }
         .search-button {
           margin-left: 16px;

@@ -125,11 +125,6 @@ const TransactionHistory = props => {
           font-weight: 500;
           padding-right: 0.75rem;
         }
-        .filter :global(.dropdown-content) {
-          left: -3px;
-          top: calc(100% - 0.2rem);
-          width: 100px;
-        }
         .filter :global(.dropdown-item) {
           display: flex;
           justify-content: center;

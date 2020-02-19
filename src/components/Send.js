@@ -165,11 +165,6 @@ const Send = props => {
           font-size: ${SMALL};
           font-weight: 400;
         }
-        .token-select-box-wrapper :global(.dropdown-content) {
-          left: -7px;
-          top: calc(100% - 0.5rem);
-          width: 144px;
-        }
         .l2-token-img-bg {
           width: 32px;
           height: 32px;
