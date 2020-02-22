@@ -14,7 +14,6 @@ import {
   XSMALL,
   SMALLER,
   SMALL,
-  LARGE,
   LARGER,
   XLARGE,
   XXSMALL,
@@ -183,62 +182,62 @@ const Home = props => {
         <div className="address-book-title-box">
           <SectionTitle>Address Book</SectionTitle>
         </div>
-        <table className="address-book-table">
-          <tr>
-            <th className="name-column">NAME</th>
-            <th className="address-column">ADDRESS</th>
-          </tr>
+        <div className="address-book-table">
+          <div className="column-titles">
+            <div className="name-column">NAME</div>
+            <div className="address-column">ADDRESS</div>
+          </div>
           {props.addressList.map(addressListItem => (
-            <AddressListItem
-              addressListItem={addressListItem}
-              editAddressListItem={props.editAddressListItem}
-              setEditedName={props.setEditedName}
-              setEditedAddress={props.setEditedAddress}
-              removeAddressListItem={props.removeAddressListItem}
-              editedNameRef={editedNameRef}
-              editedAddressRef={editedAddressRef}
-              editedName={props.editedAddressListItem.name}
-              editedAddress={props.editedAddressListItem.address}
-            />
+            <div className="address-book-item">
+              <AddressListItem
+                addressListItem={addressListItem}
+                editAddressListItem={props.editAddressListItem}
+                setEditedName={props.setEditedName}
+                setEditedAddress={props.setEditedAddress}
+                removeAddressListItem={props.removeAddressListItem}
+                editedNameRef={editedNameRef}
+                editedAddressRef={editedAddressRef}
+                editedName={props.editedAddressListItem.name}
+                editedAddress={props.editedAddressListItem.address}
+              />
+            </div>
           ))}
-          <tr>
-            <td className="default-name">
+          <div className="address-book-new-item">
+            <div className="new-item-inputs">
               <input
-                className={classNames('address-book-input', 'name-input')}
+                className={classNames('address-name-input', 'name-input')}
                 type="text"
                 ref={nameInput}
                 placeholder="NAME"
                 onKeyDown={onKeyDown}
               />
-            </td>
-            <td className="default-address">
               <input
-                className={classNames('address-book-input', 'address-input')}
+                className={classNames('address-name-input', 'address-input')}
                 type="text"
                 ref={addressInput}
                 placeholder="ADDRESS"
                 onKeyDown={onKeyDown}
               />
-              <button
-                className="add-button"
-                onClick={() => {
-                  if (
-                    nameInput.current.value !== '' &&
-                    addressInput.current.value !== ''
-                  ) {
-                    props.registerAddressListItem({
-                      id: `${Date.now()}`,
-                      name: nameInput.current.value,
-                      address: addressInput.current.value
-                    })
-                  }
-                }}
-              >
-                Add
-              </button>
-            </td>
-          </tr>
-        </table>
+            </div>
+            <button
+              className="add-button"
+              onClick={() => {
+                if (
+                  nameInput.current.value !== '' &&
+                  addressInput.current.value !== ''
+                ) {
+                  props.registerAddressListItem({
+                    id: `${Date.now()}`,
+                    name: nameInput.current.value,
+                    address: addressInput.current.value
+                  })
+                }
+              }}
+            >
+              Add
+            </button>
+          </div>
+        </div>
       </div>
 
       <style jsx>{`
@@ -446,72 +445,66 @@ const Home = props => {
           display: flex;
           align-items: center;
         }
-        .book-icon {
-          font-size: ${LARGE};
-          margin-left: 8px;
-        }
         .address-book-table {
-          margin-top: 10px;
-          border-spacing: 0px;
-          text-align: left;
-          width: 100%;
-        }
-        th,
-        td {
+          margin-top: 30px;
+          display: flex;
+          flex-direction: column;
           font-size: ${XSMALL};
           font-weight: ${BOLD};
-          border-spacing: 0px;
-          height: 52px;
-          color: ${White(0.74)};
+        }
+        .column-titles {
+          color: ${White(0.5)};
+          display: flex;
+          align-items: center;
+          padding-bottom: 12px;
           border-bottom: 1px solid ${BORDER_DARK};
         }
-        th {
-          padding: 8px;
-          font-size: ${XSMALL};
-          font-weight: ${BOLD};
+        .name-column {
+          width: 100px;
         }
-        tr {
-          align-items: center;
+        .address-column {
+          width: calc(100% - 100px);
+          padding-left: 12px;
         }
-        .default-name {
+        .address-book-item {
+          color: ${White(0.7)};
+          height: 52px;
         }
-        .default-address {
+        .address-book-new-item {
           display: flex;
           align-items: center;
           justify-content: space-between;
+          margin-top: 20px;
+          color: ${White(0.7)};
         }
-        .name-column {
-          min-width: 100px;
+        .new-item-inputs {
+          width: 100%;
+          display: flex;
+          border-bottom: 1px solid ${BORDER_DARK};
         }
-        .address-book-input {
-          height: 52px;
-          padding: 8px;
-          font-size: ${XSMALL};
-          font-weight: 800;
-          border: none;
+        .address-name-input {
+          margin-bottom: 12px;
           background-color: transparent;
-          color: #ffffff;
-          opacity: 0.7;
+          font-size: ${XSMALL};
+          font-weight: ${BOLD};
+          color: ${BORDER_DARK};
+        }
+        .address-name-input::placeholder {
+          font-size: ${XSMALL};
+          font-weight: ${BOLD};
+          color: ${BORDER_DARK};
         }
         .name-input {
           width: 100px;
         }
-        .name-input::placeholder {
-          font-size: ${XSMALL};
-          font-weight: ${BOLD};
-          opacity: 0.4;
-        }
         .address-input {
-          width: 460px;
-        }
-        .address-input::placeholder {
-          font-size: ${XSMALL};
-          font-weight: ${BOLD};
-          opacity: 0.4;
+          border-left: 1px solid ${BORDER_DARK};
+          width: calc(100% - 100px);
+          padding-left: 12px;
         }
         .add-button {
-          border: none;
           border-radius: 40px;
+          margin-left: 18px;
           width: 87px;
           height: 36px;
           background: linear-gradient(122.3deg, #ec8383 0.21%, #c13087 93.55%);

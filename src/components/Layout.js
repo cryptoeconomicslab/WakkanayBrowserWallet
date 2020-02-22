@@ -57,6 +57,12 @@ const Layout = props => {
         input[type=number]::-webkit-inner-spin-button {
         -webkit-appearance: none;
         }
+        button {
+          border: none;
+        }
+        input {
+          border: none;
+        }
         button:focus {outline:0;}
         input:focus {outline:0;}
         body {

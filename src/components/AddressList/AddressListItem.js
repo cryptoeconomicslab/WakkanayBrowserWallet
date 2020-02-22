@@ -156,5 +156,5 @@ export default ({
         background-color: #eb3959;
       }
     `}</style>
-  </tr>
+  </div>
 )
