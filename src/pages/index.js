@@ -232,6 +232,10 @@ const Home = props => {
                     address: addressInput.current.value
                   })
                 }
+                return (
+                  (nameInput.current.value = ''),
+                  (addressInput.current.value = '')
+                )
               }}
             >
               Add
@@ -457,6 +461,7 @@ const Home = props => {
           display: flex;
           align-items: center;
           padding-bottom: 12px;
+          margin-bottom: 12px;
           border-bottom: 1px solid ${BORDER_DARK};
         }
         .name-column {
@@ -468,19 +473,22 @@ const Home = props => {
         }
         .address-book-item {
           color: ${White(0.7)};
-          height: 52px;
+          margin-top: 4px;
         }
         .address-book-new-item {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          margin-top: 20px;
+          margin-top: 4px;
           color: ${White(0.7)};
         }
         .new-item-inputs {
-          width: 100%;
+          width: calc(100% - 87px);
           display: flex;
           border-bottom: 1px solid ${BORDER_DARK};
+        }
+        .new-item-inputs:focus-within {
+          border-bottom: 1px solid #2baef8;
         }
         .address-name-input {
           margin-bottom: 12px;
@@ -494,6 +502,9 @@ const Home = props => {
           font-weight: ${BOLD};
           color: ${BORDER_DARK};
         }
+        .name-input:focus + .address-input {
+          border-left: 1px solid #2baef8;
+        }
         .name-input {
           width: 100px;
         }
@@ -501,6 +512,9 @@ const Home = props => {
           border-left: 1px solid ${BORDER_DARK};
           width: calc(100% - 100px);
           padding-left: 12px;
+        }
+        .address-input:focus {
+          border-left: 1px solid #2baef8;
         }
         .add-button {
           border-radius: 40px;
