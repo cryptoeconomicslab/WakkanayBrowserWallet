@@ -136,7 +136,7 @@ const Home = props => {
                   <div className="token-balance-number">{amount}</div>
                   <hr className="line"></hr>
                   <div className="balance-in-usd">
-                    {props.ETHtoUSD * amount} USD
+                    {Math.round(props.ETHtoUSD * amount * 100) / 100} USD
                   </div>
                 </div>
                 <div className="token-buttons-container">
