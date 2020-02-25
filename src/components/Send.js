@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import { connect } from 'react-redux'
 
@@ -23,6 +23,7 @@ import { SUBTEXT, BACKGROUND, SECTION_BACKGROUND, BORDER } from '../colors'
 const Send = props => {
   const router = useRouter()
   const recepientAddressRef = useRef('')
+  const [tokenAmount, setTokenAmount] = useState(0)
   const amountInput = useRef('')
 
   const tokenBalance = props.tokenBalanceList.find(
@@ -73,9 +74,16 @@ const Send = props => {
           />
         </div>
         <div className="amount-box">
-          <input className="amount-input" type="number" ref={amountInput} />
+          <input
+            className="amount-input"
+            type="number"
+            ref={amountInput}
+            onChange={e => {
+              setTokenAmount(Number(e.target.value))
+            }}
+          />
           <span className="sent-amount-in-usd">
-            = {props.ETHtoUSD * amountInput.current.value} USD
+            = {Math.round(props.ETHtoUSD * tokenAmount * 100) / 100} USD
           </span>
         </div>
         <div className="current-balance-box">
@@ -88,7 +96,7 @@ const Send = props => {
       <div className="send-button">
         <PrimaryButton
           onClick={e => {
-            props.setTransferredAmount(Number(amountInput.current.value))
+            props.setTransferredAmount(tokenAmount)
             props.setRecepientAddress(recepientAddressRef.current.value)
             e.preventDefault()
             const href = `${router.route}?transfer`

@@ -102,7 +102,7 @@ const DepositModal = props => {
                     type="number"
                     ref={amountInput}
                     onChange={e => {
-                      setTokenAmount(e.target.value)
+                      setTokenAmount(Number(e.target.value))
                     }}
                   />
                   <div className="deposited-token-unit">
@@ -110,8 +110,8 @@ const DepositModal = props => {
                   </div>
                 </div>
                 <div className="deposited-token-confirm">
-                  = {props.ETHtoUSD * amountInput.current.value} USD / from{' '}
-                  {shortenAddress(props.address)}
+                  = {Math.round(props.ETHtoUSD * tokenAmount * 100) / 100} USD /
+                  from {shortenAddress(props.address)}
                 </div>
                 <div className="cancel-deposit-buttons">
                   <div

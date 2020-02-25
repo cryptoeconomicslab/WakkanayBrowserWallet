@@ -44,14 +44,8 @@ export const exchangeReducer = createReducer(
     [setRequestedTokenToExchange]: (state, action) => {
       state.requestedTokenToExchange = action.payload
     },
-    [setRequestedAmountToExchange]: (state, action) => {
-      state.requestedAmountToExchange = action.payload
-    },
     [setRequestedTokenToReceive]: (state, action) => {
       state.requestedTokenToReceive = action.payload
-    },
-    [setRequestedAmountToReceive]: (state, action) => {
-      state.requestedAmountToReceive = action.payload
     }
   }
 )

@@ -11,9 +11,7 @@ library.add(faArrowsAltH, faTimes)
 
 import {
   setRequestedTokenToExchange,
-  setRequestedAmountToExchange,
   setRequestedTokenToReceive,
-  setRequestedAmountToReceive,
   setOrderRequestPage
 } from '../store/exchange'
 import { shortenAddress, TOKEN_CURRENCY_MAP } from '../utils'
@@ -41,9 +39,10 @@ import {
 
 const OrderRequestModal = props => {
   const router = useRouter()
-  const amountInput = useRef('')
-  const amountRef = useRef('')
+  const exchangedAmountInput = useRef('')
+  const receivedAmountInput = useRef('')
   const [requestedAmountToExchange, setRequestedAmountToExchnage] = useState(0)
+  const [requestedAmountToReceive, setRequestedAmountToReceive] = useState(0)
 
   return (
     <div className="modal-bg">
@@ -98,10 +97,16 @@ const OrderRequestModal = props => {
                   <input
                     className="amount-input"
                     type="number"
-                    ref={amountInput}
+                    ref={exchangedAmountInput}
+                    onChange={e => {
+                      setRequestedAmountToExchnage(Number(e.target.value))
+                    }}
                   />
                   <div className="amount-in-usd">
-                    {props.ETHtoUSD * amountInput.current.value} USD
+                    {Math.round(
+                      props.ETHtoUSD * requestedAmountToExchange * 100
+                    ) / 100}{' '}
+                    USD
                   </div>
                   <div className="insufficient-fund">Insufficient Fund</div>
                 </div>
@@ -144,13 +149,16 @@ const OrderRequestModal = props => {
                   <input
                     className="amount-input"
                     type="number"
-                    ref={amountRef}
+                    ref={receivedAmountInput}
                     onChange={e => {
-                      setRequestedAmountToExchnage(e.target.value)
+                      setRequestedAmountToReceive(Number(e.target.value))
                     }}
                   />
                   <div className="amount-in-usd">
-                    {props.ETHtoUSD * amountRef.current.value} USD
+                    {Math.round(
+                      props.ETHtoUSD * requestedAmountToReceive * 100
+                    ) / 100}{' '}
+                    USD
                   </div>
                   <div className="insufficient-fund">Insufficient Fund</div>
                 </div>
@@ -186,9 +194,10 @@ const OrderRequestModal = props => {
                 <div
                   className="cancel-button"
                   onClick={() => {
-                    amountInput.current.value = ''
-                    amountRef.current.value = ''
+                    exchangedAmountInput.current.value = ''
+                    receivedAmountInput.current.value = ''
                     setRequestedAmountToExchnage(0)
+                    setRequestedAmountToReceive(0)
                   }}
                 >
                   <a className="cancel">Cancel</a>
@@ -459,18 +468,14 @@ const OrderRequestModal = props => {
 const mapStateToProps = state => ({
   tokenBalanceList: state.balance.tokenBalanceList,
   requestedTokenToExchange: state.exchangeState.requestedTokenToExchange,
-  requestedAmountToExchange: state.exchangeState.requestedAmountToExchange,
   requestedTokenToReceive: state.exchangeState.requestedTokenToReceive,
-  requestedAmountToReceive: state.exchangeState.requestedAmountToReceive,
   orderRequestPage: state.exchangeState.orderRequestPage,
   ETHtoUSD: state.balance.ETHtoUSD
 })
 
 const mapDispatchToProps = {
   setRequestedTokenToExchange,
-  setRequestedAmountToExchange,
   setRequestedTokenToReceive,
-  setRequestedAmountToReceive,
   setOrderRequestPage
 }
 
