@@ -65,7 +65,6 @@ const Home = props => {
   const addressInput = useRef('')
   const editedNameRef = useRef('')
   const editedAddressRef = useRef('')
-  const ETHtoUSD = props.ETHtoUSD
 
   const onKeyDown = event => {
     if (event.key === 'Enter') {
@@ -136,7 +135,9 @@ const Home = props => {
                   <div className="token-balance-unit">ETH</div>
                   <div className="token-balance-number">{amount}</div>
                   <hr className="line"></hr>
-                  <div className="balance-in-usd">{ETHtoUSD * amount} USD</div>
+                  <div className="balance-in-usd">
+                    {props.ETHtoUSD * amount} USD
+                  </div>
                 </div>
                 <div className="token-buttons-container">
                   <button

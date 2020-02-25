@@ -4,7 +4,6 @@ import Dropdown from './Dropdown'
 import { SUBTEXT, TEXT, BORDER, BORDER_DARK, White, Black } from '../colors'
 
 const TransactionHistory = props => {
-  const currentFilter = props.currentFilter
   return (
     <div className="block-explorer-page">
       <h2 className="transaction-hisotry-title">Transaction History</h2>
@@ -13,7 +12,7 @@ const TransactionHistory = props => {
           <div className="filter">
             <Dropdown
               onSelected={props.setFilter}
-              buttonName={currentFilter}
+              buttonName={props.currentFilter}
               items={[
                 { name: 'Filter', value: 'Filter' },
                 { name: 'Address', value: 'Address' },

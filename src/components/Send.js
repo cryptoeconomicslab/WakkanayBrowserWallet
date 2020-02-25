@@ -24,12 +24,9 @@ const Send = props => {
   const router = useRouter()
   const recepientAddressRef = useRef('')
   const amountRef = useRef('')
-  const transferredToken = props.transferredToken
-  const tokenBalanceList = props.tokenBalanceList
-  const ETHtoUSD = props.ETHtoUSD
 
-  const tokenBalance = tokenBalanceList.find(
-    ({ tokenAddress }) => tokenAddress === transferredToken
+  const tokenBalance = props.tokenBalanceList.find(
+    ({ tokenAddress }) => tokenAddress === props.transferredToken
   )
 
   return (
@@ -59,13 +56,13 @@ const Send = props => {
                   ></img>
                 </div>
                 <div className="token-name">
-                  {/* {shortenAddress(transferredToken)} (
-                  {TOKEN_CURRENCY_MAP[transferredToken]}) */}
+                  {/* {shortenAddress(props.transferredToken)} (
+                  {TOKEN_CURRENCY_MAP[props.transferredToken]}) */}
                   ETH
                 </div>
               </div>
             }
-            items={tokenBalanceList.map(({ tokenAddress }) => ({
+            items={props.tokenBalanceList.map(({ tokenAddress }) => ({
               // name: shortenAddress(tokenAddress),
               name: 'ETH',
               value: tokenAddress
@@ -78,7 +75,7 @@ const Send = props => {
         <div className="amount-box">
           <input className="amount-input" type="number" ref={amountRef} />
           <span className="sent-amount-in-usd">
-            ={ETHtoUSD * amountRef.current.value} USD
+            ={props.ETHtoUSD * amountRef.current.value} USD
           </span>
         </div>
         <div className="current-balance-box">

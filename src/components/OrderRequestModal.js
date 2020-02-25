@@ -44,11 +44,6 @@ const OrderRequestModal = props => {
   const amountInput = useRef('')
   const amountRef = useRef('')
   const [requestedAmountToExchange, setRequestedAmountToExchnage] = useState(0)
-  const requestedTokenToExchange = props.requestedTokenToExchange
-  const requestedTokenToReceive = props.requestedTokenToReceive
-  const orderRequestPage = props.orderRequestPage
-  const tokenBalanceList = props.tokenBalanceList
-  const ETHtoUSD = props.ETHtoUSD
 
   return (
     <div className="modal-bg">
@@ -62,7 +57,7 @@ const OrderRequestModal = props => {
         }}
       >
         <div className="contents">
-          {orderRequestPage === 'input-page' ? (
+          {props.orderRequestPage === 'input-page' ? (
             <div className="order-request-page" id="order-request">
               <div className="exchange-order-request-title-box">
                 Exchange Order Request
@@ -84,13 +79,13 @@ const OrderRequestModal = props => {
                             ></img>
                           </div>
                           <div className="token-name">
-                            {/* {shortenAddress(requestedTokenToExchange)} (
-                            {TOKEN_CURRENCY_MAP[requestedTokenToExchange]}) */}
+                            {/* {shortenAddress(props.requestedTokenToExchange)} (
+                            {TOKEN_CURRENCY_MAP[props.requestedTokenToExchange]}) */}
                             ETH
                           </div>
                         </div>
                       }
-                      items={tokenBalanceList.map(({ tokenAddress }) => ({
+                      items={props.tokenBalanceList.map(({ tokenAddress }) => ({
                         // name: shortenAddress(tokenAddress),
                         name: 'ETH',
                         value: tokenAddress
@@ -106,7 +101,7 @@ const OrderRequestModal = props => {
                     ref={amountInput}
                   />
                   <div className="amount-in-usd">
-                    {ETHtoUSD * amountInput.current.value} USD
+                    {props.ETHtoUSD * amountInput.current.value} USD
                   </div>
                   <div className="insufficient-fund">Insufficient Fund</div>
                 </div>
@@ -129,13 +124,13 @@ const OrderRequestModal = props => {
                           </div>
                           <div className="token-name">
                             {/* FIXME */}
-                            {/* {shortenAddress(requestedTokenToReceive)} (
-                            {TOKEN_CURRENCY_MAP[requestedTokenToReceive]}) */}
+                            {/* {shortenAddress(props.requestedTokenToReceive)} (
+                            {TOKEN_CURRENCY_MAP[props.requestedTokenToReceive]}) */}
                             ETH
                           </div>
                         </div>
                       }
-                      items={tokenBalanceList.map(({ tokenAddress }) => ({
+                      items={props.tokenBalanceList.map(({ tokenAddress }) => ({
                         // FIXME
                         // name: shortenAddress(tokenAddress),
                         name: 'ETH',
@@ -155,7 +150,7 @@ const OrderRequestModal = props => {
                     }}
                   />
                   <div className="amount-in-usd">
-                    {ETHtoUSD * amountRef.current.value} USD
+                    {props.ETHtoUSD * amountRef.current.value} USD
                   </div>
                   <div className="insufficient-fund">Insufficient Fund</div>
                 </div>
@@ -209,7 +204,7 @@ const OrderRequestModal = props => {
                 </div>
               </div>
             </div>
-          ) : orderRequestPage === 'confiramtion-page' ? (
+          ) : props.orderRequestPage === 'confiramtion-page' ? (
             <div className="confirmation-page">
               <div className="mordal-page-title">Transaction Summary</div>
               <div

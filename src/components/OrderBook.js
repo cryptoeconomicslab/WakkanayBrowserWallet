@@ -25,8 +25,6 @@ import {
 
 const OrderBook = props => {
   const router = useRouter()
-  const transferredToken = props.transferredToken
-  const tokenBalanceList = props.tokenBalanceList
 
   return (
     <div className="orderbook-section" id="order-book">
@@ -48,13 +46,13 @@ const OrderBook = props => {
                     ></img>
                   </div>
                   <div className="token-name">
-                    {/* {shortenAddress(transferredToken)} (
-                    {TOKEN_CURRENCY_MAP[transferredToken]}) */}
+                    {/* {shortenAddress(props.transferredToken)} (
+                    {TOKEN_CURRENCY_MAP[props.transferredToken]}) */}
                     ETH
                   </div>
                 </div>
               }
-              items={tokenBalanceList.map(({ tokenAddress }) => ({
+              items={props.tokenBalanceList.map(({ tokenAddress }) => ({
                 // name: shortenAddress(tokenAddress),
                 name: 'ETH',
                 value: tokenAddress
@@ -87,13 +85,13 @@ const OrderBook = props => {
                     ></img>
                   </div>
                   <div className="token-name">
-                    {/* {shortenAddress(transferredToken)} (
-                    {TOKEN_CURRENCY_MAP[transferredToken]}) */}
+                    {/* {shortenAddress(props.transferredToken)} (
+                    {TOKEN_CURRENCY_MAP[props.transferredToken]}) */}
                     ETH
                   </div>
                 </div>
               }
-              items={tokenBalanceList.map(({ tokenAddress }) => ({
+              items={props.tokenBalanceList.map(({ tokenAddress }) => ({
                 // name: shortenAddress(tokenAddress),
                 name: 'ETH',
                 value: tokenAddress

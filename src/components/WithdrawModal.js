@@ -42,9 +42,6 @@ const TOKEN_CURRENCY_MAP = {
 }
 
 const WithdrawModal = props => {
-  const withdrawnToken = props.withdrawnToken
-  const withdrawPage = props.withdrawPage
-  const ETHtoUSD = props.ETHtoUSD
   const router = useRouter()
   const [tokenAmount, setTokenAmount] = useState(0)
   const amountInput = useRef('')
@@ -61,7 +58,7 @@ const WithdrawModal = props => {
         }}
       >
         <div className="contents">
-          {withdrawPage === 'input-page' ? (
+          {props.withdrawPage === 'input-page' ? (
             <div className="input-page">
               <div className="mordal-page-title">
                 <SectionTitle>
@@ -109,11 +106,11 @@ const WithdrawModal = props => {
                     }}
                   />
                   <div className="deposited-token-unit">
-                    {TOKEN_CURRENCY_MAP[withdrawnToken]}
+                    {TOKEN_CURRENCY_MAP[props.withdrawnToken]}
                   </div>
                 </div>
                 <div className="deposited-token-confirm">
-                  = {ETHtoUSD * amountInput.current.value} USD / from{' '}
+                  = {props.ETHtoUSD * amountInput.current.value} USD / from{' '}
                   {shortenAddress(props.address)}
                 </div>
                 <div className="cancel-deposit-buttons">
@@ -138,7 +135,7 @@ const WithdrawModal = props => {
                 </div>
               </div>
             </div>
-          ) : withdrawPage === 'confirmation-page' ? (
+          ) : props.withdrawPage === 'confirmation-page' ? (
             <div className="confirmation-page">
               <div className="mordal-page-title">Transaction Summary</div>
               <div
@@ -162,10 +159,10 @@ const WithdrawModal = props => {
                   <div className="total-balance-box">
                     <span className="total-balance-number">{tokenAmount}</span>
                     <span className="total-balance-unit">
-                      {TOKEN_CURRENCY_MAP[withdrawnToken]}
+                      {TOKEN_CURRENCY_MAP[props.withdrawnToken]}
                     </span>
                     <div className="balance-in-usd">
-                      {Math.round(tokenAmount * ETHtoUSD * 100) / 100} USD
+                      {Math.round(tokenAmount * props.ETHtoUSD * 100) / 100} USD
                     </div>
                   </div>
                 </div>

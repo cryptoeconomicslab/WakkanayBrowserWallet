@@ -25,11 +25,6 @@ const TOKEN_CURRENCY_MAP = {
 
 const TransferModal = props => {
   const router = useRouter()
-  const transferredToken = props.transferredToken
-  const transferredAmount = props.transferredAmount
-  const recepientAddress = props.recepientAddress
-  const transferPage = props.transferPage
-  const ETHtoUSD = props.ETHtoUSD
 
   return (
     <div className="modal-bg">
@@ -54,7 +49,7 @@ const TransferModal = props => {
           <FontAwesomeIcon icon="times" />
         </div>
         <div className="contents">
-          {transferPage === 'confirmation-page' ? (
+          {props.transferPage === 'confirmation-page' ? (
             <div className="confirmation-page">
               <div className="mordal-page-title">Transaction Summary</div>
               <div className="amount-confirmation-section">
@@ -69,13 +64,16 @@ const TransferModal = props => {
                   ></img>
                   <div className="total-balance-box">
                     <span className="total-balance-number">
-                      {transferredAmount}
+                      {props.transferredAmount}
                     </span>
                     <span className="total-balance-unit">
-                      {TOKEN_CURRENCY_MAP[transferredToken]}
+                      {TOKEN_CURRENCY_MAP[props.transferredToken]}
                     </span>
                     <div className="balance-in-usd">
-                      {Math.round(transferredAmount * ETHtoUSD * 100) / 100} USD
+                      {Math.round(
+                        props.transferredAmount * props.ETHtoUSD * 100
+                      ) / 100}{' '}
+                      USD
                     </div>
                   </div>
                 </div>
@@ -85,7 +83,7 @@ const TransferModal = props => {
                   from{' '}
                   <a className="address">{shortenAddress(props.address)}</a>
                 </div>
-                <div className="to">to {recepientAddress}</div>
+                <div className="to">to {props.recepientAddress}</div>
               </div>
               <div className="cancel-next-buttons">
                 <div
@@ -104,9 +102,9 @@ const TransferModal = props => {
                     className="next"
                     onClick={() => {
                       props.transfer(
-                        transferredAmount,
-                        transferredToken,
-                        recepientAddress
+                        props.transferredAmount,
+                        props.transferredToken,
+                        props.recepientAddress
                       )
                     }}
                   >

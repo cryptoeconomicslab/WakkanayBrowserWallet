@@ -42,9 +42,6 @@ const TOKEN_CURRENCY_MAP = {
 }
 
 const DepositModal = props => {
-  const depositedToken = props.depositedToken
-  const depositPage = props.depositPage
-  const ETHtoUSD = props.ETHtoUSD
   const router = useRouter()
   const [tokenAmount, setTokenAmount] = useState(0)
   const amountInput = useRef('')
@@ -61,7 +58,7 @@ const DepositModal = props => {
         }}
       >
         <div className="contents">
-          {depositPage === 'input-page' ? (
+          {props.depositPage === 'input-page' ? (
             <div className="input-page">
               <div className="mordal-page-title">
                 <SectionTitle>
@@ -83,7 +80,7 @@ const DepositModal = props => {
                         </div>
                         <div className="token-name">
                           {/* FIXME */}
-                          {/* {depositedToken} ({TOKEN_CURRENCY_MAP[depositedToken]}) */}
+                          {/* {props.depositedToken} ({TOKEN_CURRENCY_MAP[props.depositedToken]}) */}
                           ETH
                         </div>
                       </div>
@@ -109,11 +106,11 @@ const DepositModal = props => {
                     }}
                   />
                   <div className="deposited-token-unit">
-                    {TOKEN_CURRENCY_MAP[depositedToken]}
+                    {TOKEN_CURRENCY_MAP[props.depositedToken]}
                   </div>
                 </div>
                 <div className="deposited-token-confirm">
-                  = {ETHtoUSD * amountInput.current.value} USD / from{' '}
+                  = {props.ETHtoUSD * amountInput.current.value} USD / from{' '}
                   {shortenAddress(props.address)}
                 </div>
                 <div className="cancel-deposit-buttons">
@@ -138,7 +135,7 @@ const DepositModal = props => {
                 </div>
               </div>
             </div>
-          ) : depositPage === 'confirmation-page' ? (
+          ) : props.depositPage === 'confirmation-page' ? (
             <div className="confirmation-page">
               <div className="mordal-page-title">Transaction Summary</div>
               <div
@@ -162,10 +159,10 @@ const DepositModal = props => {
                   <div className="total-balance-box">
                     <span className="total-balance-number">{tokenAmount}</span>
                     <span className="total-balance-unit">
-                      {TOKEN_CURRENCY_MAP[depositedToken]}
+                      {TOKEN_CURRENCY_MAP[props.depositedToken]}
                     </span>
                     <div className="balance-in-usd">
-                      {Math.round(tokenAmount * ETHtoUSD * 100) / 100} USD
+                      {Math.round(tokenAmount * props.ETHtoUSD * 100) / 100} USD
                     </div>
                   </div>
                 </div>
