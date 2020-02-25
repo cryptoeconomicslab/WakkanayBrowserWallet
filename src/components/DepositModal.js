@@ -1,7 +1,7 @@
-import { useRouter } from 'next/router'
-import ClickOutside from 'react-click-outside'
 import React, { useState, useRef } from 'react'
+import { useRouter } from 'next/router'
 import { connect } from 'react-redux'
+import ClickOutside from 'react-click-outside'
 
 //react-font-awesome import
 import { fab } from '@fortawesome/free-brands-svg-icons'

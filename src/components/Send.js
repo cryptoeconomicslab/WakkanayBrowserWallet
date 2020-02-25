@@ -1,29 +1,29 @@
-import { useRef } from 'react'
+import React, { useRef } from 'react'
 import { useRouter } from 'next/router'
-import { SUBTEXT, BACKGROUND, SECTION_BACKGROUND, BORDER } from '../colors'
+import { connect } from 'react-redux'
 
 //react-font-awesome import
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 library.add(faSignOutAlt)
 
-import { connect } from 'react-redux'
-import Dropdown from './Dropdown'
 import {
   setTransferredToken,
   setTransferredAmount,
   setRecepientAddress
 } from '../store/transfer'
 import { shortenAddress, TOKEN_CURRENCY_MAP } from '../utils'
+import Dropdown from './Dropdown'
 import { PrimaryButton } from './PrimaryButton'
 import { SectionTitle } from '../components/SectionTitle'
 import { TokenSelectButton } from './TokenSelectButton'
 import { NORMAL, SMALL, MEDIUM, XLARGE } from '../fonts'
+import { SUBTEXT, BACKGROUND, SECTION_BACKGROUND, BORDER } from '../colors'
 
 const Send = props => {
   const router = useRouter()
   const recepientAddressRef = useRef('')
-  const amountRef = useRef('')
+  const amountInput = useRef('')
 
   const tokenBalance = props.tokenBalanceList.find(
     ({ tokenAddress }) => tokenAddress === props.transferredToken
@@ -73,9 +73,9 @@ const Send = props => {
           />
         </div>
         <div className="amount-box">
-          <input className="amount-input" type="number" ref={amountRef} />
+          <input className="amount-input" type="number" ref={amountInput} />
           <span className="sent-amount-in-usd">
-            ={props.ETHtoUSD * amountRef.current.value} USD
+            = {props.ETHtoUSD * amountInput.current.value} USD
           </span>
         </div>
         <div className="current-balance-box">
@@ -88,7 +88,7 @@ const Send = props => {
       <div className="send-button">
         <PrimaryButton
           onClick={e => {
-            props.setTransferredAmount(Number(amountRef.current.value))
+            props.setTransferredAmount(Number(amountInput.current.value))
             props.setRecepientAddress(recepientAddressRef.current.value)
             e.preventDefault()
             const href = `${router.route}?transfer`
