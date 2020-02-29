@@ -1,5 +1,5 @@
-import { BOLD, EXTRABOLD, XSMALL, SMALL, SMALLER, XXSMALL } from '../../fonts'
-import { PRIMARY_BUTTON_TEXT, White, BORDER_DARK } from '../../colors'
+import { BOLD, EXTRABOLD, XSMALL, SMALLER, XXSMALL } from '../fonts'
+import { PRIMARY_BUTTON_TEXT, White, BORDER_DARK } from '../colors'
 import classNames from 'classnames'
 
 import React, { useState } from 'react'
