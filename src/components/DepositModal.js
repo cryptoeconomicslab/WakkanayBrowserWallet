@@ -79,14 +79,14 @@ const DepositModal = props => {
                           ></img>
                         </div>
                         <div className="token-name">
-                          {/* FIXME */}
+                          {/* TODO */}
                           {/* {props.depositedToken} ({TOKEN_CURRENCY_MAP[props.depositedToken]}) */}
                           ETH
                         </div>
                       </div>
                     }
                     items={props.tokenBalanceList.map(({ tokenAddress }) => ({
-                      // FIXME
+                      // TODO
                       // name: shortenAddress(tokenAddress),
                       name: 'ETH',
                       value: tokenAddress

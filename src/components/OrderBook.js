@@ -46,13 +46,15 @@ const OrderBook = props => {
                     ></img>
                   </div>
                   <div className="token-name">
-                    {/* {shortenAddress(props.transferredToken)} (
+                    {/* TODO
+                    {shortenAddress(props.transferredToken)} (
                     {TOKEN_CURRENCY_MAP[props.transferredToken]}) */}
                     ETH
                   </div>
                 </div>
               }
               items={props.tokenBalanceList.map(({ tokenAddress }) => ({
+                // TODO
                 // name: shortenAddress(tokenAddress),
                 name: 'ETH',
                 value: tokenAddress

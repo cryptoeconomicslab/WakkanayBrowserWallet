@@ -79,14 +79,14 @@ const WithdrawModal = props => {
                           ></img>
                         </div>
                         <div className="token-name">
-                          {/* FIXME */}
+                          {/* TODO */}
                           {/* {depositedToken} ({TOKEN_CURRENCY_MAP[depositedToken]}) */}
                           ETH
                         </div>
                       </div>
                     }
                     items={props.tokenBalanceList.map(({ tokenAddress }) => ({
-                      // FIXME
+                      // TODO
                       // name: shortenAddress(tokenAddress),
                       name: 'ETH',
                       value: tokenAddress

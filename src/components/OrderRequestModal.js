@@ -128,7 +128,7 @@ const OrderRequestModal = props => {
                             ></img>
                           </div>
                           <div className="token-name">
-                            {/* FIXME */}
+                            {/* TODO */}
                             {/* {shortenAddress(props.requestedTokenToReceive)} (
                             {TOKEN_CURRENCY_MAP[props.requestedTokenToReceive]}) */}
                             ETH
@@ -136,7 +136,7 @@ const OrderRequestModal = props => {
                         </div>
                       }
                       items={props.tokenBalanceList.map(({ tokenAddress }) => ({
-                        // FIXME
+                        // TODO
                         // name: shortenAddress(tokenAddress),
                         name: 'ETH',
                         value: tokenAddress
