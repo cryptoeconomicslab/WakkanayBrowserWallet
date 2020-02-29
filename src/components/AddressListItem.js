@@ -3,6 +3,7 @@ import { PRIMARY_BUTTON_TEXT, White, BORDER_DARK } from '../colors'
 import classNames from 'classnames'
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/router'
 
 export default ({
   addressListItem,
@@ -17,6 +18,7 @@ export default ({
 }) => {
   const [updateButtonToggle, setUpdateButtonToggle] = useState(false)
   const [borderBottomToggle, setBorderBottomToggle] = useState(false)
+  const router = useRouter()
   return (
     <div key={addressListItem.id} className="address-book-item">
       <div
@@ -103,7 +105,16 @@ export default ({
               }}
             />
           </button>
-          <button className="send-button">Send</button>
+          <button
+            className="send-button"
+            onClick={() => {
+              router.push('/payment')
+              // TODO
+              // pass addressListItem.address to Send.js's recepient address input as if it was typed in.
+            }}
+          >
+            Send
+          </button>
         </div>
       )}
 
