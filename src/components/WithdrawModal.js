@@ -7,7 +7,6 @@ import { connect } from 'react-redux'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faEthernet } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 library.add(fab, faEthernet)
 
 import { setWithdrawnToken, setWithdrawPage, withdraw } from '../store/withdraw'
@@ -126,7 +125,7 @@ const WithdrawModal = props => {
                   <div className="deposit-button">
                     <PrimaryButton
                       onClick={() => {
-                        props.setWithdrawPage('confirm-page')
+                        props.setWithdrawPage('confirmation-page')
                       }}
                     >
                       Withdraw
@@ -138,14 +137,6 @@ const WithdrawModal = props => {
           ) : props.withdrawPage === 'confirmation-page' ? (
             <div className="confirmation-page">
               <div className="mordal-page-title">Transaction Summary</div>
-              <div
-                className="back-button"
-                onClick={() => {
-                  props.setWithdrawPage('input-page')
-                }}
-              >
-                <FontAwesomeIcon icon="arrow-left" />
-              </div>
               <div className="amount-confirmation-section">
                 <div className="amount-confirmation-title">
                   <a>You will withdraw</a>
@@ -183,15 +174,13 @@ const WithdrawModal = props => {
                 >
                   <a className="cancel">Cancel</a>
                 </div>
-                <div className="next-button">
-                  <a
-                    className="next"
-                    onClick={() => {
-                      props.withdraw(tokenAmount)
-                    }}
-                  >
-                    Confirm
-                  </a>
+                <div
+                  className="confirm-button"
+                  onClick={() => {
+                    props.setWithdrawPage('completion-page')
+                  }}
+                >
+                  <PrimaryButton>Confirm</PrimaryButton>
                 </div>
               </div>
               <div>Click confirm to open Metamask</div>

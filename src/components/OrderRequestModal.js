@@ -6,7 +6,6 @@ import { useState, useRef } from 'react'
 //react-font-awesome import
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faArrowsAltH, faTimes } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 library.add(faArrowsAltH, faTimes)
 
 import {
@@ -205,7 +204,7 @@ const OrderRequestModal = props => {
                 <div className="create-button">
                   <PrimaryButton
                     onClick={() => {
-                      props.setOrderRequestPage('confirm-page')
+                      props.setOrderRequestPage('confirmation-page')
                     }}
                   >
                     Create
@@ -213,17 +212,9 @@ const OrderRequestModal = props => {
                 </div>
               </div>
             </div>
-          ) : props.orderRequestPage === 'confiramtion-page' ? (
+          ) : props.orderRequestPage === 'confirmation-page' ? (
             <div className="confirmation-page">
               <div className="mordal-page-title">Transaction Summary</div>
-              <div
-                className="back-button"
-                onClick={() => {
-                  props.setOrderRequestPage('input-page')
-                }}
-              >
-                <FontAwesomeIcon icon="arrow-left" />
-              </div>
               <div className="amount-confirmation-section">
                 exchange transaction summary
               </div>
@@ -236,14 +227,19 @@ const OrderRequestModal = props => {
                 >
                   <a className="cancel">Cancel</a>
                 </div>
-                <div className="confirm-button">
+                <div
+                  className="confirm-button"
+                  onClick={() => {
+                    props.setOrderRequestPage('completion-page')
+                  }}
+                >
                   <PrimaryButton>Confirm</PrimaryButton>
                 </div>
               </div>
               <div>Click confirm to open Metamask</div>
             </div>
           ) : (
-            <div>Exchange Order Requested </div>
+            <div>Exchange order is successfully requested </div>
           )}
         </div>
       </ClickOutside>

@@ -126,7 +126,7 @@ const DepositModal = props => {
                   <div className="deposit-button">
                     <PrimaryButton
                       onClick={() => {
-                        props.setDepositPage('confirm-page')
+                        props.setDepositPage('confirmation-page')
                       }}
                     >
                       Deposit
@@ -138,14 +138,6 @@ const DepositModal = props => {
           ) : props.depositPage === 'confirmation-page' ? (
             <div className="confirmation-page">
               <div className="mordal-page-title">Transaction Summary</div>
-              <div
-                className="back-button"
-                onClick={() => {
-                  props.setDepositPage('input-page')
-                }}
-              >
-                <FontAwesomeIcon icon="arrow-left" />
-              </div>
               <div className="amount-confirmation-section">
                 <div className="amount-confirmation-title">
                   <a>You will deposit</a>
@@ -183,15 +175,13 @@ const DepositModal = props => {
                 >
                   <a className="cancel">Cancel</a>
                 </div>
-                <div className="next-button">
-                  <a
-                    className="next"
-                    onClick={() => {
-                      props.deposit(tokenAmount)
-                    }}
-                  >
-                    Confirm
-                  </a>
+                <div
+                  className="confirm-button"
+                  onClick={() => {
+                    props.setDepositPage('completion-page')
+                  }}
+                >
+                  <PrimaryButton>Confirm</PrimaryButton>
                 </div>
               </div>
               <div>Click confirm to open Metamask</div>

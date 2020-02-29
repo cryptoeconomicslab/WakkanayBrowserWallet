@@ -22,7 +22,7 @@ export const exchangeReducer = createReducer(
     exchangedToken: undefined,
     maxExchangedAmount: 0,
     receivedToken: undefined,
-    orderRequestPage: 'confirmation-page',
+    orderRequestPage: 'input-page',
     requestedTokenToExchange: undefined,
     requestedAmountToExchange: 0,
     requestedTokenToReceive: undefined,
