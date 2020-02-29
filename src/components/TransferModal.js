@@ -17,6 +17,7 @@ import { connect } from 'react-redux'
 import { setTransferPage, transfer } from '../store/transfer'
 import { shortenAddress } from '../utils'
 import { SMALL, MEDIUM, LARGER, SMALLPLUS } from '../fonts'
+import { MODAL_MAIN_BACKGROUND } from '../colors'
 
 const TOKEN_CURRENCY_MAP = {
   Ethereum: 'ETH',
@@ -137,7 +138,7 @@ const TransferModal = props => {
           min-width: 520px;
           height: calc(80% - 20px);
           min-height: 440px;
-          background-color: white;
+          background-color: ${MODAL_MAIN_BACKGROUND};
           opacity: 1;
           border-radius: 6px;
           display: flex;
