@@ -1,12 +1,14 @@
 import { connect } from 'react-redux'
-import { SUBTEXT, BACKGROUND, SECTION_BACKGROUND } from '../colors'
+
+import { SUBTEXT, BACKGROUND, SECTION_BACKGROUND, BORDER_DARK } from '../colors'
 import { SMALLER, SMALL } from '../fonts'
 import { SectionTitle } from '../components/SectionTitle'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSignInAlt } from '@fortawesome/free-solid-svg-icons'
-library.add(faSignInAlt)
 
 import QRCode from 'qrcode.react'
+
+// clipboard
+import { CopyToClipboard } from 'react-copy-to-clipboard'
+import ReactTooltip from 'react-tooltip'
 
 const Receive = props => {
   return (
@@ -14,9 +16,14 @@ const Receive = props => {
       <SectionTitle>Receive Token</SectionTitle>
       <div className="address-box-wrapper">
         <div className="address-title">Your Wakkanay Wallet Address</div>
-        <div className="address-box">
-          <div className="address">{props.address}</div>
-        </div>
+        <CopyToClipboard text={props.address}>
+          <div className="address-box" data-tip="React-tooltip">
+            {props.address}
+          </div>
+        </CopyToClipboard>
+        <ReactTooltip place="bottom" type="dark" effect="solid">
+          <span>Copy to Clipboard</span>
+        </ReactTooltip>
       </div>
       <div className="qr-code-box">
         <QRCode
@@ -61,6 +68,10 @@ const Receive = props => {
           align-items: center;
           justify-content: flex-start;
           padding: 12px;
+          cursor: pointer;
+        }
+        .address-box:hover {
+          background-color: ${BORDER_DARK};
         }
         .qr-code-box {
           position: absolute;
