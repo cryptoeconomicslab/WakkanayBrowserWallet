@@ -59,7 +59,7 @@ const TransferModal = props => {
                 <div className="amount-confirmation-box">
                   <img
                     className="token-logo"
-                    src="../ethereum-icon.png"
+                    src="../tokenIcons/ethereum-logo.png"
                     alt="Ethereum Logo"
                   ></img>
                   <div className="total-balance-box">

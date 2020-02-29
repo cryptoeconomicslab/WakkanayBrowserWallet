@@ -41,7 +41,7 @@ const OrderBook = props => {
                   <div className="exchanged-token-img-bg">
                     <img
                       className="exchanged-token-img"
-                      src="../ethereum-icon.png"
+                      src="../tokenIcons/ethereum-logo.png"
                       alt="Ethereum Logo"
                     ></img>
                   </div>
@@ -82,7 +82,7 @@ const OrderBook = props => {
                   <div className="exchanged-token-img-bg">
                     <img
                       className="exchanged-token-img"
-                      src="../ethereum-icon.png"
+                      src="../tokenIcons/ethereum-logo.png"
                       alt="Eth Logo"
                     ></img>
                   </div>
@@ -134,7 +134,7 @@ const OrderBook = props => {
               <div className="l2-token-img-bg">
                 <img
                   className="l2-token-img"
-                  src="../ethereum-icon.png"
+                  src="../tokenIcons/ethereum-logo.png"
                   alt="Ethereum Logo"
                 ></img>
               </div>
@@ -153,7 +153,7 @@ const OrderBook = props => {
               <div className="l2-token-img-bg">
                 <img
                   className="l2-token-img"
-                  src="../dai-icon.png"
+                  src="../tokenIcons/dai-logo.png"
                   alt="Dai Logo"
                 ></img>
               </div>

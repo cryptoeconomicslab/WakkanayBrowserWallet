@@ -73,7 +73,7 @@ const OrderRequestModal = props => {
                           <div className="l2-token-img-bg">
                             <img
                               className="l2-token-img"
-                              src="../ethereum-icon.png"
+                              src="../tokenIcons/ethereum-logo.png"
                               alt="Ethereum Logo"
                             ></img>
                           </div>
@@ -123,7 +123,7 @@ const OrderRequestModal = props => {
                           <div className="l2-token-img-bg">
                             <img
                               className="l2-token-img"
-                              src="../ethereum-icon.png"
+                              src="../tokenIcons/ethereum-logo.png"
                               alt="Ethereum Logo"
                             ></img>
                           </div>

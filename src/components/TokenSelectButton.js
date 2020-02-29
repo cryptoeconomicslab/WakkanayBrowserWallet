@@ -4,7 +4,7 @@ export const TokenSelectButton = props => {
       <div className="selected-token-img-bg">
         <img
           className="selected-token-img"
-          src="../ethereum-icon.png"
+          src="../tokenIcons/ethereum-logo.png"
           alt="Eth Logo"
         ></img>
       </div>
