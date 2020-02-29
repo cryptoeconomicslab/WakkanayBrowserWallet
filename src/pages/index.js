@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 // internal import
 import Layout from '../components/Layout'
-import AddressListItem from '../components/AddressList/AddressListItem'
+import AddressListItem from '../components/AddressListItem'
 import { SectionTitle } from '../components/SectionTitle'
 import { PrimaryButton } from '../components/PrimaryButton'
 import { shortenAddress } from '../utils'
