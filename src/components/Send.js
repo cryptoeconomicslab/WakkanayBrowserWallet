@@ -43,6 +43,7 @@ const Send = props => {
           className="recepient-address-input"
           type="text"
           ref={recepientAddressRef}
+          value={router.query.address}
         />
       </div>
       <div className="token-box">

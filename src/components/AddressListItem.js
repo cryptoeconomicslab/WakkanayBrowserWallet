@@ -108,9 +108,7 @@ export default ({
           <button
             className="send-button"
             onClick={() => {
-              router.push('/payment')
-              // TODO
-              // pass addressListItem.address to Send.js's recepient address input as if it was typed in.
+              router.push(`/payment?address=${addressListItem.address}`)
             }}
           >
             Send
