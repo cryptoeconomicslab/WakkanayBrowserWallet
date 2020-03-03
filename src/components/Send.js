@@ -15,7 +15,7 @@ import {
 } from '../store/transfer'
 
 //internal import
-import { shortenAddress, TOKEN_CURRENCY_MAP } from '../utils'
+import { shortenAddress, TOKEN_CURRENCY_MAP, roundBalance } from '../utils'
 import Dropdown from './Dropdown'
 import { PrimaryButton } from './PrimaryButton'
 import { SectionTitle } from '../components/SectionTitle'
@@ -87,7 +87,7 @@ const Send = props => {
             }}
           />
           <span className="sent-amount-in-usd">
-            = {Math.round(props.ETHtoUSD * tokenAmount * 100) / 100} USD
+            = {roundBalance(props.ETHtoUSD, tokenAmount)} USD
           </span>
         </div>
         <div className="current-balance-box">

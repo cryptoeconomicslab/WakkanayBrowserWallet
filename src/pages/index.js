@@ -7,7 +7,7 @@ import Layout from '../components/Layout'
 import AddressListItem from '../components/AddressListItem'
 import { SectionTitle } from '../components/SectionTitle'
 import { PrimaryButton } from '../components/PrimaryButton'
-import { shortenAddress } from '../utils'
+import { shortenAddress, roundBalance } from '../utils'
 import {
   BOLD,
   EXTRABOLD,
@@ -136,7 +136,7 @@ const Home = props => {
                   <div className="token-balance-number">{amount}</div>
                   <hr className="line"></hr>
                   <div className="balance-in-usd">
-                    {Math.round(props.ETHtoUSD * amount * 100) / 100} USD
+                    {roundBalance(props.ETHtoUSD, amount)} USD
                   </div>
                 </div>
                 <div className="token-buttons-container">

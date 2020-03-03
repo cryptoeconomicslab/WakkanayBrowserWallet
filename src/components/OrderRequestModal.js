@@ -13,7 +13,7 @@ import {
   setRequestedTokenToReceive,
   setOrderRequestPage
 } from '../store/exchange'
-import { shortenAddress, TOKEN_CURRENCY_MAP } from '../utils'
+import { shortenAddress, TOKEN_CURRENCY_MAP, roundBalance } from '../utils'
 import Dropdown from './Dropdown'
 import { PrimaryButton } from './PrimaryButton'
 import { TokenSelectButton } from './TokenSelectButton'
@@ -102,9 +102,7 @@ const OrderRequestModal = props => {
                     }}
                   />
                   <div className="amount-in-usd">
-                    {Math.round(
-                      props.ETHtoUSD * requestedAmountToExchange * 100
-                    ) / 100}{' '}
+                    {roundBalance(props.ETHtoUSD, requestedAmountToExchange)}{' '}
                     USD
                   </div>
                   <div className="insufficient-fund">Insufficient Fund</div>
@@ -154,10 +152,7 @@ const OrderRequestModal = props => {
                     }}
                   />
                   <div className="amount-in-usd">
-                    {Math.round(
-                      props.ETHtoUSD * requestedAmountToReceive * 100
-                    ) / 100}{' '}
-                    USD
+                    {roundBalance(props.ETHtoUSD, requestedAmountToReceive)} USD
                   </div>
                   <div className="insufficient-fund">Insufficient Fund</div>
                 </div>

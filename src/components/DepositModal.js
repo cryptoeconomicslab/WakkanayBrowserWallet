@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 library.add(fab, faArrowLeft)
 
 import { setDepositedToken, setDepositPage, deposit } from '../store/deposit'
-import { shortenAddress } from '../utils'
+import { shortenAddress, TOKEN_CURRENCY_MAP, roundBalance } from '../utils'
 import Dropdown from './Dropdown'
 import { SectionTitle } from './SectionTitle'
 import { TokenSelectButton } from './TokenSelectButton'
@@ -110,8 +110,8 @@ const DepositModal = props => {
                   </div>
                 </div>
                 <div className="deposited-token-confirm">
-                  = {Math.round(props.ETHtoUSD * tokenAmount * 100) / 100} USD /
-                  from {shortenAddress(props.address)}
+                  = {roundBalance(props.ETHtoUSD, tokenAmount)} USD / from{' '}
+                  {shortenAddress(props.address)}
                 </div>
                 <div className="cancel-deposit-buttons">
                   <div
@@ -154,7 +154,7 @@ const DepositModal = props => {
                       {TOKEN_CURRENCY_MAP[props.depositedToken]}
                     </span>
                     <div className="balance-in-usd">
-                      {Math.round(tokenAmount * props.ETHtoUSD * 100) / 100} USD
+                      {roundBalance(props.ETHtoUSD, tokenAmount)} USD
                     </div>
                   </div>
                 </div>

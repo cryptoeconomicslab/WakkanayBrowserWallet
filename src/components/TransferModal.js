@@ -15,14 +15,9 @@ library.add(fab, faTimes, faEthernet, faArrowLeft)
 
 import { connect } from 'react-redux'
 import { setTransferPage, transfer } from '../store/transfer'
-import { shortenAddress } from '../utils'
+import { shortenAddress, TOKEN_CURRENCY_MAP, roundBalance } from '../utils'
 import { SMALL, MEDIUM, LARGER, SMALLPLUS } from '../fonts'
 import { MODAL_MAIN_BACKGROUND } from '../colors'
-
-const TOKEN_CURRENCY_MAP = {
-  Ethereum: 'ETH',
-  Dai: 'DAI'
-}
 
 const TransferModal = props => {
   const router = useRouter()
@@ -71,9 +66,7 @@ const TransferModal = props => {
                       {TOKEN_CURRENCY_MAP[props.transferredToken]}
                     </span>
                     <div className="balance-in-usd">
-                      {Math.round(
-                        props.transferredAmount * props.ETHtoUSD * 100
-                      ) / 100}{' '}
+                      {roundBalance(props.ETHtoUSD, props.transferredAmount)}{' '}
                       USD
                     </div>
                   </div>

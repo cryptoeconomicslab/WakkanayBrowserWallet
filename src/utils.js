@@ -8,3 +8,7 @@ export const TOKEN_CURRENCY_MAP = {
   Ethereum: 'ETH',
   Dai: 'DAI'
 }
+
+export const roundBalance = (rate, tokenAmount) => {
+  return Math.round(rate * tokenAmount * 100) / 100
+}
