@@ -35,11 +35,6 @@ import {
   SUBTEXT
 } from '../colors'
 
-const TOKEN_CURRENCY_MAP = {
-  Ethereum: 'ETH',
-  Dai: 'DAI'
-}
-
 const WithdrawModal = props => {
   const router = useRouter()
   const [tokenAmount, setTokenAmount] = useState(0)

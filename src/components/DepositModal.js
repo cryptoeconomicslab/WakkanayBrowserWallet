@@ -36,11 +36,6 @@ import {
   SUBTEXT
 } from '../colors'
 
-const TOKEN_CURRENCY_MAP = {
-  Ethereum: 'ETH',
-  Dai: 'DAI'
-}
-
 const DepositModal = props => {
   const router = useRouter()
   const [tokenAmount, setTokenAmount] = useState(0)
