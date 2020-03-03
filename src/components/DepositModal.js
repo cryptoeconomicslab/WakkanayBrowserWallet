@@ -75,7 +75,7 @@ const DepositModal = props => {
                         </div>
                         <div className="token-name">
                           {/* TODO */}
-                          {/* {props.depositedToken} ({TOKEN_CURRENCY_MAP[props.depositedToken]}) */}
+                          {/* {TOKEN_CURRENCY_MAP[props.depositedToken]}*/}
                           ETH
                         </div>
                       </div>

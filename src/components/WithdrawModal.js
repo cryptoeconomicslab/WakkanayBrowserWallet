@@ -74,7 +74,7 @@ const WithdrawModal = props => {
                         </div>
                         <div className="token-name">
                           {/* TODO */}
-                          {/* {depositedToken} ({TOKEN_CURRENCY_MAP[depositedToken]}) */}
+                          {/* {TOKEN_CURRENCY_MAP[withdrawnToken]} */}
                           ETH
                         </div>
                       </div>
