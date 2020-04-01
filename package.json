@@ -15,7 +15,7 @@
     "@cryptoeconomicslab/eth-coder": "0.0.7",
     "@cryptoeconomicslab/eth-contract": "0.0.7",
     "@cryptoeconomicslab/eth-wallet": "0.0.7",
-    "@cryptoeconomicslab/indexeddb-kvs": "0.0.3",
+    "@cryptoeconomicslab/indexeddb-kvs": "^0.0.4",
     "@cryptoeconomicslab/ovm": "0.0.35",
     "@cryptoeconomicslab/plasma-light-client": "0.0.35",
     "@cryptoeconomicslab/primitives": "0.0.35",
