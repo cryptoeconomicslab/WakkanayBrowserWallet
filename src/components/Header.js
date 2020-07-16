@@ -33,16 +33,27 @@ const Header = ({ appRouter, appStatus }) => {
             </Link>
           </h1>
           {appStatus.status === 'loaded' && (
-            <Link href={HISTORY} passHref>
-              <a className="historyButton">
-                <img
-                  src="/icon-history.svg"
-                  width="14"
-                  className="historyButton__img"
-                />
-                <span className="historyButton__txt">History</span>
+            <div className="rightButtons">
+              <a
+                className="logoutButton"
+                onClick={() => {
+                  localStorage.removeItem('loggedInWith')
+                  location.reload()
+                }}
+              >
+                Logout
               </a>
-            </Link>
+              <Link href={HISTORY} passHref>
+                <a className="historyButton">
+                  <img
+                    src="/icon-history.svg"
+                    width="14"
+                    className="historyButton__img"
+                  />
+                  <span className="historyButton__txt">History</span>
+                </a>
+              </Link>
+            </div>
           )}
         </>
       ) : (
@@ -81,6 +92,10 @@ const Header = ({ appRouter, appStatus }) => {
         .title img {
           cursor: pointer;
         }
+        .rightButtons {
+          display: flex;
+          justify-content: space-between;
+        }
         .historyButton {
           display: flex;
           align-items: center;
@@ -109,6 +124,12 @@ const Header = ({ appRouter, appStatus }) => {
         }
         .historyButton__txt {
           font-size: ${FZ_MEDIUM};
+        }
+        .logoutButton {
+          display: flex;
+          align-items: center;
+          padding: 0.5rem 1.25rem;
+          cursor: pointer;
         }
       `}</style>
     </div>

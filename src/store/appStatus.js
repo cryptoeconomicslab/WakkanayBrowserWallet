@@ -57,26 +57,19 @@ export const checkClientInitialized = () => {
     }
 
     const loggedInWith = localStorage.getItem('loggedInWith')
-    try {
-      if (loggedInWith === WALLET_KIND.WALLET_METAMASK) {
+    if (loggedInWith) {
+      try {
         await clientWrapper.initializeClient({
-          kind: WALLET_KIND.WALLET_METAMASK
+          kind: loggedInWith
         })
         dispatch(setAppStatus(APP_STATUS.LOADED))
         dispatch(subscribeEvents())
         initialGetters(dispatch)
-      } else if (loggedInWith === WALLET_KIND.WALLET_MAGIC_LINK) {
-        await clientWrapper.initializeClient({
-          kind: WALLET_KIND.WALLET_MAGIC_LINK
-        })
-        dispatch(setAppStatus(APP_STATUS.LOADED))
-        dispatch(subscribeEvents())
-        initialGetters(dispatch)
-      } else {
+      } catch (e) {
+        console.error(e)
         dispatch(setAppStatus(APP_STATUS.UNLOADED))
       }
-    } catch (e) {
-      console.error(e)
+    } else {
       dispatch(setAppStatus(APP_STATUS.UNLOADED))
     }
   }
