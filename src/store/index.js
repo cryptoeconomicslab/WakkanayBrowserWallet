@@ -13,6 +13,7 @@ import { withdrawReducer } from './withdraw'
 import { appStatusReducer } from './appStatus'
 import { appRouterReducer } from './appRouter'
 import { exchangeReducer } from './exchange'
+import { errorsReducer } from './errors'
 
 const reducer = combineReducers({
   address: addressReducer,
@@ -25,7 +26,8 @@ const reducer = combineReducers({
   withdrawState: withdrawReducer,
   appStatus: appStatusReducer,
   appRouter: appRouterReducer,
-  exchangeState: exchangeReducer
+  exchangeState: exchangeReducer,
+  errors: errorsReducer
 })
 
 export const initStore = initialState => {

@@ -27,7 +27,6 @@ import {
   // NFT_COLLECTIBLES,
   openModal
 } from '../routes'
-import { getErrorMessage } from '../selectors'
 import { pushRouteHistory, popRouteHistory } from '../store/appRouter'
 import { checkClientInitialized } from '../store/appStatus'
 import {
@@ -39,7 +38,7 @@ const Initial = ({
   checkClientInitialized,
   pushRouteHistory,
   popRouteHistory,
-  errorMessage,
+  errors,
   appStatus,
   address,
   tokenTotalBalance,
@@ -88,7 +87,7 @@ const Initial = ({
       </Head>
       <Header />
       <div className="container">
-        <ErrorAlert>{errorMessage}</ErrorAlert>
+        {errors.length > 0 && <ErrorAlert>{errors}</ErrorAlert>}
         <h2 className="headline">
           {router.pathname !== HISTORY ? 'Your Wallet' : 'Transaction History'}
         </h2>
@@ -212,9 +211,9 @@ const mapStateToProps = state => ({
   address: state.address,
   appRouter: state.appRouter,
   appStatus: state.appStatus,
+  errors: state.errors.errors,
   l1TotalBalance: getL1TotalBalance(state),
-  tokenTotalBalance: getTokenTotalBalance(state),
-  errorMessage: getErrorMessage(state)
+  tokenTotalBalance: getTokenTotalBalance(state)
 })
 
 const mapDispatchToProps = {

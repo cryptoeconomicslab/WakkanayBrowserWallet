@@ -5,6 +5,7 @@ import { formatUnits } from 'ethers/utils'
 import { createSelector } from 'reselect'
 import clientWrapper from '../client'
 import { TOKEN_LIST, getTokenByTokenContractAddress } from '../constants/tokens'
+import { addError } from '../store/errors'
 import { roundBalance } from '../utils'
 
 // selector
@@ -40,11 +41,8 @@ export const getTokenTotalBalance = createSelector(
 
 // actions
 export const setL1Balance = createAction('SET_L1_BALANCE')
-export const errorSetL1Balance = createAction('ERROR_SET_L1_BALANCE')
 export const setTokenBalance = createAction('SET_TOKEN_BALANCE')
-export const errorSetTokenBalance = createAction('ERROR_SET_TOKEN_BALANCE')
 export const setETHtoUSD = createAction('SET_ETH_TO_USD')
-export const errorSetETHtoUSD = createAction('ERROR_SET_ETH_TO_USD')
 
 export const getL1Balance = () => {
   return async dispatch => {
@@ -72,7 +70,7 @@ export const getL1Balance = () => {
       dispatch(setL1Balance(balances))
     } catch (e) {
       console.error(e)
-      dispatch(errorSetL1Balance(true))
+      dispatch(addError('Can not get your Mainchain balance now.'))
     }
   }
 }
@@ -99,7 +97,7 @@ export const getBalance = () => {
       dispatch(setTokenBalance(balance))
     } catch (e) {
       console.error(e)
-      dispatch(errorSetTokenBalance(true))
+      dispatch(addError('Can not get your L2 balance now.'))
     }
   }
 }
@@ -116,12 +114,12 @@ export const getETHtoUSD = () => {
         if (res.data && res.data.result && res.data.result.ethusd) {
           dispatch(setETHtoUSD(res.data.result.ethusd))
         } else {
-          dispatch(errorSetETHtoUSD(true))
+          throw Error('Can not get res.data.')
         }
       })
       .catch(async e => {
-        console.log(e)
-        dispatch(errorSetETHtoUSD(true))
+        console.error(e)
+        dispatch(addError('Can not get USD balance now.'))
       })
   }
 }
@@ -129,30 +127,18 @@ export const getETHtoUSD = () => {
 export const tokenBalanceReducer = createReducer(
   {
     l1Balance: {},
-    errorL1Balance: false,
     tokenBalance: {},
-    errorTokenBalance: false,
-    ETHtoUSD: 0,
-    errorEthToUSD: false
+    ETHtoUSD: 0
   },
   {
     [setL1Balance]: (state, action) => {
       state.l1Balance = action.payload
     },
-    [errorSetL1Balance]: (state, action) => {
-      state.errorL1Balance = action.payload
-    },
     [setTokenBalance]: (state, action) => {
       state.tokenBalance = action.payload
     },
-    [errorSetTokenBalance]: (state, action) => {
-      state.errorTokenBalance = action.payload
-    },
     [setETHtoUSD]: (state, action) => {
       state.ETHtoUSD = action.payload
-    },
-    [errorSetETHtoUSD]: (state, action) => {
-      state.errorEthToUSD = action.payload
     }
   }
 )

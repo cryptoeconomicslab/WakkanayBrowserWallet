@@ -2,21 +2,17 @@ import { formatEther } from 'ethers/utils'
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import clientWrapper from '../client'
 import { getTokenByTokenContractAddress } from '../constants/tokens'
+import { addError } from './errors'
 
 export const setHistoryList = createAction('SET_HISTORY_LIST')
-export const errorSetHistoryList = createAction('ERROR_SET_HISTORY_LIST')
 
 export const historyReducer = createReducer(
   {
-    historyList: [],
-    errorHistoryList: false
+    historyList: []
   },
   {
     [setHistoryList]: (state, action) => {
       state.historyList = action.payload
-    },
-    [errorSetHistoryList]: (state, action) => {
-      state.errorHistoryList = action.payload
     }
   }
 )
@@ -37,7 +33,7 @@ export const getTransactionHistories = () => {
       dispatch(setHistoryList(histories))
     } catch (error) {
       console.error(error)
-      dispatch(errorSetHistoryList(true))
+      dispatch(addError('Can not get your transaction history now.'))
     }
   }
 }

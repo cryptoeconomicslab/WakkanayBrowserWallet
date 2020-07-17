@@ -4,14 +4,14 @@ import { utils } from 'ethers'
 import JSBI from 'jsbi'
 import clientWrapper from '../client'
 import { config } from '../config'
+import { addError, clearAllErrors } from './errors'
 
 export const setTransferIsSending = createAction('SET_TRANSFER_IS_SENDING')
 export const setTransferredToken = createAction('SET_TRANSFERRED_TOKEN')
 export const setTransferredAmount = createAction('SET_TRANSFERRED_AMOUNT')
 export const setRecepientAddress = createAction('SET_RECEPIENT_ADDRESS')
 export const setTransferPage = createAction('SET_TRANSFER_PAGE')
-export const setTransferError = createAction('SET_TRANSFER_ERROR')
-export const clearState = createAction('CLEAR_STATE')
+export const clearTransferState = createAction('CLEAR_TRANSFER_STATE')
 
 const initialState = {
   isSending: false,
@@ -37,10 +37,7 @@ export const transferReducer = createReducer(initialState, {
   [setTransferPage]: (state, action) => {
     state.transferPage = action.payload
   },
-  [setTransferError]: (state, action) => {
-    state.transferError = action.payload
-  },
-  [clearState]: () => {
+  [clearTransferState]: () => {
     return initialState
   }
 })
@@ -52,18 +49,21 @@ export const transferReducer = createReducer(initialState, {
  * @param {*} recipientAddress the address of token recipient
  */
 export const transfer = (amount, tokenContractAddress, recipientAddress) => {
-  const amountWei = JSBI.BigInt(utils.parseEther(amount).toString())
+  // TODO: validation check
+  // invalid address, insufficient funds
   return async dispatch => {
     try {
+      dispatch(clearAllErrors())
       dispatch(setTransferIsSending(true))
       const client = await clientWrapper.getClient()
       if (!client) return
+      const amountWei = JSBI.BigInt(utils.parseEther(amount).toString())
       await client.transfer(amountWei, tokenContractAddress, recipientAddress)
-      dispatch(clearState())
+      dispatch(clearTransferState())
       dispatch(setTransferPage('completion-page'))
     } catch (error) {
-      console.log(error)
-      dispatch(setTransferError(error.message))
+      console.error(error)
+      dispatch(addError('Transfer Failed.'))
     } finally {
       dispatch(setTransferIsSending(false))
     }

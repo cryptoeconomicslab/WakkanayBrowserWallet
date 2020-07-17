@@ -3,9 +3,12 @@ import { TEXT_ERROR } from '../../constants/colors'
 
 // TODO: implement alert style
 export default props => {
+  const errorMessages = props.children.map(errorMessage => {
+    return <li>{errorMessage}</li>
+  })
   return (
     <div>
-      {props.children}
+      <ul>{errorMessages}</ul>
       <style jsx>{`
         div {
           color: ${TEXT_ERROR};
