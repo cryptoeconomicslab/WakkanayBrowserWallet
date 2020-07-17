@@ -9,14 +9,7 @@ import Header from './Header'
 import StartupModal from './StartupModal'
 // import { Tabs } from './Tabs'
 import Wallet from './Wallet'
-import {
-  TEXT,
-  BACKGROUND,
-  SUBTEXT,
-  ERROR,
-  MAIN,
-  MAIN_DARK
-} from '../constants/colors'
+import { TEXT, BACKGROUND, SUBTEXT, MAIN, MAIN_DARK } from '../constants/colors'
 import {
   FW_BOLD,
   FZ_MEDIUM,
@@ -34,6 +27,7 @@ import {
   // NFT_COLLECTIBLES,
   openModal
 } from '../routes'
+import { getErrorMessage } from '../selectors'
 import { pushRouteHistory, popRouteHistory } from '../store/appRouter'
 import { checkClientInitialized } from '../store/appStatus'
 import {
@@ -45,9 +39,9 @@ const Initial = ({
   checkClientInitialized,
   pushRouteHistory,
   popRouteHistory,
+  errorMessage,
   appStatus,
   address,
-  tokenBalance,
   tokenTotalBalance,
   l1TotalBalance,
   children
@@ -94,9 +88,7 @@ const Initial = ({
       </Head>
       <Header />
       <div className="container">
-        <ErrorAlert>
-          {tokenBalance.errorEthToUSD && 'can not get USD balance now'}
-        </ErrorAlert>
+        <ErrorAlert>{errorMessage}</ErrorAlert>
         <h2 className="headline">
           {router.pathname !== HISTORY ? 'Your Wallet' : 'Transaction History'}
         </h2>
@@ -124,11 +116,6 @@ const Initial = ({
         <Box>
           {/* {isTabShownHidden && <Tabs currentPath={router.pathname} />} */}
           {content}
-          {appStatus.status === 'error' && (
-            <div className="error">
-              {appStatus.error ? appStatus.error.message : 'Unexpected error'}
-            </div>
-          )}
         </Box>
       </div>
       <style>{`
@@ -216,12 +203,6 @@ const Initial = ({
         .wallet__txt {
           color: ${SUBTEXT};
         }
-        .error {
-          color: ${ERROR};
-          text-align: center;
-          margin-top: 0.75rem;
-          font-size: ${FZ_MEDIUM};
-        }
       `}</style>
     </div>
   )
@@ -231,9 +212,9 @@ const mapStateToProps = state => ({
   address: state.address,
   appRouter: state.appRouter,
   appStatus: state.appStatus,
-  tokenBalance: state.tokenBalance,
   l1TotalBalance: getL1TotalBalance(state),
-  tokenTotalBalance: getTokenTotalBalance(state)
+  tokenTotalBalance: getTokenTotalBalance(state),
+  errorMessage: getErrorMessage(state)
 })
 
 const mapDispatchToProps = {

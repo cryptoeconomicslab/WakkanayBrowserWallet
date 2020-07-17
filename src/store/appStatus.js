@@ -5,7 +5,7 @@ import clientWrapper from '../client'
 import { PETHContract } from '../contracts/PETHContract'
 import { getTokenByUnit } from '../constants/tokens'
 import { getAddress } from './address'
-import { getTransactionHistories } from './transaction_history'
+import { getTransactionHistories } from './transactionHistory'
 import { getL1Balance, getBalance, getETHtoUSD } from './tokenBalanceList'
 import { autoCompleteWithdrawal } from './withdraw'
 import { WALLET_KIND } from '../wallet'
@@ -69,7 +69,7 @@ export const checkClientInitialized = () => {
       } catch (e) {
         localStorage.removeItem('privateKey')
         console.error(e)
-        dispatch(setAppStatus(APP_STATUS.UNLOADED))
+        dispatch(setAppStatus(APP_STATUS.ERROR))
       }
     } else {
       dispatch(setAppStatus(APP_STATUS.UNLOADED))
@@ -108,6 +108,7 @@ export const initializeMetamaskWallet = () => {
     } catch (error) {
       console.error(error)
       dispatch(setAppError(error))
+      dispatch(setAppStatus(APP_STATUS.ERROR))
     }
   }
 }
@@ -135,6 +136,7 @@ export const initializeMetamaskSnapWallet = () => {
     } catch (error) {
       console.error(error)
       dispatch(setAppError(error))
+      dispatch(setAppStatus(APP_STATUS.ERROR))
     }
   }
 }
@@ -151,6 +153,7 @@ export const initializeWalletConnect = () => {
     } catch (error) {
       console.error(error)
       dispatch(setAppError(error))
+      dispatch(setAppStatus(APP_STATUS.ERROR))
     }
   }
 }
@@ -168,6 +171,7 @@ export const initializeMagicLinkWallet = email => {
     } catch (error) {
       console.error(error)
       dispatch(setAppError(error))
+      dispatch(setAppStatus(APP_STATUS.ERROR))
     }
   }
 }

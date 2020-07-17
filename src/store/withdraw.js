@@ -7,7 +7,8 @@ import clientWrapper from '../client'
 export const WITHDRAW_PROGRESS = {
   INPUT: 'INPUT',
   CONFIRM: 'CONFIRM',
-  COMPLETE: 'COMPLETE'
+  COMPLETE: 'COMPLETE',
+  ERROR: 'ERROR'
 }
 
 export const setWithdrawProgress = createAction('SET_WITHDRAW_PROGRESS')
@@ -29,16 +30,17 @@ export const withdrawReducer = createReducer(
  * @param {*} tokenContractAddress token contract address of token
  */
 export const withdraw = (amount, tokenContractAddress) => {
-  const amountWei = JSBI.BigInt(utils.parseEther(amount).toString())
   return async dispatch => {
     try {
+      const amountWei = JSBI.BigInt(utils.parseEther(amount).toString())
       const client = await clientWrapper.getClient()
       if (!client) return
       await client.startWithdrawal(amountWei, tokenContractAddress)
       dispatch(setWithdrawProgress(WITHDRAW_PROGRESS.COMPLETE))
       dispatch(getBalance())
     } catch (error) {
-      console.log(error)
+      console.error(error)
+      dispatch(setWithdrawProgress(WITHDRAW_PROGRESS.ERROR))
     }
   }
 }

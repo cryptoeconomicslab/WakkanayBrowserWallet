@@ -8,7 +8,8 @@ import { TOKEN_LIST } from '../constants/tokens'
 export const DEPOSIT_PROGRESS = {
   INPUT: 'INPUT',
   CONFIRM: 'CONFIRM',
-  COMPLETE: 'COMPLETE'
+  COMPLETE: 'COMPLETE',
+  ERROR: 'ERROR'
 }
 
 export const setDepositProgress = createAction('SET_DEPOSIT_PROGRESS')
@@ -30,10 +31,9 @@ export const depositReducer = createReducer(
  * @param {*} addr deposit contract address
  */
 export const deposit = (amount, addr) => {
-  const amountWei = JSBI.BigInt(utils.parseEther(amount).toString())
-
   return async dispatch => {
     try {
+      const amountWei = JSBI.BigInt(utils.parseEther(amount).toString())
       const client = await clientWrapper.getClient()
       if (!client) return
       const peth = TOKEN_LIST.find(token => token.unit === 'ETH')
@@ -49,6 +49,7 @@ export const deposit = (amount, addr) => {
       dispatch(setDepositProgress(DEPOSIT_PROGRESS.COMPLETE))
     } catch (error) {
       console.error(error)
+      dispatch(setDepositProgress(DEPOSIT_PROGRESS.ERROR))
     }
   }
 }

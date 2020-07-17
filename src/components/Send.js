@@ -10,7 +10,7 @@ import {
   setRecepientAddress,
   transfer
 } from '../store/transfer'
-import { MAIN, SECTION_BACKGROUND, TEXT_ERROR } from '../constants/colors'
+import { MAIN, SECTION_BACKGROUND } from '../constants/colors'
 import { getTokenByTokenContractAddress, TOKEN_LIST } from '../constants/tokens'
 import { TokenSelector } from './TokenSelector'
 import AddressInput from './AddressInput'
@@ -63,9 +63,6 @@ const Send = props => {
       >
         Send
       </Button>
-      {props.transferError && (
-        <Message color={TEXT_ERROR}>{props.transferError}</Message>
-      )}
       {props.transferPage === 'completion-page' && (
         <Message color={MAIN}>Transfer Success!</Message>
       )}
@@ -91,8 +88,7 @@ const mapStateToProps = state => ({
   transferredToken: state.transferState.transferredToken,
   transferredAmount: state.transferState.transferredAmount,
   recepientAddress: state.transferState.recepientAddress,
-  transferPage: state.transferState.transferPage,
-  transferError: state.transferState.transferError
+  transferPage: state.transferState.transferPage
 })
 
 const mapDispatchToProps = {

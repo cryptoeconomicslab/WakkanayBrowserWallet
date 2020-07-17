@@ -54,8 +54,8 @@ export const transferReducer = createReducer(initialState, {
 export const transfer = (amount, tokenContractAddress, recipientAddress) => {
   const amountWei = JSBI.BigInt(utils.parseEther(amount).toString())
   return async dispatch => {
-    dispatch(setTransferIsSending(true))
     try {
+      dispatch(setTransferIsSending(true))
       const client = await clientWrapper.getClient()
       if (!client) return
       await client.transfer(amountWei, tokenContractAddress, recipientAddress)

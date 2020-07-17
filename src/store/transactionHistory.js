@@ -4,14 +4,19 @@ import clientWrapper from '../client'
 import { getTokenByTokenContractAddress } from '../constants/tokens'
 
 export const setHistoryList = createAction('SET_HISTORY_LIST')
+export const errorSetHistoryList = createAction('ERROR_SET_HISTORY_LIST')
 
 export const historyReducer = createReducer(
   {
-    historyList: []
+    historyList: [],
+    errorHistoryList: false
   },
   {
     [setHistoryList]: (state, action) => {
       state.historyList = action.payload
+    },
+    [errorSetHistoryList]: (state, action) => {
+      state.errorHistoryList = action.payload
     }
   }
 )
@@ -31,7 +36,8 @@ export const getTransactionHistories = () => {
       })
       dispatch(setHistoryList(histories))
     } catch (error) {
-      console.log(error)
+      console.error(error)
+      dispatch(errorSetHistoryList(true))
     }
   }
 }

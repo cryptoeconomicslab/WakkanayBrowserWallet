@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import { BaseModal } from './BaseModal'
+import Message from './Message'
 import Button from './Button'
 import { TokenSelector } from '../TokenSelector'
 import Confirmation from '../Confirmation'
 import TokenInput from '../TokenInput'
 import { config } from '../../config'
 import { DEPOSIT_PROGRESS } from '../../store/deposit'
-import { SUBTEXT } from '../../constants/colors'
+import { TEXT_ERROR, SUBTEXT } from '../../constants/colors'
 import { FZ_MEDIUM, FW_BLACK } from '../../constants/fonts'
 import { getTokenByTokenContractAddress } from '../../constants/tokens'
 
@@ -80,7 +81,7 @@ const DepositWithdrawModal = ({ type, progress, setProgress, action }) => {
                 onCancel={close}
                 onConfirm={() => action(tokenAmount, token)}
               />
-            ) : (
+            ) : progress === DEPOSIT_PROGRESS.COMPLETE ? (
               <div className="complete">
                 <img src="popper.svg" className="complete__img" />
                 <div className="complete__txt">
@@ -90,6 +91,17 @@ const DepositWithdrawModal = ({ type, progress, setProgress, action }) => {
                   Close
                 </Button>
               </div>
+            ) : (
+              <>
+                <Message color={TEXT_ERROR}>
+                  Something went wrong.
+                  <br />
+                  Please try again later.
+                </Message>
+                <Button full border onClick={close}>
+                  Close
+                </Button>
+              </>
             )}
           </div>
           <style jsx>{`

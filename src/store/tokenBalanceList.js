@@ -40,51 +40,67 @@ export const getTokenTotalBalance = createSelector(
 
 // actions
 export const setL1Balance = createAction('SET_L1_BALANCE')
+export const errorSetL1Balance = createAction('ERROR_SET_L1_BALANCE')
 export const setTokenBalance = createAction('SET_TOKEN_BALANCE')
+export const errorSetTokenBalance = createAction('ERROR_SET_TOKEN_BALANCE')
 export const setETHtoUSD = createAction('SET_ETH_TO_USD')
 export const errorSetETHtoUSD = createAction('ERROR_SET_ETH_TO_USD')
 
 export const getL1Balance = () => {
   return async dispatch => {
-    const client = await clientWrapper.getClient()
-    if (!client) return
-    const balances = await TOKEN_LIST.reduce(async (map, token) => {
-      let balance = 0
-      if (token.unit === 'ETH') {
-        balance = await client.wallet.getL1Balance()
-      } else {
-        balance = await client.wallet.getL1Balance(
-          // TODO: don't use gazelle primitives
-          Address.from(token.tokenContractAddress)
-        )
-      }
-      map[token.unit] = {
-        amount: roundBalance(formatUnits(balance.value.raw, balance.decimals)),
-        decimals: balance.decimals
-      }
-      return map
-    }, {})
-    dispatch(setL1Balance(balances))
+    try {
+      const client = await clientWrapper.getClient()
+      if (!client) return
+      const balances = await TOKEN_LIST.reduce(async (map, token) => {
+        let balance = 0
+        if (token.unit === 'ETH') {
+          balance = await client.wallet.getL1Balance()
+        } else {
+          balance = await client.wallet.getL1Balance(
+            // TODO: don't use gazelle primitives
+            Address.from(token.tokenContractAddress)
+          )
+        }
+        map[token.unit] = {
+          amount: roundBalance(
+            formatUnits(balance.value.raw, balance.decimals)
+          ),
+          decimals: balance.decimals
+        }
+        return map
+      }, {})
+      dispatch(setL1Balance(balances))
+    } catch (e) {
+      console.error(e)
+      dispatch(errorSetL1Balance(true))
+    }
   }
 }
 
 // thunk action: higher order function to get deposited token balance from mock client
 export const getBalance = () => {
   return async dispatch => {
-    const client = await clientWrapper.getClient()
-    if (!client) return
-    const balanceList = await client.getBalance()
-    const balance = balanceList.reduce((map, balance) => {
-      const token = getTokenByTokenContractAddress(balance.tokenContractAddress)
-      map[token.unit] = {
-        amount: roundBalance(
-          formatUnits(balance.amount.toString(), balance.decimals)
-        ),
-        decimals: balance.decimals
-      }
-      return map
-    }, {})
-    dispatch(setTokenBalance(balance))
+    try {
+      const client = await clientWrapper.getClient()
+      if (!client) return
+      const balanceList = await client.getBalance()
+      const balance = balanceList.reduce((map, balance) => {
+        const token = getTokenByTokenContractAddress(
+          balance.tokenContractAddress
+        )
+        map[token.unit] = {
+          amount: roundBalance(
+            formatUnits(balance.amount.toString(), balance.decimals)
+          ),
+          decimals: balance.decimals
+        }
+        return map
+      }, {})
+      dispatch(setTokenBalance(balance))
+    } catch (e) {
+      console.error(e)
+      dispatch(errorSetTokenBalance(true))
+    }
   }
 }
 
@@ -113,7 +129,9 @@ export const getETHtoUSD = () => {
 export const tokenBalanceReducer = createReducer(
   {
     l1Balance: {},
+    errorL1Balance: false,
     tokenBalance: {},
+    errorTokenBalance: false,
     ETHtoUSD: 0,
     errorEthToUSD: false
   },
@@ -121,8 +139,14 @@ export const tokenBalanceReducer = createReducer(
     [setL1Balance]: (state, action) => {
       state.l1Balance = action.payload
     },
+    [errorSetL1Balance]: (state, action) => {
+      state.errorL1Balance = action.payload
+    },
     [setTokenBalance]: (state, action) => {
       state.tokenBalance = action.payload
+    },
+    [errorSetTokenBalance]: (state, action) => {
+      state.errorTokenBalance = action.payload
     },
     [setETHtoUSD]: (state, action) => {
       state.ETHtoUSD = action.payload
