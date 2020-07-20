@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import Router, { useRouter } from 'next/router'
 import Head from 'next/head'
 import Box from './Base/Box'
-import ErrorAlert from './Base/ErrorAlert'
+import Toast from './Base/Toast'
 import { config } from '../config'
 import Header from './Header'
 import StartupModal from './StartupModal'
@@ -38,10 +38,12 @@ import { pushRouteHistory, popRouteHistory } from '../store/appRouter'
 import { checkClientInitialized } from '../store/appStatus'
 import {
   getL1TotalBalance,
-  getTokenTotalBalance
+  getTokenTotalBalance,
+  errorSetETHtoUSD
 } from '../store/tokenBalanceList'
 
 const Initial = ({
+  errorSetETHtoUSD,
   checkClientInitialized,
   pushRouteHistory,
   popRouteHistory,
@@ -94,9 +96,14 @@ const Initial = ({
       </Head>
       <Header />
       <div className="container">
-        <ErrorAlert>
-          {tokenBalance.errorEthToUSD && 'can not get USD balance now'}
-        </ErrorAlert>
+        <Toast
+          isShown={!!tokenBalance.errorEthToUSD}
+          onClose={() => {
+            errorSetETHtoUSD(false)
+          }}
+        >
+          can not get USD balance now
+        </Toast>
         <h2 className="headline">
           {router.pathname !== HISTORY ? 'Your Wallet' : 'Transaction History'}
         </h2>
@@ -237,6 +244,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = {
+  errorSetETHtoUSD,
   checkClientInitialized,
   pushRouteHistory,
   popRouteHistory
