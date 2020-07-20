@@ -2,7 +2,7 @@ import classnames from 'classnames'
 import { MAIN, White, MAIN_DARK, Main } from '../../constants/colors'
 import { FZ_MEDIUM, FW_BLACK, FZ_SMALL } from '../../constants/fonts'
 
-export default props => {
+export default (props) => {
   const { full, size, className, border } = props
   return (
     <button
@@ -30,6 +30,9 @@ export default props => {
         }
         .button:not(:disabled):hover {
           background: ${MAIN_DARK};
+        }
+        .button.full + .button.full {
+          margin-top: 0.875rem;
         }
         .full {
           width: 100%;
