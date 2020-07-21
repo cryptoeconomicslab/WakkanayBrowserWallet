@@ -28,51 +28,47 @@ import {
   openModal
 } from '../routes'
 import { pushRouteHistory, popRouteHistory } from '../store/appRouter'
-import { checkClientInitialized } from '../store/appStatus'
+import { APP_STATUS, checkClientInitialized } from '../store/appStatus'
 import {
   getL1TotalBalance,
-  getTokenTotalBalance
+  getTokenTotalBalance,
+  errorSetL1Balance,
+  errorSetTokenBalance,
+  errorSetETHtoUSD
 } from '../store/tokenBalanceList'
+import { errorSetHistoryList } from '../store/transactionHistory'
+import { errorTransfer } from '../store/transfer'
 
-const Initial = ({
-  checkClientInitialized,
-  pushRouteHistory,
-  popRouteHistory,
-  errors,
-  appStatus,
-  address,
-  tokenTotalBalance,
-  l1TotalBalance,
-  children
-}) => {
+const Initial = props => {
   const router = useRouter()
   const isWalletHidden =
     router.pathname === WALLET || router.pathname === HISTORY
   // const isTabShownHidden =
-  //   appStatus.status === 'loaded' &&
+  //   props.appStatus.status === 'loaded' &&
   //   (router.pathname === PAYMENT ||
   //     router.pathname === EXCHANGE ||
   //     router.pathname === NFT_COLLECTIBLES)
 
   useEffect(() => {
-    checkClientInitialized()
-    pushRouteHistory(router.pathname)
+    props.checkClientInitialized()
+    props.pushRouteHistory(router.pathname)
     Router.events.on('routeChangeComplete', url => {
-      pushRouteHistory(url.split('?')[0])
+      props.pushRouteHistory(url.split('?')[0])
     })
     Router.beforePopState(() => {
-      popRouteHistory()
+      props.popRouteHistory()
       return true
     })
   }, [])
 
   const content =
-    appStatus.status === 'unloaded' || appStatus.status === 'error' ? (
+    props.appStatus.status === 'unloaded' ||
+    props.appStatus.status === 'error' ? (
       <div>
         <StartupModal />
       </div>
-    ) : appStatus.status === 'loaded' ? (
-      children
+    ) : props.appStatus.status === 'loaded' ? (
+      props.children
     ) : (
       <p>loading...</p>
     )
@@ -87,20 +83,74 @@ const Initial = ({
       </Head>
       <Header />
       <div className="container">
-        {errors.length > 0 && <ErrorAlert>{errors}</ErrorAlert>}
+        {/* TODO: how to show the errors */}
+        <ErrorAlert
+          isShown={props.tokenBalance.errorEthToUSD}
+          onClose={() => {
+            props.errorSetETHtoUSD(false)
+          }}
+        >
+          Get ETH-USD rate failed.
+        </ErrorAlert>
+
+        <ErrorAlert
+          isShown={props.tokenBalance.errorL1Balance}
+          onClose={() => {
+            props.errorSetL1Balance(false)
+          }}
+        >
+          Get your L1 balance failed.
+        </ErrorAlert>
+
+        <ErrorAlert
+          isShown={props.tokenBalance.errorTokenBalance}
+          onClose={() => {
+            props.errorSetTokenBalance(false)
+          }}
+        >
+          Get your balance failed.
+        </ErrorAlert>
+
+        <ErrorAlert
+          isShown={props.tokenBalance.errorHistoryList}
+          onClose={() => {
+            props.errorSetHistoryList(false)
+          }}
+        >
+          Get your transaction history failed.
+        </ErrorAlert>
+
+        <ErrorAlert
+          isShown={props.transfer.transferError}
+          onClose={() => {
+            props.errorTransfer(false)
+          }}
+        >
+          Transfer failed.
+        </ErrorAlert>
+
+        <ErrorAlert
+          isShown={props.appStatus.status === APP_STATUS.ERROR}
+          onClose={() => {
+            props.setAppError(null)
+          }}
+        >
+          {props.appStatus.error}
+        </ErrorAlert>
+
         <h2 className="headline">
           {router.pathname !== HISTORY ? 'Your Wallet' : 'Transaction History'}
         </h2>
         {!isWalletHidden && (
           <Box>
             <div className="wallet">
-              {appStatus.status !== 'loaded' ? (
+              {props.appStatus.status !== 'loaded' ? (
                 <span className="wallet__txt">No Wallet</span>
               ) : (
                 <Wallet
-                  l2={tokenTotalBalance}
-                  mainchain={l1TotalBalance}
-                  address={address}
+                  l2={props.tokenTotalBalance}
+                  mainchain={props.l1TotalBalance}
+                  address={props.address}
                   onDeposit={() => {
                     openModal({
                       modal: 'deposit',
@@ -211,7 +261,9 @@ const mapStateToProps = state => ({
   address: state.address,
   appRouter: state.appRouter,
   appStatus: state.appStatus,
-  errors: state.errors.errors,
+  tokenBalance: state.tokenBalance,
+  history: state.history,
+  transfer: state.transferState,
   l1TotalBalance: getL1TotalBalance(state),
   tokenTotalBalance: getTokenTotalBalance(state)
 })
@@ -219,7 +271,12 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   checkClientInitialized,
   pushRouteHistory,
-  popRouteHistory
+  popRouteHistory,
+  errorSetL1Balance,
+  errorSetTokenBalance,
+  errorSetETHtoUSD,
+  errorSetHistoryList,
+  errorTransfer
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Initial)

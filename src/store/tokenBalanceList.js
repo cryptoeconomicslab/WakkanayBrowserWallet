@@ -5,7 +5,6 @@ import { formatUnits } from 'ethers/utils'
 import { createSelector } from 'reselect'
 import clientWrapper from '../client'
 import { TOKEN_LIST, getTokenByTokenContractAddress } from '../constants/tokens'
-import { addError } from '../store/errors'
 import { roundBalance } from '../utils'
 
 // selector
@@ -41,12 +40,16 @@ export const getTokenTotalBalance = createSelector(
 
 // actions
 export const setL1Balance = createAction('SET_L1_BALANCE')
+export const errorSetL1Balance = createAction('ERROR_SET_L1_BALANCE')
 export const setTokenBalance = createAction('SET_TOKEN_BALANCE')
+export const errorSetTokenBalance = createAction('ERROR_SET_TOKEN_BALANCE')
 export const setETHtoUSD = createAction('SET_ETH_TO_USD')
+export const errorSetETHtoUSD = createAction('ERROR_SET_ETH_TO_USD')
 
 export const getL1Balance = () => {
   return async dispatch => {
     try {
+      dispatch(errorSetL1Balance(false))
       const client = await clientWrapper.getClient()
       if (!client) return
       const balances = await TOKEN_LIST.reduce(async (map, token) => {
@@ -70,7 +73,7 @@ export const getL1Balance = () => {
       dispatch(setL1Balance(balances))
     } catch (e) {
       console.error(e)
-      dispatch(addError('Can not get your Mainchain balance now.'))
+      dispatch(errorSetL1Balance(true))
     }
   }
 }
@@ -79,6 +82,7 @@ export const getL1Balance = () => {
 export const getBalance = () => {
   return async dispatch => {
     try {
+      dispatch(errorSetTokenBalance(false))
       const client = await clientWrapper.getClient()
       if (!client) return
       const balanceList = await client.getBalance()
@@ -97,7 +101,7 @@ export const getBalance = () => {
       dispatch(setTokenBalance(balance))
     } catch (e) {
       console.error(e)
-      dispatch(addError('Can not get your L2 balance now.'))
+      dispatch(errorSetTokenBalance(true))
     }
   }
 }
@@ -108,6 +112,7 @@ const EtherLatestPriceURL =
 
 export const getETHtoUSD = () => {
   return async dispatch => {
+    dispatch(errorSetETHtoUSD(false))
     axios
       .get(EtherLatestPriceURL)
       .then(async res => {
@@ -119,7 +124,7 @@ export const getETHtoUSD = () => {
       })
       .catch(async e => {
         console.error(e)
-        dispatch(addError('Can not get USD balance now.'))
+        dispatch(errorSetETHtoUSD(true))
       })
   }
 }
@@ -127,18 +132,30 @@ export const getETHtoUSD = () => {
 export const tokenBalanceReducer = createReducer(
   {
     l1Balance: {},
+    errorL1Balance: false,
     tokenBalance: {},
-    ETHtoUSD: 0
+    errorTokenBalance: false,
+    ETHtoUSD: 0,
+    errorEthToUSD: false
   },
   {
     [setL1Balance]: (state, action) => {
       state.l1Balance = action.payload
     },
+    [errorSetL1Balance]: (state, action) => {
+      state.errorL1Balance = action.payload
+    },
     [setTokenBalance]: (state, action) => {
       state.tokenBalance = action.payload
     },
+    [errorSetTokenBalance]: (state, action) => {
+      state.errorTokenBalance = action.payload
+    },
     [setETHtoUSD]: (state, action) => {
       state.ETHtoUSD = action.payload
+    },
+    [errorSetETHtoUSD]: (state, action) => {
+      state.errorEthToUSD = action.payload
     }
   }
 )

@@ -5,13 +5,12 @@ import clientWrapper from '../client'
 import { PETHContract } from '../contracts/PETHContract'
 import { getTokenByUnit } from '../constants/tokens'
 import { getAddress } from './address'
-import { addError, clearAllErrors } from './errors'
 import { getTransactionHistories } from './transactionHistory'
 import { getL1Balance, getBalance, getETHtoUSD } from './tokenBalanceList'
 import { autoCompleteWithdrawal } from './withdraw'
 import { WALLET_KIND } from '../wallet'
 
-const APP_STATUS = {
+export const APP_STATUS = {
   UNLOADED: 'unloaded',
   LOADED: 'loaded',
   INITIAL: 'initial',
@@ -19,18 +18,21 @@ const APP_STATUS = {
 }
 
 export const setAppStatus = createAction('SET_APP_STATUS')
+export const setAppError = createAction('SET_APP_ERROR')
 
 export const appStatusReducer = createReducer(
   { status: APP_STATUS.INITIAL, error: null },
   {
     [setAppStatus]: (state, action) => {
       state.status = action.payload
+    },
+    [setAppError]: (state, action) => {
+      state.error = action.payload
     }
   }
 )
 
 const initialGetters = dispatch => {
-  dispatch(clearAllErrors())
   dispatch(getL1Balance())
   dispatch(getBalance())
   dispatch(getAddress())
@@ -67,6 +69,7 @@ export const checkClientInitialized = () => {
       } catch (e) {
         localStorage.removeItem('privateKey')
         console.error(e)
+        dispatch(setAppError(e.message))
         dispatch(setAppStatus(APP_STATUS.ERROR))
       }
     } else {
@@ -77,7 +80,7 @@ export const checkClientInitialized = () => {
 
 export const initializeClient = privateKey => {
   return async dispatch => {
-    dispatch(clearAllErrors())
+    dispatch(setAppError(null))
     try {
       await clientWrapper.initializeClient({
         kind: WALLET_KIND.WALLET_PRIVATEKEY,
@@ -88,7 +91,7 @@ export const initializeClient = privateKey => {
       initialGetters(dispatch)
     } catch (error) {
       console.error(error)
-      dispatch(addError(error))
+      dispatch(setAppError(error.message))
       dispatch(setAppStatus(APP_STATUS.ERROR))
     }
   }
@@ -96,7 +99,7 @@ export const initializeClient = privateKey => {
 
 export const initializeMetamaskWallet = () => {
   return async dispatch => {
-    dispatch(clearAllErrors())
+    dispatch(setAppError(null))
     try {
       await clientWrapper.initializeClient({
         kind: WALLET_KIND.WALLET_METAMASK
@@ -105,7 +108,7 @@ export const initializeMetamaskWallet = () => {
       initialGetters(dispatch)
     } catch (error) {
       console.error(error)
-      dispatch(addError(error))
+      dispatch(setAppError(error.message))
       dispatch(setAppStatus(APP_STATUS.ERROR))
     }
   }
@@ -113,7 +116,7 @@ export const initializeMetamaskWallet = () => {
 
 export const initializeMetamaskSnapWallet = () => {
   return async dispatch => {
-    dispatch(clearAllErrors())
+    dispatch(setAppError(null))
     try {
       // identify the Snap by the location of its package.json file
       const snapId = new URL('package.json', window.location.href).toString()
@@ -133,7 +136,7 @@ export const initializeMetamaskSnapWallet = () => {
       dispatch(setAppStatus(APP_STATUS.LOADED))
     } catch (error) {
       console.error(error)
-      dispatch(addError(error))
+      dispatch(setAppError(error.message))
       dispatch(setAppStatus(APP_STATUS.ERROR))
     }
   }
@@ -141,7 +144,7 @@ export const initializeMetamaskSnapWallet = () => {
 
 export const initializeWalletConnect = () => {
   return async dispatch => {
-    dispatch(clearAllErrors())
+    dispatch(setAppError(null))
     try {
       await clientWrapper.initializeClient({
         kind: WALLET_KIND.WALLET_CONNECT
@@ -150,7 +153,7 @@ export const initializeWalletConnect = () => {
       initialGetters(dispatch)
     } catch (error) {
       console.error(error)
-      dispatch(addError(error))
+      dispatch(setAppError(error.message))
       dispatch(setAppStatus(APP_STATUS.ERROR))
     }
   }
@@ -158,7 +161,7 @@ export const initializeWalletConnect = () => {
 
 export const initializeMagicLinkWallet = email => {
   return async dispatch => {
-    dispatch(clearAllErrors())
+    dispatch(setAppError(null))
     try {
       await clientWrapper.initializeClient({
         kind: WALLET_KIND.WALLET_MAGIC_LINK,
@@ -168,7 +171,7 @@ export const initializeMagicLinkWallet = email => {
       initialGetters(dispatch)
     } catch (error) {
       console.error(error)
-      dispatch(addError(error))
+      dispatch(setAppError(error.message))
       dispatch(setAppStatus(APP_STATUS.ERROR))
     }
   }
@@ -188,7 +191,6 @@ export const subscribeEvents = () => async dispatch => {
       '',
       'font-weight: bold;'
     )
-    dispatch(clearAllErrors())
     dispatch(getBalance())
     dispatch(getL1Balance())
     dispatch(getTransactionHistories())
@@ -196,7 +198,6 @@ export const subscribeEvents = () => async dispatch => {
 
   client.subscribeSyncFinished(blockNumber => {
     console.info(`sync new state: ${blockNumber.data}`)
-    dispatch(clearAllErrors())
     dispatch(getBalance())
     dispatch(getL1Balance())
     dispatch(getTransactionHistories())
@@ -208,7 +209,6 @@ export const subscribeEvents = () => async dispatch => {
       'color: brown; font-weight: bold;',
       'font-weight: bold;'
     )
-    dispatch(clearAllErrors())
     dispatch(getBalance())
     dispatch(getL1Balance())
     dispatch(getTransactionHistories())
@@ -232,7 +232,6 @@ export const subscribeEvents = () => async dispatch => {
       await contract.unwrap(exit.stateUpdate.amount)
       console.info(`unwrapped PETH: ${exit.stateUpdate.amount}`)
     }
-    dispatch(clearAllErrors())
     dispatch(getBalance())
     dispatch(getL1Balance())
     dispatch(getTransactionHistories())

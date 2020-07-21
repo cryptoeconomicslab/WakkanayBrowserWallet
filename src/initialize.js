@@ -16,7 +16,6 @@ import {
   AdjudicationContract,
   OwnershipPayoutContract
 } from '@cryptoeconomicslab/eth-contract'
-import { PETHContract } from './contracts/PETHContract'
 import { WALLET_KIND } from './wallet'
 import * as Sentry from '@sentry/browser'
 if (process.env.SENTRY_ENDPOINT) {
@@ -54,7 +53,7 @@ async function instantiate(walletParams) {
     }
     signer = wallet.provider.getSigner()
   } else if (kind === WALLET_KIND.WALLET_CONNECT) {
-    wallet = await WalletConnectService.initilize()
+    wallet = await WalletConnectService.initilize(networkName)
     signer = wallet.provider.getSigner()
   } else if (kind === WALLET_KIND.WALLET_METAMASK_SNAP) {
     await window.ethereum.enable()
