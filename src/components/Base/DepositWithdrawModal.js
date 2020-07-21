@@ -29,21 +29,26 @@ const modalTexts = {
   }
 }
 
-const DepositWithdrawModal = ({ type, progress, setProgress, action }) => {
+const DepositWithdrawModal = ({
+  type,
+  progress,
+  setProgress,
+  action,
+  balance
+}) => {
   const router = useRouter()
   const [tokenAmount, setTokenAmount] = useState(undefined)
   const [token, setToken] = useState(router.query.token || config.PlasmaETH)
-
   const updateToken = selectedTokenContractAddress => {
     setToken(selectedTokenContractAddress)
   }
-
   const updateProgress = _progress => () => {
     setProgress(_progress)
   }
-
   const selectedTokenObj = getTokenByTokenContractAddress(token)
-
+  const selectedTokenBalance = balance[selectedTokenObj.unit]
+    ? balance[selectedTokenObj.unit].amount
+    : 0
   return (
     <BaseModal
       title={modalTexts[type].title}
@@ -65,7 +70,7 @@ const DepositWithdrawModal = ({ type, progress, setProgress, action }) => {
                 />
                 <Button
                   size="full"
-                  disabled={!tokenAmount}
+                  disabled={!tokenAmount || tokenAmount > selectedTokenBalance}
                   onClick={updateProgress(DEPOSIT_PROGRESS.CONFIRM)}
                 >
                   {modalTexts[type].inputButton}
