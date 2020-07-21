@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import { BaseModal } from './BaseModal'
 import Button from './Button'
+import BeatLoader from './BeatLoader'
 import { TokenSelector } from '../TokenSelector'
 import Confirmation from '../Confirmation'
 import TokenInput from '../TokenInput'
@@ -30,6 +31,7 @@ const modalTexts = {
 
 const DepositWithdrawModal = ({ type, progress, setProgress, action }) => {
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
   const [tokenAmount, setTokenAmount] = useState(undefined)
   const [token, setToken] = useState(router.query.token || config.PlasmaETH)
 
@@ -50,6 +52,7 @@ const DepositWithdrawModal = ({ type, progress, setProgress, action }) => {
       render={({ close }) => (
         <>
           <div className="depositWithdrawModal">
+            <BeatLoader isLoading={isLoading} />
             {progress === DEPOSIT_PROGRESS.INPUT ? (
               <>
                 <TokenSelector
@@ -77,8 +80,13 @@ const DepositWithdrawModal = ({ type, progress, setProgress, action }) => {
                 unit={selectedTokenObj.unit}
                 imgSrc={selectedTokenObj.imgSrc}
                 supplement={modalTexts[type].confirmText}
+                isLoading={isLoading}
                 onCancel={close}
-                onConfirm={() => action(tokenAmount, token)}
+                onConfirm={async () => {
+                  setIsLoading(true)
+                  await action(tokenAmount, token)
+                  setIsLoading(false)
+                }}
               />
             ) : (
               <div className="complete">

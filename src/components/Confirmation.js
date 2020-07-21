@@ -20,6 +20,7 @@ const Confirmation = ({
   supplement,
   onCancel,
   onConfirm,
+  isLoading,
   /* Redux */
   ETHtoUSD,
   address
@@ -45,10 +46,21 @@ const Confirmation = ({
         to your wallet
       </div>
       <div className="confirmation__btns">
-        <Button full className="confirmation__btn" onClick={onConfirm}>
+        <Button
+          full
+          className="confirmation__btn"
+          onClick={onConfirm}
+          disabled={isLoading}
+        >
           Confirm
         </Button>
-        <Button full border className="confirmation__btn" onClick={onCancel}>
+        <Button
+          full
+          border
+          className="confirmation__btn"
+          onClick={onCancel}
+          disabled={isLoading}
+        >
           Cancel
         </Button>
       </div>
