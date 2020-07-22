@@ -27,24 +27,31 @@ import {
   // NFT_COLLECTIBLES,
   openModal
 } from '../routes'
-import { pushRouteHistory, popRouteHistory } from '../store/appRouter'
-import { APP_STATUS, checkClientInitialized } from '../store/appStatus'
 import {
   getL1TotalBalance,
-  getTokenTotalBalance,
-  setL1BalanceError,
-  setTokenBalanceError,
-  setETHtoUSDError
-} from '../store/tokenBalanceList'
-import { setHistoryListError } from '../store/transactionHistory'
-import { setTransferError } from '../store/transfer'
+  getL2TotalBalance
+} from '../selectors/totalBalanceSelectors'
+import { pushRouteHistory, popRouteHistory } from '../store/appRouter'
+import { APP_STATUS, checkClientInitialized } from '../store/appStatus'
+import { L1_BALANCE_PROGRESS, getL1Balance } from '../store/l1Balance'
+import { L2_BALANCE_PROGRESS, getL2Balance } from '../store/l2Balance'
+import { ETH_USD_RATE_PROGRESS, getEthUsdRate } from '../store/ethUsdRate'
+import {
+  TRANSACTION_HISTORY_PROGRESS,
+  getTransactionHistories
+} from '../store/transactionHistory'
+import {
+  TRANSFER_PROGRESS,
+  setTransferStatus,
+  setTransferError
+} from '../store/transfer'
 
 const Initial = props => {
   const router = useRouter()
   const isWalletHidden =
     router.pathname === WALLET || router.pathname === HISTORY
   // const isTabShownHidden =
-  //   props.appStatus.status === 'loaded' &&
+  //   props.appStatus.status === APP_STATUS.LOADED &&
   //   (router.pathname === PAYMENT ||
   //     router.pathname === EXCHANGE ||
   //     router.pathname === NFT_COLLECTIBLES)
@@ -62,12 +69,12 @@ const Initial = props => {
   }, [])
 
   const content =
-    props.appStatus.status === 'unloaded' ||
-    props.appStatus.status === 'error' ? (
+    props.appStatus.status === APP_STATUS.UNLOADED ||
+    props.appStatus.status === APP_STATUS.ERROR ? (
       <div>
         <StartupModal />
       </div>
-    ) : props.appStatus.status === 'loaded' ? (
+    ) : props.appStatus.status === APP_STATUS.LOADED ? (
       props.children
     ) : (
       <p>loading...</p>
@@ -85,45 +92,46 @@ const Initial = props => {
       <div className="container">
         {/* TODO: how to show the errors */}
         <ErrorAlert
-          isShown={props.tokenBalance.ethToUSDError}
+          isShown={props.ethUsdRate.status === ETH_USD_RATE_PROGRESS.ERROR}
           onClose={() => {
-            props.setETHtoUSDError(false)
+            props.getEthUsdRate()
           }}
         >
           Get ETH-USD rate failed.
         </ErrorAlert>
 
         <ErrorAlert
-          isShown={props.tokenBalance.l1BalanceError}
+          isShown={props.l1Balance.status === L1_BALANCE_PROGRESS.ERROR}
           onClose={() => {
-            props.setL1BalanceError(false)
+            props.getL1Balance()
           }}
         >
           Get your L1 balance failed.
         </ErrorAlert>
 
         <ErrorAlert
-          isShown={props.tokenBalance.tokenBalanceError}
+          isShown={props.l2Balance.status === L2_BALANCE_PROGRESS.ERROR}
           onClose={() => {
-            props.setTokenBalanceError(false)
+            props.getL2Balance()
           }}
         >
           Get your balance failed.
         </ErrorAlert>
 
         <ErrorAlert
-          isShown={props.tokenBalance.historyListError}
+          isShown={props.history.status === TRANSACTION_HISTORY_PROGRESS.ERROR}
           onClose={() => {
-            props.setHistoryListError(false)
+            props.getTransactionHistories()
           }}
         >
           Get your transaction history failed.
         </ErrorAlert>
 
         <ErrorAlert
-          isShown={props.transfer.transferError}
+          isShown={props.transfer.status === TRANSFER_PROGRESS.ERROR}
           onClose={() => {
-            props.setTransferError(false)
+            props.setTransferError(null)
+            props.setTransferStatus(TRANSFER_PROGRESS.INITIAL)
           }}
         >
           Transfer failed.
@@ -144,11 +152,11 @@ const Initial = props => {
         {!isWalletHidden && (
           <Box>
             <div className="wallet">
-              {props.appStatus.status !== 'loaded' ? (
+              {props.appStatus.status !== APP_STATUS.LOADED ? (
                 <span className="wallet__txt">No Wallet</span>
               ) : (
                 <Wallet
-                  l2={props.tokenTotalBalance}
+                  l2={props.l2TotalBalance}
                   mainchain={props.l1TotalBalance}
                   address={props.address}
                   onDeposit={() => {
@@ -261,21 +269,24 @@ const mapStateToProps = state => ({
   address: state.address,
   appRouter: state.appRouter,
   appStatus: state.appStatus,
-  tokenBalance: state.tokenBalance,
+  ethUsdRate: state.ethUsdRate,
+  l1Balance: state.l1Balance,
+  l2Balance: state.l2Balance,
   history: state.history,
   transfer: state.transferState,
   l1TotalBalance: getL1TotalBalance(state),
-  tokenTotalBalance: getTokenTotalBalance(state)
+  l2TotalBalance: getL2TotalBalance(state)
 })
 
 const mapDispatchToProps = {
   checkClientInitialized,
   pushRouteHistory,
   popRouteHistory,
-  setL1BalanceError,
-  setTokenBalanceError,
-  setETHtoUSDError,
-  setHistoryListError,
+  getTransactionHistories,
+  getL1Balance,
+  getL2Balance,
+  getEthUsdRate,
+  setTransferStatus,
   setTransferError
 }
 

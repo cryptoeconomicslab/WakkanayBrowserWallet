@@ -5,26 +5,31 @@ import JSBI from 'jsbi'
 import clientWrapper from '../client'
 import { config } from '../config'
 
+export const TRANSFER_PROGRESS = {
+  INITIAL: 'INITIAL',
+  SENDING: 'SENDING',
+  COMPLETE: 'COMPLETE',
+  ERROR: 'ERROR'
+}
+
 export const setTransferIsSending = createAction('SET_TRANSFER_IS_SENDING')
 export const setTransferredToken = createAction('SET_TRANSFERRED_TOKEN')
 export const setTransferredAmount = createAction('SET_TRANSFERRED_AMOUNT')
 export const setRecepientAddress = createAction('SET_RECEPIENT_ADDRESS')
 export const setTransferPage = createAction('SET_TRANSFER_PAGE')
+export const setTransferStatus = createAction('SET_TRANSFER_STATUS')
 export const setTransferError = createAction('SET_TRANSFER_ERROR')
 export const clearTransferState = createAction('CLEAR_TRANSFER_STATE')
 
 const initialState = {
-  isSending: false,
   transferredToken: config.PlasmaETH,
   transferredAmount: '',
   recepientAddress: '',
   transferPage: 'confirmation-page',
-  transferError: false
+  status: TRANSFER_PROGRESS.INITIAL,
+  error: null
 }
 export const transferReducer = createReducer(initialState, {
-  [setTransferIsSending]: (state, action) => {
-    state.isSending = action.payload
-  },
   [setTransferredToken]: (state, action) => {
     state.transferredToken = action.payload
   },
@@ -37,8 +42,12 @@ export const transferReducer = createReducer(initialState, {
   [setTransferPage]: (state, action) => {
     state.transferPage = action.payload
   },
+  [setTransferStatus]: (state, action) => {
+    state.status = action.payload
+  },
   [setTransferError]: (state, action) => {
-    state.transferError = action.payload
+    state.error = action.payload
+    state.status = TRANSFER_PROGRESS.ERROR
   },
   [clearTransferState]: () => {
     return initialState
@@ -56,36 +65,34 @@ export const transfer = (amount, tokenContractAddress, recipientAddress) => {
   // invalid address, insufficient funds
   return async dispatch => {
     try {
-      dispatch(setTransferError(false))
-      dispatch(setTransferIsSending(true))
+      dispatch(setTransferStatus(TRANSFER_PROGRESS.SENDING))
       const client = await clientWrapper.getClient()
       if (!client) return
       const amountWei = JSBI.BigInt(utils.parseEther(amount).toString())
       await client.transfer(amountWei, tokenContractAddress, recipientAddress)
       dispatch(clearTransferState())
       dispatch(setTransferPage('completion-page'))
-    } catch (error) {
-      console.error(error)
-      dispatch(setTransferError(true))
-    } finally {
-      dispatch(setTransferIsSending(false))
+      dispatch(setTransferStatus(TRANSFER_PROGRESS.COMPLETE))
+    } catch (e) {
+      console.error(e)
+      dispatch(setTransferError(e.message))
     }
   }
 }
 
 // selector
-const getTransferIsSending = state => state.transferState.isSending
+const getTransferState = state => state.transferState.state
 const getTransferredToken = state => state.transferState.transferredToken
 const getTransferredAmount = state => state.transferState.transferredAmount
 const getRecepientAddress = state => state.transferState.recepientAddress
 export const isAbleToSubmit = createSelector(
   [
-    getTransferIsSending,
+    getTransferState,
     getTransferredToken,
     getTransferredAmount,
     getRecepientAddress
   ],
-  (isSending, token, amount, address) => {
-    return isSending === true || !token || !amount || !address
+  (state, token, amount, address) => {
+    return state === TRANSFER_PROGRESS.SENDING || !token || !amount || !address
   }
 )

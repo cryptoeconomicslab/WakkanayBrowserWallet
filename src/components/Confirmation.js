@@ -21,7 +21,7 @@ const Confirmation = ({
   onCancel,
   onConfirm,
   /* Redux */
-  ETHtoUSD,
+  ethUsdRate,
   address
 }) => {
   return (
@@ -34,7 +34,7 @@ const Confirmation = ({
         <div className="confirmation__tokenAmount">{tokenAmount}</div>
         <div className="confirmation__tokenUnit">{unit}</div>
         <div className="confirmation__tokenBalance">
-          = {roundBalance(ETHtoUSD * tokenAmount)} USD
+          = {roundBalance(ethUsdRate * tokenAmount)} USD
         </div>
       </div>
       <div className="confirmation__address">
@@ -127,7 +127,7 @@ const Confirmation = ({
 }
 
 const mapStateToProps = state => ({
-  ETHtoUSD: state.tokenBalance.ETHtoUSD,
+  ethUsdRate: state.ethUsdRate.rate,
   address: state.address
 })
 

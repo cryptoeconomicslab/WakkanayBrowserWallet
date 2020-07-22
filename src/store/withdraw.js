@@ -1,7 +1,7 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import { utils } from 'ethers'
 import JSBI from 'jsbi'
-import { getBalance } from './tokenBalanceList'
+import { getL2Balance } from './l2Balance'
 import clientWrapper from '../client'
 
 export const WITHDRAW_PROGRESS = {
@@ -37,7 +37,7 @@ export const withdraw = (amount, tokenContractAddress) => {
       if (!client) return
       await client.startWithdrawal(amountWei, tokenContractAddress)
       dispatch(setWithdrawProgress(WITHDRAW_PROGRESS.COMPLETE))
-      dispatch(getBalance())
+      dispatch(getL2Balance())
     } catch (error) {
       console.error(error)
       dispatch(setWithdrawProgress(WITHDRAW_PROGRESS.ERROR))

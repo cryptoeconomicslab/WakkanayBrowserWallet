@@ -378,7 +378,6 @@ const OrderBook = props => {
 }
 
 const mapStateToProps = state => ({
-  tokenBalanceList: state.tokenBalance.tokenBalance,
   exchangedToken: state.exchangeState.exchangedToken,
   receivedToken: state.exchangeState.receivedToken
 })

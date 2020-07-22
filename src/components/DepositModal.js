@@ -3,23 +3,23 @@ import { connect } from 'react-redux'
 import DepositWithdrawModal from './Base/DepositWithdrawModal'
 import { deposit, setDepositProgress } from '../store/deposit'
 
-const DepositModal = ({ deposit, progress, setProgress, l1Balance }) => {
+const DepositModal = ({ deposit, progress, setProgress, balanceList }) => {
   return (
     <DepositWithdrawModal
       type={'deposit'}
       action={deposit}
       progress={progress}
       setProgress={setProgress}
-      balance={l1Balance}
+      balance={balanceList}
     />
   )
 }
 
 const mapStateToProps = ({
-  tokenBalance: { l1Balance },
+  l1Balance: { balanceList },
   depositState: { depositProgress }
 }) => ({
-  l1Balance,
+  balanceList,
   progress: depositProgress
 })
 const mapDispatchToProps = {

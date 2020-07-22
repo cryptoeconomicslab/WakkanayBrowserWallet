@@ -5,16 +5,18 @@ import clientWrapper from '../client'
 import { PETHContract } from '../contracts/PETHContract'
 import { getTokenByUnit } from '../constants/tokens'
 import { getAddress } from './address'
+import { getEthUsdRate } from './ethUsdRate'
+import { getL1Balance } from './l1Balance'
+import { getL2Balance } from './l2Balance'
 import { getTransactionHistories } from './transactionHistory'
-import { getL1Balance, getBalance, getETHtoUSD } from './tokenBalanceList'
 import { autoCompleteWithdrawal } from './withdraw'
 import { WALLET_KIND } from '../wallet'
 
 export const APP_STATUS = {
-  UNLOADED: 'unloaded',
-  LOADED: 'loaded',
-  INITIAL: 'initial',
-  ERROR: 'error'
+  UNLOADED: 'UNLOADED',
+  LOADED: 'LOADED',
+  INITIAL: 'INITIAL',
+  ERROR: 'ERROR'
 }
 
 export const setAppStatus = createAction('SET_APP_STATUS')
@@ -34,9 +36,9 @@ export const appStatusReducer = createReducer(
 
 const initialGetters = dispatch => {
   dispatch(getL1Balance())
-  dispatch(getBalance())
+  dispatch(getL2Balance())
   dispatch(getAddress())
-  dispatch(getETHtoUSD()) // get the latest ETH price, returned value's unit is USD/ETH
+  dispatch(getEthUsdRate()) // get the latest ETH price, returned value's unit is USD/ETH
   dispatch(getTransactionHistories())
 }
 
@@ -86,9 +88,9 @@ export const initializeClient = privateKey => {
         kind: WALLET_KIND.WALLET_PRIVATEKEY,
         privateKey
       })
+      initialGetters(dispatch)
       dispatch(setAppStatus(APP_STATUS.LOADED))
       dispatch(subscribeEvents())
-      initialGetters(dispatch)
     } catch (error) {
       console.error(error)
       dispatch(setAppError(error.message))
@@ -104,8 +106,8 @@ export const initializeMetamaskWallet = () => {
       await clientWrapper.initializeClient({
         kind: WALLET_KIND.WALLET_METAMASK
       })
-      dispatch(setAppStatus(APP_STATUS.LOADED))
       initialGetters(dispatch)
+      dispatch(setAppStatus(APP_STATUS.LOADED))
     } catch (error) {
       console.error(error)
       dispatch(setAppError(error.message))
@@ -149,8 +151,8 @@ export const initializeWalletConnect = () => {
       await clientWrapper.initializeClient({
         kind: WALLET_KIND.WALLET_CONNECT
       })
-      dispatch(setAppStatus(APP_STATUS.LOADED))
       initialGetters(dispatch)
+      dispatch(setAppStatus(APP_STATUS.LOADED))
     } catch (error) {
       console.error(error)
       dispatch(setAppError(error.message))
@@ -167,8 +169,8 @@ export const initializeMagicLinkWallet = email => {
         kind: WALLET_KIND.WALLET_MAGIC_LINK,
         email
       })
-      dispatch(setAppStatus(APP_STATUS.LOADED))
       initialGetters(dispatch)
+      dispatch(setAppStatus(APP_STATUS.LOADED))
     } catch (error) {
       console.error(error)
       dispatch(setAppError(error.message))
@@ -191,15 +193,15 @@ export const subscribeEvents = () => async dispatch => {
       '',
       'font-weight: bold;'
     )
-    dispatch(getBalance())
     dispatch(getL1Balance())
+    dispatch(getL2Balance())
     dispatch(getTransactionHistories())
   })
 
   client.subscribeSyncFinished(blockNumber => {
     console.info(`sync new state: ${blockNumber.data}`)
-    dispatch(getBalance())
     dispatch(getL1Balance())
+    dispatch(getL2Balance())
     dispatch(getTransactionHistories())
   })
 
@@ -209,8 +211,8 @@ export const subscribeEvents = () => async dispatch => {
       'color: brown; font-weight: bold;',
       'font-weight: bold;'
     )
-    dispatch(getBalance())
     dispatch(getL1Balance())
+    dispatch(getL2Balance())
     dispatch(getTransactionHistories())
   })
 
@@ -232,8 +234,8 @@ export const subscribeEvents = () => async dispatch => {
       await contract.unwrap(exit.stateUpdate.amount)
       console.info(`unwrapped PETH: ${exit.stateUpdate.amount}`)
     }
-    dispatch(getBalance())
     dispatch(getL1Balance())
+    dispatch(getL2Balance())
     dispatch(getTransactionHistories())
   })
 

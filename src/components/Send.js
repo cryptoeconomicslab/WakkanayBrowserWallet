@@ -25,9 +25,9 @@ const Send = props => {
   )
   const tokensWithCurrentAmount = TOKEN_LIST.map(token => ({
     ...token,
-    amount: props.tokenBalance[token.unit]
-      ? props.tokenBalance[token.unit].amount /
-        10 ** props.tokenBalance[token.unit].decimals
+    amount: props.l2Balance[token.unit]
+      ? props.l2Balance[token.unit].amount /
+        10 ** props.l2Balance[token.unit].decimals
       : 0
   }))
 
@@ -82,8 +82,7 @@ const Send = props => {
 
 const mapStateToProps = state => ({
   address: state.address,
-  tokenBalance: state.tokenBalance.tokenBalance,
-  ETHtoUSD: state.tokenBalance.ETHtoUSD,
+  l2Balance: state.l2Balance.balanceList,
   isAbleToSubmit: isAbleToSubmit(state),
   transferredToken: state.transferState.transferredToken,
   transferredAmount: state.transferState.transferredAmount,
