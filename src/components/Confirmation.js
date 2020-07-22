@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import BeatLoader from './Base/BeatLoader'
 import Button from './Base/Button'
 import { shortenAddress, roundBalance } from '../utils'
 import { SUBTEXT, BACKGROUND, TEXT } from '../constants/colors'
@@ -20,6 +21,7 @@ const Confirmation = ({
   supplement,
   onCancel,
   onConfirm,
+  isLoading,
   /* Redux */
   ETHtoUSD,
   address
@@ -45,10 +47,21 @@ const Confirmation = ({
         to your wallet
       </div>
       <div className="confirmation__btns">
-        <Button full className="confirmation__btn" onClick={onConfirm}>
-          Confirm
+        <Button
+          full
+          className="confirmation__btn"
+          onClick={onConfirm}
+          disabled={isLoading}
+        >
+          {isLoading ? <BeatLoader isLoading={isLoading} /> : <>Confirm</>}
         </Button>
-        <Button full border className="confirmation__btn" onClick={onCancel}>
+        <Button
+          full
+          border
+          className="confirmation__btn"
+          onClick={onCancel}
+          disabled={isLoading}
+        >
           Cancel
         </Button>
       </div>
