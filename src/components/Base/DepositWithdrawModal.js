@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import { BaseModal } from './BaseModal'
 import Button from './Button'
-import BeatLoader from './BeatLoader'
 import { TokenSelector } from '../TokenSelector'
 import Confirmation from '../Confirmation'
 import TokenInput from '../TokenInput'
@@ -52,7 +51,6 @@ const DepositWithdrawModal = ({ type, progress, setProgress, action }) => {
       render={({ close }) => (
         <>
           <div className="depositWithdrawModal">
-            <BeatLoader isLoading={isLoading} />
             {progress === DEPOSIT_PROGRESS.INPUT ? (
               <>
                 <TokenSelector

@@ -1,6 +1,6 @@
 import { css } from '@emotion/core'
 import BeatLoader from 'react-spinners/BeatLoader'
-import { MAIN_DARK } from '../../constants/colors'
+import { Black } from '../../constants/colors'
 
 const override = css`
   text-align: center;
@@ -11,7 +11,7 @@ export default ({ isLoading }) => {
       <BeatLoader
         css={override}
         size={15}
-        color={MAIN_DARK}
+        color={Black(1.0)}
         loading={isLoading}
       />
     </div>

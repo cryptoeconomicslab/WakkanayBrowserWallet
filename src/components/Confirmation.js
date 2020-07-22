@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import BeatLoader from './Base/BeatLoader'
 import Button from './Base/Button'
 import { shortenAddress, roundBalance } from '../utils'
 import { SUBTEXT, BACKGROUND, TEXT } from '../constants/colors'
@@ -52,7 +53,7 @@ const Confirmation = ({
           onClick={onConfirm}
           disabled={isLoading}
         >
-          Confirm
+          {isLoading ? <BeatLoader isLoading={isLoading} /> : <>Confirm</>}
         </Button>
         <Button
           full
