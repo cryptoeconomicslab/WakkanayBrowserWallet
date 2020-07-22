@@ -10,7 +10,7 @@ export const setTransferredToken = createAction('SET_TRANSFERRED_TOKEN')
 export const setTransferredAmount = createAction('SET_TRANSFERRED_AMOUNT')
 export const setRecepientAddress = createAction('SET_RECEPIENT_ADDRESS')
 export const setTransferPage = createAction('SET_TRANSFER_PAGE')
-export const errorTransfer = createAction('ERROR_TRANSFER')
+export const setTransferError = createAction('SET_TRANSFER_ERROR')
 export const clearTransferState = createAction('CLEAR_TRANSFER_STATE')
 
 const initialState = {
@@ -37,7 +37,7 @@ export const transferReducer = createReducer(initialState, {
   [setTransferPage]: (state, action) => {
     state.transferPage = action.payload
   },
-  [errorTransfer]: (state, action) => {
+  [setTransferError]: (state, action) => {
     state.transferError = action.payload
   },
   [clearTransferState]: () => {
@@ -56,7 +56,7 @@ export const transfer = (amount, tokenContractAddress, recipientAddress) => {
   // invalid address, insufficient funds
   return async dispatch => {
     try {
-      dispatch(errorTransfer(false))
+      dispatch(setTransferError(false))
       dispatch(setTransferIsSending(true))
       const client = await clientWrapper.getClient()
       if (!client) return
@@ -66,7 +66,7 @@ export const transfer = (amount, tokenContractAddress, recipientAddress) => {
       dispatch(setTransferPage('completion-page'))
     } catch (error) {
       console.error(error)
-      dispatch(errorTransfer(true))
+      dispatch(setTransferError(true))
     } finally {
       dispatch(setTransferIsSending(false))
     }

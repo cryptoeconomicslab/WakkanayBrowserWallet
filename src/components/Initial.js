@@ -32,12 +32,12 @@ import { APP_STATUS, checkClientInitialized } from '../store/appStatus'
 import {
   getL1TotalBalance,
   getTokenTotalBalance,
-  errorSetL1Balance,
-  errorSetTokenBalance,
-  errorSetETHtoUSD
+  setL1BalanceError,
+  setTokenBalanceError,
+  setETHtoUSDError
 } from '../store/tokenBalanceList'
-import { errorSetHistoryList } from '../store/transactionHistory'
-import { errorTransfer } from '../store/transfer'
+import { setHistoryListError } from '../store/transactionHistory'
+import { setTransferError } from '../store/transfer'
 
 const Initial = props => {
   const router = useRouter()
@@ -85,36 +85,36 @@ const Initial = props => {
       <div className="container">
         {/* TODO: how to show the errors */}
         <ErrorAlert
-          isShown={props.tokenBalance.errorEthToUSD}
+          isShown={props.tokenBalance.ethToUSDError}
           onClose={() => {
-            props.errorSetETHtoUSD(false)
+            props.setETHtoUSDError(false)
           }}
         >
           Get ETH-USD rate failed.
         </ErrorAlert>
 
         <ErrorAlert
-          isShown={props.tokenBalance.errorL1Balance}
+          isShown={props.tokenBalance.l1BalanceError}
           onClose={() => {
-            props.errorSetL1Balance(false)
+            props.setL1BalanceError(false)
           }}
         >
           Get your L1 balance failed.
         </ErrorAlert>
 
         <ErrorAlert
-          isShown={props.tokenBalance.errorTokenBalance}
+          isShown={props.tokenBalance.tokenBalanceError}
           onClose={() => {
-            props.errorSetTokenBalance(false)
+            props.setTokenBalanceError(false)
           }}
         >
           Get your balance failed.
         </ErrorAlert>
 
         <ErrorAlert
-          isShown={props.tokenBalance.errorHistoryList}
+          isShown={props.tokenBalance.historyListError}
           onClose={() => {
-            props.errorSetHistoryList(false)
+            props.setHistoryListError(false)
           }}
         >
           Get your transaction history failed.
@@ -123,7 +123,7 @@ const Initial = props => {
         <ErrorAlert
           isShown={props.transfer.transferError}
           onClose={() => {
-            props.errorTransfer(false)
+            props.setTransferError(false)
           }}
         >
           Transfer failed.
@@ -272,11 +272,11 @@ const mapDispatchToProps = {
   checkClientInitialized,
   pushRouteHistory,
   popRouteHistory,
-  errorSetL1Balance,
-  errorSetTokenBalance,
-  errorSetETHtoUSD,
-  errorSetHistoryList,
-  errorTransfer
+  setL1BalanceError,
+  setTokenBalanceError,
+  setETHtoUSDError,
+  setHistoryListError,
+  setTransferError
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Initial)
