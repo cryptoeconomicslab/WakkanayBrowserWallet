@@ -55,7 +55,7 @@ const Initial = ({
   children
 }) => {
   const router = useRouter()
-  useReactToast({ errors, removeError })
+  useReactToast({ toasts: errors, onDisappearToast: removeError })
   const isWalletHidden =
     router.pathname === WALLET || router.pathname === HISTORY
   // const isTabShownHidden =

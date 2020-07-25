@@ -10,23 +10,23 @@ export function usePrevious(value) {
   return ref.current
 }
 
-export function useReactToast({ errors, removeError }) {
+export function useReactToast({ toasts, onDisappearToast, type = 'error' }) {
   const { addToast, toastStack } = useToasts()
-  const prev = usePrevious({ errors, toastStack })
+  const prev = usePrevious({ toasts, toastStack })
 
   useEffect(() => {
     if (
-      (!prev && errors.length) ||
-      (prev && errors.length > prev.errors.length)
+      (!prev && toasts.length) ||
+      (prev && toasts.length > prev.toasts.length)
     ) {
-      addToast(errors[errors.length - 1], { appearance: 'error' })
+      addToast(toasts[toasts.length - 1], { appearance: type })
     }
-  }, [errors])
+  }, [toasts])
 
   useEffect(() => {
     if (prev && toastStack.length < prev.toastStack.length) {
       const diff = _.difference(prev.toastStack, toastStack)
-      removeError(diff[0].content)
+      onDisappearToast(diff[0].content)
     }
   }, [toastStack])
 }
