@@ -15,18 +15,21 @@ export function useReactToast({ toasts, onDisappearToast, type = 'error' }) {
   const prev = usePrevious({ toasts, toastStack })
 
   useEffect(() => {
-    if (
-      (!prev && toasts.length) ||
-      (prev && toasts.length > prev.toasts.length)
-    ) {
-      addToast(toasts[toasts.length - 1], { appearance: type })
+    const prevToasts = !prev ? [] : prev.toasts
+    if (toasts.length > prevToasts.length) {
+      const diff = _.difference(toasts, prevToasts)
+      diff.forEach(toastContent => {
+        addToast(toastContent, { appearance: type })
+      })
     }
   }, [toasts])
 
   useEffect(() => {
     if (prev && toastStack.length < prev.toastStack.length) {
       const diff = _.difference(prev.toastStack, toastStack)
-      onDisappearToast(diff[0].content)
+      diff.forEach(({ content }) => {
+        onDisappearToast(content)
+      })
     }
   }, [toastStack])
 }
