@@ -33,18 +33,16 @@ const Header = ({ appRouter, appStatus }) => {
             </Link>
           </h1>
           {appStatus.status === 'loaded' && (
-            <div className="rightButtons">
-              <Link href={HISTORY} passHref>
-                <a className="historyButton">
-                  <img
-                    src="/icon-history.svg"
-                    width="14"
-                    className="historyButton__img"
-                  />
-                  <span className="historyButton__txt">History</span>
-                </a>
-              </Link>
-            </div>
+            <Link href={HISTORY} passHref>
+              <a className="historyButton">
+                <img
+                  src="/icon-history.svg"
+                  width="14"
+                  className="historyButton__img"
+                />
+                <span className="historyButton__txt">History</span>
+              </a>
+            </Link>
           )}
         </>
       ) : (
@@ -82,10 +80,6 @@ const Header = ({ appRouter, appStatus }) => {
         }
         .title img {
           cursor: pointer;
-        }
-        .rightButtons {
-          display: flex;
-          justify-content: space-between;
         }
         .historyButton {
           display: flex;
