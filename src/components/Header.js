@@ -34,15 +34,6 @@ const Header = ({ appRouter, appStatus }) => {
           </h1>
           {appStatus.status === 'loaded' && (
             <div className="rightButtons">
-              <a
-                className="logoutButton"
-                onClick={() => {
-                  localStorage.removeItem('loggedInWith')
-                  location.reload()
-                }}
-              >
-                Logout
-              </a>
               <Link href={HISTORY} passHref>
                 <a className="historyButton">
                   <img
@@ -124,12 +115,6 @@ const Header = ({ appRouter, appStatus }) => {
         }
         .historyButton__txt {
           font-size: ${FZ_MEDIUM};
-        }
-        .logoutButton {
-          display: flex;
-          align-items: center;
-          padding: 0.5rem 1.25rem;
-          cursor: pointer;
         }
       `}</style>
     </div>

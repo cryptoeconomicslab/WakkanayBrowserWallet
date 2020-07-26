@@ -24,7 +24,8 @@ import {
   FZ_DEFAULT,
   FZ_LARGE,
   FZ_HEADLINE,
-  FW_NORMAL
+  FW_NORMAL,
+  FW_BLACK
 } from '../constants/fonts'
 import {
   WALLET,
@@ -130,6 +131,19 @@ const Initial = ({
             </div>
           )}
         </Box>
+        {appStatus.status === 'loaded' && (
+          <div className="logoutButtonWrap">
+            <a
+              className="logoutButton"
+              onClick={() => {
+                localStorage.removeItem('loggedInWith')
+                location.reload()
+              }}
+            >
+              Logout
+            </a>
+          </div>
+        )}
       </div>
       <style>{`
         *,
@@ -221,6 +235,21 @@ const Initial = ({
           text-align: center;
           margin-top: 0.75rem;
           font-size: ${FZ_MEDIUM};
+        }
+        .logoutButtonWrap {
+          text-align: center;
+          margin-top: 2rem;
+        }
+        .logoutButton {
+          cursor: pointer;
+          text-decoration: underline;
+          display: inline-block;
+          color: ${ERROR};
+          font-size: ${FZ_MEDIUM};
+          font-weight: ${FW_BLACK};
+        }
+        .logoutButton:hover {
+          text-decoration: none;
         }
       `}</style>
     </div>
