@@ -9,10 +9,10 @@ import StartupModal from './StartupModal'
 // import { Tabs } from './Tabs'
 import Wallet from './Wallet'
 import {
-  ERROR,
   TEXT,
   BACKGROUND,
   SUBTEXT,
+  ERROR,
   MAIN,
   MAIN_DARK
 } from '../constants/colors'

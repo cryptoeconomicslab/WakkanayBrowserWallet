@@ -4,6 +4,7 @@ import { utils } from 'ethers'
 import JSBI from 'jsbi'
 import clientWrapper from '../client'
 import { config } from '../config'
+import { pushError } from './error'
 
 export const TRANSFER_PROGRESS = {
   INITIAL: 'INITIAL',
@@ -18,7 +19,6 @@ export const setTransferredAmount = createAction('SET_TRANSFERRED_AMOUNT')
 export const setRecepientAddress = createAction('SET_RECEPIENT_ADDRESS')
 export const setTransferPage = createAction('SET_TRANSFER_PAGE')
 export const setTransferStatus = createAction('SET_TRANSFER_STATUS')
-export const setTransferError = createAction('SET_TRANSFER_ERROR')
 export const clearTransferState = createAction('CLEAR_TRANSFER_STATE')
 
 const initialState = {
@@ -26,8 +26,7 @@ const initialState = {
   transferredAmount: '',
   recepientAddress: '',
   transferPage: 'confirmation-page',
-  status: TRANSFER_PROGRESS.INITIAL,
-  error: null
+  status: TRANSFER_PROGRESS.INITIAL
 }
 export const transferReducer = createReducer(initialState, {
   [setTransferredToken]: (state, action) => {
@@ -44,10 +43,6 @@ export const transferReducer = createReducer(initialState, {
   },
   [setTransferStatus]: (state, action) => {
     state.status = action.payload
-  },
-  [setTransferError]: (state, action) => {
-    state.error = action.payload
-    state.status = TRANSFER_PROGRESS.ERROR
   },
   [clearTransferState]: () => {
     return initialState
@@ -75,7 +70,8 @@ export const transfer = (amount, tokenContractAddress, recipientAddress) => {
       dispatch(setTransferStatus(TRANSFER_PROGRESS.COMPLETE))
     } catch (e) {
       console.error(e)
-      dispatch(setTransferError(e.message))
+      dispatch(setTransferStatus(TRANSFER_PROGRESS.ERROR))
+      dispatch(pushError('Transfer failed.'))
     }
   }
 }

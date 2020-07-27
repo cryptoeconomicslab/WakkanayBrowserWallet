@@ -3,6 +3,7 @@ import { createAction, createReducer } from '@reduxjs/toolkit'
 import { formatUnits } from 'ethers/utils'
 import clientWrapper from '../client'
 import { TOKEN_LIST } from '../constants/tokens'
+import { pushError } from './error'
 import { roundBalance } from '../utils'
 
 export const L1_BALANCE_PROGRESS = {
@@ -14,13 +15,11 @@ export const L1_BALANCE_PROGRESS = {
 
 export const setL1Balance = createAction('SET_L1_BALANCE')
 export const setL1BalanceStatus = createAction('SET_L1_BALANCE_STATUS')
-export const setL1BalanceError = createAction('SET_L1_BALANCE_ERROR')
 
 export const l1BalanceReducer = createReducer(
   {
     balanceList: {},
-    status: L1_BALANCE_PROGRESS.UNLOADED,
-    error: null
+    status: L1_BALANCE_PROGRESS.UNLOADED
   },
   {
     [setL1Balance]: (state, action) => {
@@ -29,10 +28,6 @@ export const l1BalanceReducer = createReducer(
     },
     [setL1BalanceStatus]: (state, action) => {
       state.status = action.payload
-    },
-    [setL1BalanceError]: (state, action) => {
-      state.error = action.payload
-      state.status = L1_BALANCE_PROGRESS.ERROR
     }
   }
 )
@@ -64,7 +59,8 @@ export const getL1Balance = () => {
       dispatch(setL1Balance(balanceList))
     } catch (e) {
       console.error(e)
-      dispatch(setL1BalanceError(true))
+      dispatch(setL1BalanceStatus(L1_BALANCE_PROGRESS.ERROR))
+      dispatch(pushError('Get your L1 balance failed.'))
     }
   }
 }

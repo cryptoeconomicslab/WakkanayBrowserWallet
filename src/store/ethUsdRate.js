@@ -14,13 +14,11 @@ export const ETH_USD_RATE_PROGRESS = {
 
 export const setEthUsdRate = createAction('SET_ETH_USD_RATE')
 export const setEthUsdRateStatus = createAction('SET_ETH_USD_RATE_STATUS')
-export const setEthUsdRateError = createAction('SET_ETH_USD_RATE_ERROR')
 
 export const ethUsdRateReducer = createReducer(
   {
     rate: 0,
-    status: ETH_USD_RATE_PROGRESS.UNLOADED,
-    error: false
+    status: ETH_USD_RATE_PROGRESS.UNLOADED
   },
   {
     [setEthUsdRate]: (state, action) => {
@@ -29,30 +27,24 @@ export const ethUsdRateReducer = createReducer(
     },
     [setEthUsdRateStatus]: (state, action) => {
       state.status = action.payload
-    },
-    [setEthUsdRateError]: (state, action) => {
-      state.error = action.payload
-      state.status = ETH_USD_RATE_PROGRESS.ERROR
     }
   }
 )
 
 export const getEthUsdRate = () => {
   return async dispatch => {
-    dispatch(setEthUsdRateStatus(ETH_USD_RATE_PROGRESS.LOADING))
-    axios
-      .get(ETH_LATEST_PRICE_URL)
-      .then(async res => {
-        if (res.data && res.data.result && res.data.result.ethusd) {
-          dispatch(setEthUsdRate(res.data.result.ethusd))
-        } else {
-          throw Error('Get res.data failed.')
-        }
-      })
-      .catch(async e => {
-        console.error(e)
-        dispatch(setEthUsdRateError(e.message))
-        dispatch(pushError('Get ETH-USD rate failed.'))
-      })
+    try {
+      dispatch(setEthUsdRateStatus(ETH_USD_RATE_PROGRESS.LOADING))
+      const res = await axios.get(ETH_LATEST_PRICE_URL)
+      if (res.data && res.data.result && res.data.result.ethusd) {
+        dispatch(setEthUsdRate(res.data.result.ethusd))
+      } else {
+        throw Error('Get res.data failed.')
+      }
+    } catch (e) {
+      console.error(e)
+      dispatch(setEthUsdRateStatus(ETH_USD_RATE_PROGRESS.ERROR))
+      dispatch(pushError('Get ETH-USD rate failed.'))
+    }
   }
 }

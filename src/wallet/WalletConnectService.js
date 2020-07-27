@@ -2,7 +2,7 @@ import { ethers } from 'ethers'
 import WalletConnectQRCodeModal from '@walletconnect/qrcode-modal'
 import Web3 from 'web3'
 import { Web3Wallet } from './Web3Wallet'
-import WalletUtils from './WalletUtils'
+import { validateNetwork } from './WalletUtils'
 
 let WalletConnectProvider
 if (global.window) {
@@ -40,7 +40,7 @@ export class WalletConnectService {
     const provider = new ethers.providers.Web3Provider(web3.currentProvider)
     const address = await provider.getSigner().getAddress()
     const network = await provider.ready
-    WalletUtils.validateNetwork(networkName, network.name)
+    validateNetwork(networkName, network.name)
     return new Web3Wallet(address, provider)
   }
 }

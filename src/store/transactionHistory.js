@@ -2,6 +2,7 @@ import { formatEther } from 'ethers/utils'
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import clientWrapper from '../client'
 import { getTokenByTokenContractAddress } from '../constants/tokens'
+import { pushError } from './error'
 
 export const TRANSACTION_HISTORY_PROGRESS = {
   UNLOADED: 'UNLOADED',
@@ -12,13 +13,11 @@ export const TRANSACTION_HISTORY_PROGRESS = {
 
 export const setHistoryList = createAction('SET_HISTORY_LIST')
 export const setHistoryListStatus = createAction('SET_HISTORY_LIST_STATUS')
-export const setHistoryListError = createAction('SET_HISTORY_LIST_ERROR')
 
 export const historyReducer = createReducer(
   {
     historyList: [],
-    status: TRANSACTION_HISTORY_PROGRESS.UNLOADED,
-    error: null
+    status: TRANSACTION_HISTORY_PROGRESS.UNLOADED
   },
   {
     [setHistoryList]: (state, action) => {
@@ -27,10 +26,6 @@ export const historyReducer = createReducer(
     },
     [setHistoryListStatus]: (state, action) => {
       state.status = action.payload
-    },
-    [setHistoryListError]: (state, action) => {
-      state.error = action.payload
-      state.status = TRANSACTION_HISTORY_PROGRESS.ERROR
     }
   }
 )
@@ -52,7 +47,8 @@ export const getTransactionHistories = () => {
       dispatch(setHistoryList(histories))
     } catch (e) {
       console.error(e)
-      dispatch(setHistoryListError(e.message))
+      dispatch(setHistoryListStatus(TRANSACTION_HISTORY_PROGRESS.ERROR))
+      dispatch(pushError('Get your transaction history failed.'))
     }
   }
 }

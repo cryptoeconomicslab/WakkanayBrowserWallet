@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import { Web3Wallet } from './Web3Wallet'
-import WalletUtils from './WalletUtils'
+import { validateNetwork } from './WalletUtils'
 
 /**
  * MetamaskWallet is wallet implementation for Metamask
@@ -19,7 +19,7 @@ export class MetamaskService {
     const address = await provider.getSigner().getAddress()
     // wait the network is ready
     const network = await provider.ready
-    WalletUtils.validateNetwork(networkName, network.name)
+    validateNetwork(networkName, network.name)
     return new Web3Wallet(address, provider)
   }
 }
