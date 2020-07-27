@@ -1,27 +1,44 @@
 import { connect } from 'react-redux'
+import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
 import { SUBTEXT } from '../constants/colors'
 import { FZ_SMALL, FW_BOLD, FZ_MEDIUM } from '../constants/fonts'
 import { getTransactionHistories } from '../store/transactionHistory'
+import { shortenAddress } from '../utils'
 
-const TransactionHistory = props => {
+const Message = ({ message, counterParty }) => {
+  if (message === ActionType.Send) {
+    return <>{`${message} to ${shortenAddress(counterParty)}`}</>
+  } else if (message === ActionType.Receive) {
+    return <>{`${message} from ${shortenAddress(counterParty)}`}</>
+  } else {
+    return <>{message}</>
+  }
+}
+
+const TransactionHistory = ({ historyList }) => {
   return (
     <ul>
-      {props.historyList.map(({ message, amount, unit, blockNumber }) => (
-        <li className="transaction">
-          <div className="transaction__item transaction__item--icon">
-            <img src={`/icon-${message}.svg`} />
-          </div>
-          <div className="transaction__item transaction__item--amount">
-            {amount} {unit}
-          </div>
-          <div className="transaction__item transaction__item--type">
-            {message}
-          </div>
-          <div className="transaction__item transaction__item--time">
-            at {blockNumber} block
-          </div>
-        </li>
-      ))}
+      {historyList.map(
+        ({ message, amount, unit, blockNumber, counterParty }, i) => (
+          <li
+            className="transaction"
+            key={`${i}-${message}-${amount}-${unit}-${blockNumber}-${counterParty}`}
+          >
+            <div className="transaction__item transaction__item--icon">
+              <img src={`/icon-${message}.svg`} />
+            </div>
+            <div className="transaction__item transaction__item--amount">
+              {amount} {unit}
+            </div>
+            <div className="transaction__item transaction__item--type">
+              <Message message={message} counterParty={counterParty} />
+            </div>
+            <div className="transaction__item transaction__item--time">
+              at {blockNumber} block
+            </div>
+          </li>
+        )
+      )}
       <style jsx>{`
         .transaction {
           list-style-type: none;
