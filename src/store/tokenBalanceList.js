@@ -6,6 +6,7 @@ import { createSelector } from 'reselect'
 import clientWrapper from '../client'
 import { TOKEN_LIST, getTokenByTokenContractAddress } from '../constants/tokens'
 import { roundBalance } from '../utils'
+import { pushError } from './error'
 
 // selector
 const getL1BalanceState = state => state.tokenBalance.l1Balance
@@ -42,7 +43,6 @@ export const getTokenTotalBalance = createSelector(
 export const setL1Balance = createAction('SET_L1_BALANCE')
 export const setTokenBalance = createAction('SET_TOKEN_BALANCE')
 export const setETHtoUSD = createAction('SET_ETH_TO_USD')
-export const errorSetETHtoUSD = createAction('ERROR_SET_ETH_TO_USD')
 
 export const getL1Balance = () => {
   return async dispatch => {
@@ -100,12 +100,12 @@ export const getETHtoUSD = () => {
         if (res.data && res.data.result && res.data.result.ethusd) {
           dispatch(setETHtoUSD(res.data.result.ethusd))
         } else {
-          dispatch(errorSetETHtoUSD(true))
+          dispatch(pushError('can not get USD balance now'))
         }
       })
       .catch(async e => {
         console.log(e)
-        dispatch(errorSetETHtoUSD(true))
+        dispatch(pushError('can not get USD balance now'))
       })
   }
 }
@@ -114,8 +114,7 @@ export const tokenBalanceReducer = createReducer(
   {
     l1Balance: {},
     tokenBalance: {},
-    ETHtoUSD: 0,
-    errorEthToUSD: false
+    ETHtoUSD: 0
   },
   {
     [setL1Balance]: (state, action) => {
@@ -126,9 +125,6 @@ export const tokenBalanceReducer = createReducer(
     },
     [setETHtoUSD]: (state, action) => {
       state.ETHtoUSD = action.payload
-    },
-    [errorSetETHtoUSD]: (state, action) => {
-      state.errorEthToUSD = action.payload
     }
   }
 )

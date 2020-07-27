@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import Router, { useRouter } from 'next/router'
 import Head from 'next/head'
 import Box from './Base/Box'
-import ErrorAlert from './Base/ErrorAlert'
 import { config } from '../config'
 import Header from './Header'
 import StartupModal from './StartupModal'
@@ -41,6 +40,8 @@ import {
   getL1TotalBalance,
   getTokenTotalBalance
 } from '../store/tokenBalanceList'
+import { removeError } from '../store/error'
+import { useReactToast } from '../hooks'
 
 const Initial = ({
   checkClientInitialized,
@@ -48,12 +49,14 @@ const Initial = ({
   popRouteHistory,
   appStatus,
   address,
-  tokenBalance,
+  errors,
+  removeError,
   tokenTotalBalance,
   l1TotalBalance,
   children
 }) => {
   const router = useRouter()
+  useReactToast({ toasts: errors, onDisappearToast: removeError })
   const isWalletHidden =
     router.pathname === WALLET || router.pathname === HISTORY
   // const isTabShownHidden =
@@ -95,9 +98,6 @@ const Initial = ({
       </Head>
       <Header />
       <div className="container">
-        <ErrorAlert>
-          {tokenBalance.errorEthToUSD && 'can not get USD balance now'}
-        </ErrorAlert>
         <h2 className="headline">
           {router.pathname !== HISTORY ? 'Your Wallet' : 'Transaction History'}
         </h2>
@@ -260,7 +260,7 @@ const mapStateToProps = state => ({
   address: state.address,
   appRouter: state.appRouter,
   appStatus: state.appStatus,
-  tokenBalance: state.tokenBalance,
+  errors: state.errorState.errors,
   l1TotalBalance: getL1TotalBalance(state),
   tokenTotalBalance: getTokenTotalBalance(state)
 })
@@ -268,7 +268,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   checkClientInitialized,
   pushRouteHistory,
-  popRouteHistory
+  popRouteHistory,
+  removeError
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Initial)
