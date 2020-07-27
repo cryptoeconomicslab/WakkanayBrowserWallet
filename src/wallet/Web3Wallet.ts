@@ -16,12 +16,15 @@ const ERC20abi = [
  * Web3Wallet is wallet implementation for Web3Provider
  */
 export class Web3Wallet {
+  private address: string
+  public provider: ethers.providers.Web3Provider
+
   /**
    * Web3Wallet
    * @param {*} address address string
    * @param {*} provider Web3Provider
    */
-  constructor(address, provider) {
+  constructor(address: string, provider: ethers.providers.Web3Provider) {
     this.address = address
     this.provider = provider
   }
@@ -30,8 +33,8 @@ export class Web3Wallet {
     return Address.from(this.address)
   }
 
-  async getL1Balance(tokenAddress) {
-    let value, decimals, symbol
+  async getL1Balance(tokenAddress: Address) {
+    let value: BigNumber, decimals: number, symbol: string
     if (tokenAddress) {
       const contract = new ethers.Contract(
         tokenAddress.data,
