@@ -58,18 +58,16 @@ export const checkClientInitialized = () => {
       return
     }
 
-    const localKey = localStorage.getItem('privateKey')
-    if (localKey) {
+    const loggedInWith = localStorage.getItem('loggedInWith')
+    if (loggedInWith) {
       try {
         await clientWrapper.initializeClient({
-          kind: WALLET_KIND.WALLET_PRIVATEKEY,
-          privateKey: localKey
+          kind: loggedInWith
         })
         dispatch(setAppStatus(APP_STATUS.LOADED))
         dispatch(subscribeEvents())
         initialGetters(dispatch)
       } catch (e) {
-        localStorage.removeItem('privateKey')
         console.error(e)
         dispatch(setAppError(e.message))
         dispatch(setAppStatus(APP_STATUS.ERROR))

@@ -1,5 +1,6 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import axios from 'axios'
+import { pushError } from './error'
 
 const ETH_LATEST_PRICE_URL =
   'https://api.etherscan.io/api?module=stats&action=ethprice&apikey=ANJAFJARGHU6JKSBJ7G6YG4N3TSKUMV2PG'
@@ -45,12 +46,13 @@ export const getEthUsdRate = () => {
         if (res.data && res.data.result && res.data.result.ethusd) {
           dispatch(setEthUsdRate(res.data.result.ethusd))
         } else {
-          throw Error('Can not get res.data.')
+          throw Error('Get res.data failed.')
         }
       })
       .catch(async e => {
         console.error(e)
-        dispatch(setEthUsdRateStatus(e.message))
+        dispatch(setEthUsdRateError(e.message))
+        dispatch(pushError('Get ETH-USD rate failed.'))
       })
   }
 }

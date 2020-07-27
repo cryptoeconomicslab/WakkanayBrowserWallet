@@ -3,13 +3,19 @@ import { connect } from 'react-redux'
 import Router, { useRouter } from 'next/router'
 import Head from 'next/head'
 import Box from './Base/Box'
-import ErrorAlert from './Base/ErrorAlert'
 import { config } from '../config'
 import Header from './Header'
 import StartupModal from './StartupModal'
 // import { Tabs } from './Tabs'
 import Wallet from './Wallet'
-import { TEXT, BACKGROUND, SUBTEXT, MAIN, MAIN_DARK } from '../constants/colors'
+import {
+  ERROR,
+  TEXT,
+  BACKGROUND,
+  SUBTEXT,
+  MAIN,
+  MAIN_DARK
+} from '../constants/colors'
 import {
   FW_BOLD,
   FZ_MEDIUM,
@@ -17,7 +23,8 @@ import {
   FZ_DEFAULT,
   FZ_LARGE,
   FZ_HEADLINE,
-  FW_NORMAL
+  FW_NORMAL,
+  FW_BLACK
 } from '../constants/fonts'
 import {
   WALLET,
@@ -33,49 +40,51 @@ import {
 } from '../selectors/totalBalanceSelectors'
 import { pushRouteHistory, popRouteHistory } from '../store/appRouter'
 import { APP_STATUS, checkClientInitialized } from '../store/appStatus'
-import { L1_BALANCE_PROGRESS, getL1Balance } from '../store/l1Balance'
-import { L2_BALANCE_PROGRESS, getL2Balance } from '../store/l2Balance'
-import { ETH_USD_RATE_PROGRESS, getEthUsdRate } from '../store/ethUsdRate'
-import {
-  TRANSACTION_HISTORY_PROGRESS,
-  getTransactionHistories
-} from '../store/transactionHistory'
-import {
-  TRANSFER_PROGRESS,
-  setTransferStatus,
-  setTransferError
-} from '../store/transfer'
+import { removeError } from '../store/error'
+import { useReactToast } from '../hooks'
 
-const Initial = props => {
+const Initial = ({
+  checkClientInitialized,
+  pushRouteHistory,
+  popRouteHistory,
+  appStatus,
+  address,
+  errors,
+  removeError,
+  l1TotalBalance,
+  l2TotalBalance,
+  children
+}) => {
   const router = useRouter()
+  useReactToast({ toasts: errors, onDisappearToast: removeError })
   const isWalletHidden =
     router.pathname === WALLET || router.pathname === HISTORY
   // const isTabShownHidden =
-  //   props.appStatus.status === APP_STATUS.LOADED &&
+  //   appStatus.status === APP_STATUS.LOADED &&
   //   (router.pathname === PAYMENT ||
   //     router.pathname === EXCHANGE ||
   //     router.pathname === NFT_COLLECTIBLES)
 
   useEffect(() => {
-    props.checkClientInitialized()
-    props.pushRouteHistory(router.pathname)
+    checkClientInitialized()
+    pushRouteHistory(router.pathname)
     Router.events.on('routeChangeComplete', url => {
-      props.pushRouteHistory(url.split('?')[0])
+      pushRouteHistory(url.split('?')[0])
     })
     Router.beforePopState(() => {
-      props.popRouteHistory()
+      popRouteHistory()
       return true
     })
   }, [])
 
   const content =
-    props.appStatus.status === APP_STATUS.UNLOADED ||
-    props.appStatus.status === APP_STATUS.ERROR ? (
+    appStatus.status === APP_STATUS.UNLOADED ||
+    appStatus.status === APP_STATUS.ERROR ? (
       <div>
         <StartupModal />
       </div>
-    ) : props.appStatus.status === APP_STATUS.LOADED ? (
-      props.children
+    ) : appStatus.status === APP_STATUS.LOADED ? (
+      children
     ) : (
       <p>loading...</p>
     )
@@ -90,75 +99,19 @@ const Initial = props => {
       </Head>
       <Header />
       <div className="container">
-        {/* TODO: how to show the errors */}
-        <ErrorAlert
-          isShown={props.ethUsdRate.status === ETH_USD_RATE_PROGRESS.ERROR}
-          onClose={() => {
-            props.getEthUsdRate()
-          }}
-        >
-          Get ETH-USD rate failed.
-        </ErrorAlert>
-
-        <ErrorAlert
-          isShown={props.l1Balance.status === L1_BALANCE_PROGRESS.ERROR}
-          onClose={() => {
-            props.getL1Balance()
-          }}
-        >
-          Get your L1 balance failed.
-        </ErrorAlert>
-
-        <ErrorAlert
-          isShown={props.l2Balance.status === L2_BALANCE_PROGRESS.ERROR}
-          onClose={() => {
-            props.getL2Balance()
-          }}
-        >
-          Get your balance failed.
-        </ErrorAlert>
-
-        <ErrorAlert
-          isShown={props.history.status === TRANSACTION_HISTORY_PROGRESS.ERROR}
-          onClose={() => {
-            props.getTransactionHistories()
-          }}
-        >
-          Get your transaction history failed.
-        </ErrorAlert>
-
-        <ErrorAlert
-          isShown={props.transfer.status === TRANSFER_PROGRESS.ERROR}
-          onClose={() => {
-            props.setTransferError(null)
-            props.setTransferStatus(TRANSFER_PROGRESS.INITIAL)
-          }}
-        >
-          Transfer failed.
-        </ErrorAlert>
-
-        <ErrorAlert
-          isShown={props.appStatus.status === APP_STATUS.ERROR}
-          onClose={() => {
-            props.setAppError(null)
-          }}
-        >
-          {props.appStatus.error}
-        </ErrorAlert>
-
         <h2 className="headline">
           {router.pathname !== HISTORY ? 'Your Wallet' : 'Transaction History'}
         </h2>
         {!isWalletHidden && (
           <Box>
             <div className="wallet">
-              {props.appStatus.status !== APP_STATUS.LOADED ? (
+              {appStatus.status !== APP_STATUS.LOADED ? (
                 <span className="wallet__txt">No Wallet</span>
               ) : (
                 <Wallet
-                  l2={props.l2TotalBalance}
-                  mainchain={props.l1TotalBalance}
-                  address={props.address}
+                  l2={l2TotalBalance}
+                  mainchain={l1TotalBalance}
+                  address={address}
                   onDeposit={() => {
                     openModal({
                       modal: 'deposit',
@@ -174,6 +127,19 @@ const Initial = props => {
           {/* {isTabShownHidden && <Tabs currentPath={router.pathname} />} */}
           {content}
         </Box>
+        {appStatus.status === APP_STATUS.LOADED && (
+          <div className="logoutButtonWrap">
+            <a
+              className="logoutButton"
+              onClick={() => {
+                localStorage.removeItem('loggedInWith')
+                location.reload()
+              }}
+            >
+              Logout
+            </a>
+          </div>
+        )}
       </div>
       <style>{`
         *,
@@ -260,6 +226,27 @@ const Initial = props => {
         .wallet__txt {
           color: ${SUBTEXT};
         }
+        .error {
+          color: ${ERROR};
+          text-align: center;
+          margin-top: 0.75rem;
+          font-size: ${FZ_MEDIUM};
+        }
+        .logoutButtonWrap {
+          text-align: center;
+          margin-top: 2rem;
+        }
+        .logoutButton {
+          cursor: pointer;
+          text-decoration: underline;
+          display: inline-block;
+          color: ${ERROR};
+          font-size: ${FZ_MEDIUM};
+          font-weight: ${FW_BLACK};
+        }
+        .logoutButton:hover {
+          text-decoration: none;
+        }
       `}</style>
     </div>
   )
@@ -267,13 +254,8 @@ const Initial = props => {
 
 const mapStateToProps = state => ({
   address: state.address,
-  appRouter: state.appRouter,
   appStatus: state.appStatus,
-  ethUsdRate: state.ethUsdRate,
-  l1Balance: state.l1Balance,
-  l2Balance: state.l2Balance,
-  history: state.history,
-  transfer: state.transferState,
+  errors: state.errorState.errors,
   l1TotalBalance: getL1TotalBalance(state),
   l2TotalBalance: getL2TotalBalance(state)
 })
@@ -282,12 +264,7 @@ const mapDispatchToProps = {
   checkClientInitialized,
   pushRouteHistory,
   popRouteHistory,
-  getTransactionHistories,
-  getL1Balance,
-  getL2Balance,
-  getEthUsdRate,
-  setTransferStatus,
-  setTransferError
+  removeError
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Initial)

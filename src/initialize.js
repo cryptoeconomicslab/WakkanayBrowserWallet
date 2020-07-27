@@ -123,13 +123,6 @@ export default async function initialize(walletParams) {
   const lightClient = await instantiate(walletParams)
   await lightClient.start()
 
-  // TODO: need more secure way to store private key.
-  if (
-    walletParams.kind === WALLET_KIND.WALLET_PRIVATEKEY &&
-    typeof walletParams.privateKey === 'string'
-  ) {
-    localStorage.setItem('privateKey', walletParams.privateKey)
-  }
-
+  localStorage.setItem('loggedInWith', walletParams.kind)
   return lightClient
 }
