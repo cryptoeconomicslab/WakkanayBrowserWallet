@@ -3,6 +3,8 @@ import { utils } from 'ethers'
 import JSBI from 'jsbi'
 import { getBalance } from './tokenBalanceList'
 import clientWrapper from '../client'
+import { PETHContract } from '../contracts/PETHContract'
+import { getTokenByUnit } from '../constants/tokens'
 
 export const WITHDRAW_PROGRESS = {
   INPUT: 'INPUT',
@@ -50,11 +52,22 @@ export const completeWithdrawal = () => {
     const exitList = await client.getPendingWithdrawals()
     exitList.map(async exit => {
       try {
-        console.log(exit)
         await client.completeWithdrawal(exit)
+        // TODO: must wait until that tx is included
+        const peth = getTokenByUnit('ETH')
+        if (
+          peth.depositContractAddress.toLowerCase() ===
+          exit.stateUpdate.depositContractAddress.data
+        ) {
+          const contract = new PETHContract(
+            peth.tokenContractAddress,
+            client.wallet.provider.getSigner()
+          )
+          await contract.unwrap(exit.stateUpdate.amount)
+        }
         dispatch({
           type: `NOTIFY_FINALIZE_EXIT`,
-          payload: exit.id.intoHexString()
+          payload: exit.id.toHexString()
         })
       } catch (e) {
         // @NOTE: 'Exit property is not decidable' is fine
