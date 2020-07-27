@@ -56,18 +56,18 @@ export const completeWithdrawal = () => {
         // TODO: must wait until that tx is included
         const peth = getTokenByUnit('ETH')
         if (
-          peth.depositContractAddress ===
+          peth.depositContractAddress.toLowerCase() ===
           exit.stateUpdate.depositContractAddress.data
         ) {
           const contract = new PETHContract(
             peth.tokenContractAddress,
-            client.wallet.getEthersWallet()
+            client.wallet.provider.getSigner()
           )
           await contract.unwrap(exit.stateUpdate.amount)
         }
         dispatch({
           type: `NOTIFY_FINALIZE_EXIT`,
-          payload: exit.id.intoHexString()
+          payload: exit.id.toHexString()
         })
       } catch (e) {
         // @NOTE: 'Exit property is not decidable' is fine
