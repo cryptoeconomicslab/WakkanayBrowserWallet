@@ -26,7 +26,8 @@ export const getTransactionHistories = () => {
           message: history.type,
           amount: formatEther(history.amount.toString()),
           unit: getTokenByTokenContractAddress(history.tokenAddress).unit,
-          blockNumber: history.blockNumber.toString()
+          blockNumber: history.blockNumber.toString(),
+          counterParty: history.counterParty
         }
       })
       dispatch(setHistoryList(histories))
