@@ -1,7 +1,8 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import { utils } from 'ethers'
 import JSBI from 'jsbi'
-import { getBalance } from './tokenBalanceList'
+import { getBalance, getL1Balance } from './tokenBalanceList'
+import { getTransactionHistories } from './transaction_history'
 import clientWrapper from '../client'
 import { PETHContract } from '../contracts/PETHContract'
 import { getTokenByUnit } from '../constants/tokens'
@@ -39,6 +40,8 @@ export const withdraw = (amount, tokenContractAddress) => {
       await client.startWithdrawal(amountWei, tokenContractAddress)
       dispatch(setWithdrawProgress(WITHDRAW_PROGRESS.COMPLETE))
       dispatch(getBalance())
+      dispatch(getL1Balance())
+      dispatch(getTransactionHistories())
     } catch (error) {
       console.log(error)
     }

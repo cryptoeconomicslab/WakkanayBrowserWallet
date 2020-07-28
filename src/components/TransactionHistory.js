@@ -1,8 +1,10 @@
 import { connect } from 'react-redux'
 import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
+import Button from './Base/Button'
 import { SUBTEXT } from '../constants/colors'
 import { FZ_SMALL, FW_BOLD, FZ_MEDIUM } from '../constants/fonts'
 import { getTransactionHistories } from '../store/transaction_history'
+import { completeWithdrawal } from '../store/withdraw'
 import { shortenAddress } from '../utils'
 
 const Message = ({ message, counterParty }) => {
@@ -10,6 +12,32 @@ const Message = ({ message, counterParty }) => {
     return <>{`${message} to ${shortenAddress(counterParty)}`}</>
   } else if (message === ActionType.Receive) {
     return <>{`${message} from ${shortenAddress(counterParty)}`}</>
+  } else if (message === ActionType.Exit) {
+    return (
+      <>
+        <div className="exitWrapper">
+          {message}
+          {/* TODO: how to get ExitID */}
+          <Button
+            size="tiny"
+            disable="false"
+            onClick={() => {
+              console.log('not implemented yet.')
+            }}
+          >
+            Complete
+          </Button>
+          <style jsx>{`
+            .exitWrapper {
+              display: flex;
+            }
+            :global(.button) {
+              margin-left: 4px;
+            }
+          `}</style>
+        </div>
+      </>
+    )
   } else {
     return <>{message}</>
   }
