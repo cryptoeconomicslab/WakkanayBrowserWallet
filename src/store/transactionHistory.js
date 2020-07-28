@@ -2,7 +2,7 @@ import { formatEther } from 'ethers/utils'
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import clientWrapper from '../client'
 import { getTokenByTokenContractAddress } from '../constants/tokens'
-import { pushError } from './error'
+import { pushToast } from './toast'
 
 export const TRANSACTION_HISTORY_PROGRESS = {
   UNLOADED: 'UNLOADED',
@@ -49,7 +49,12 @@ export const getTransactionHistories = () => {
     } catch (e) {
       console.error(e)
       dispatch(setHistoryListStatus(TRANSACTION_HISTORY_PROGRESS.ERROR))
-      dispatch(pushError('Get your transaction history failed.'))
+      dispatch(
+        pushToast({
+          message: 'Get your transaction history failed.',
+          type: 'error'
+        })
+      )
     }
   }
 }

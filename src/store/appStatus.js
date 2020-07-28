@@ -5,7 +5,7 @@ import clientWrapper from '../client'
 import { PETHContract } from '../contracts/PETHContract'
 import { getTokenByUnit } from '../constants/tokens'
 import { getAddress } from './address'
-import { pushError } from './error'
+import { pushToast } from './toast'
 import { getEthUsdRate } from './ethUsdRate'
 import { getL1Balance } from './l1Balance'
 import { getL2Balance } from './l2Balance'
@@ -69,7 +69,7 @@ export const checkClientInitialized = () => {
       }
     } catch (e) {
       console.error(e)
-      dispatch(pushError(e.message))
+      dispatch(pushToast({ message: e.message, type: 'error' }))
       dispatch(setAppStatus(APP_STATUS.ERROR))
     }
   }
@@ -87,7 +87,7 @@ export const initializeClient = privateKey => {
       dispatch(subscribeEvents())
     } catch (e) {
       console.error(e)
-      dispatch(pushError(e.message))
+      dispatch(pushToast({ message: e.message, type: 'error' }))
       dispatch(setAppStatus(APP_STATUS.ERROR))
     }
   }
@@ -103,7 +103,7 @@ export const initializeMetamaskWallet = () => {
       dispatch(setAppStatus(APP_STATUS.LOADED))
     } catch (e) {
       console.error(e)
-      dispatch(pushError(e.message))
+      dispatch(pushToast({ message: e.message, type: 'error' }))
       dispatch(setAppStatus(APP_STATUS.ERROR))
     }
   }
@@ -130,7 +130,7 @@ export const initializeMetamaskSnapWallet = () => {
       dispatch(setAppStatus(APP_STATUS.LOADED))
     } catch (e) {
       console.error(e)
-      dispatch(pushError(e.message))
+      dispatch(pushToast({ message: e.message, type: 'error' }))
       dispatch(setAppStatus(APP_STATUS.ERROR))
     }
   }
@@ -146,7 +146,7 @@ export const initializeWalletConnect = () => {
       dispatch(setAppStatus(APP_STATUS.LOADED))
     } catch (e) {
       console.error(e)
-      dispatch(pushError(e.message))
+      dispatch(pushToast({ message: e.message, type: 'error' }))
       dispatch(setAppStatus(APP_STATUS.ERROR))
     }
   }
@@ -163,7 +163,7 @@ export const initializeMagicLinkWallet = email => {
       dispatch(setAppStatus(APP_STATUS.LOADED))
     } catch (e) {
       console.error(e)
-      dispatch(pushError(e.message))
+      dispatch(pushToast({ message: e.message, type: 'error' }))
       dispatch(setAppStatus(APP_STATUS.ERROR))
     }
   }

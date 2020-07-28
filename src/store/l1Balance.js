@@ -3,7 +3,7 @@ import { createAction, createReducer } from '@reduxjs/toolkit'
 import { formatUnits } from 'ethers/utils'
 import clientWrapper from '../client'
 import { TOKEN_LIST } from '../constants/tokens'
-import { pushError } from './error'
+import { pushToast } from './toast'
 import { roundBalance } from '../utils'
 
 export const L1_BALANCE_PROGRESS = {
@@ -60,7 +60,9 @@ export const getL1Balance = () => {
     } catch (e) {
       console.error(e)
       dispatch(setL1BalanceStatus(L1_BALANCE_PROGRESS.ERROR))
-      dispatch(pushError('Get your L1 balance failed.'))
+      dispatch(
+        pushToast({ message: 'Get your L1 balance failed.', type: 'error' })
+      )
     }
   }
 }

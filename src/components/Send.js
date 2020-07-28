@@ -10,12 +10,11 @@ import {
   setRecepientAddress,
   transfer
 } from '../store/transfer'
-import { MAIN, SECTION_BACKGROUND } from '../constants/colors'
+import { SECTION_BACKGROUND } from '../constants/colors'
 import { getTokenByTokenContractAddress, TOKEN_LIST } from '../constants/tokens'
 import { TokenSelector } from './TokenSelector'
 import AddressInput from './AddressInput'
 import Button from './Base/Button'
-import Message from './Base/Message'
 import { SectionTitle } from './SectionTitle'
 import TokenInput from './TokenInput'
 
@@ -63,9 +62,6 @@ const Send = props => {
       >
         Send
       </Button>
-      {props.transferPage === 'completion-page' && (
-        <Message color={MAIN}>Transfer Success!</Message>
-      )}
 
       <style jsx>{`
         .send-section {

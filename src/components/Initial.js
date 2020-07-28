@@ -40,7 +40,7 @@ import {
 } from '../selectors/totalBalanceSelectors'
 import { pushRouteHistory, popRouteHistory } from '../store/appRouter'
 import { APP_STATUS, checkClientInitialized } from '../store/appStatus'
-import { removeError } from '../store/error'
+import { removeToast } from '../store/toast'
 import { useReactToast } from '../hooks'
 
 const Initial = ({
@@ -49,14 +49,14 @@ const Initial = ({
   popRouteHistory,
   appStatus,
   address,
-  errors,
-  removeError,
+  toasts,
+  removeToast,
   l1TotalBalance,
   l2TotalBalance,
   children
 }) => {
   const router = useRouter()
-  useReactToast({ toasts: errors, onDisappearToast: removeError })
+  useReactToast({ toasts: toasts, onDisappearToast: removeToast })
   const isWalletHidden =
     router.pathname === WALLET || router.pathname === HISTORY
   // const isTabShownHidden =
@@ -255,7 +255,7 @@ const Initial = ({
 const mapStateToProps = state => ({
   address: state.address,
   appStatus: state.appStatus,
-  errors: state.errorState.errors,
+  toasts: state.toastState.toasts,
   l1TotalBalance: getL1TotalBalance(state),
   l2TotalBalance: getL2TotalBalance(state)
 })
@@ -264,7 +264,7 @@ const mapDispatchToProps = {
   checkClientInitialized,
   pushRouteHistory,
   popRouteHistory,
-  removeError
+  removeToast
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Initial)

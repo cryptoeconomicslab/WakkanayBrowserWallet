@@ -4,7 +4,7 @@ import { utils } from 'ethers'
 import JSBI from 'jsbi'
 import clientWrapper from '../client'
 import { config } from '../config'
-import { pushError } from './error'
+import { pushToast } from './toast'
 
 export const TRANSFER_PROGRESS = {
   INITIAL: 'INITIAL',
@@ -68,10 +68,11 @@ export const transfer = (amount, tokenContractAddress, recipientAddress) => {
       dispatch(clearTransferState())
       dispatch(setTransferPage('completion-page'))
       dispatch(setTransferStatus(TRANSFER_PROGRESS.COMPLETE))
+      dispatch(pushToast({ message: 'Transfer success.', type: 'info' }))
     } catch (e) {
       console.error(e)
       dispatch(setTransferStatus(TRANSFER_PROGRESS.ERROR))
-      dispatch(pushError('Transfer failed.'))
+      dispatch(pushToast({ message: 'Transfer failed.', type: 'error' }))
     }
   }
 }
