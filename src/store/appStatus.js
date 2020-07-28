@@ -2,8 +2,6 @@ import { createAction, createReducer } from '@reduxjs/toolkit'
 import { EthCoder } from '@cryptoeconomicslab/eth-coder'
 import { setupContext } from '@cryptoeconomicslab/context'
 import clientWrapper from '../client'
-import { PETHContract } from '../contracts/PETHContract'
-import { getTokenByUnit } from '../constants/tokens'
 import { getAddress } from './address'
 import { pushToast } from './toast'
 import { getEthUsdRate } from './ethUsdRate'
@@ -208,22 +206,6 @@ export const subscribeEvents = () => async dispatch => {
 
   client.subscribeExitFinalized(async exitId => {
     console.info(`exit finalized for exit: ${exitId.toHexString()}`)
-    const exitList = await client.getPendingWithdrawals()
-    const exit = exitList.find(exit => exit.id === exitId)
-    const peth = getTokenByUnit('ETH')
-    if (
-      peth !== undefined &&
-      exit !== undefined &&
-      peth.depositContractAddress ===
-        exit.stateUpdate.depositContractAddress.data
-    ) {
-      const contract = new PETHContract(
-        peth.tokenContractAddress,
-        client.wallet.getEthersWallet()
-      )
-      await contract.unwrap(exit.stateUpdate.amount)
-      console.info(`unwrapped PETH: ${exit.stateUpdate.amount}`)
-    }
     dispatch(getL1Balance())
     dispatch(getL2Balance())
     dispatch(getTransactionHistories())
