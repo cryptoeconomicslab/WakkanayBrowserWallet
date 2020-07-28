@@ -7,7 +7,6 @@ import { HISTORY, PAYMENT } from '../routes'
 
 const Header = ({ appRouter, appStatus }) => {
   const router = useRouter()
-
   const LinkWrap = ({ children }) =>
     appRouter.routeHistory.length < 2 ? (
       <Link href={PAYMENT} passHref>
@@ -22,6 +21,7 @@ const Header = ({ appRouter, appStatus }) => {
         {children}
       </span>
     )
+  const mockFinalizableExitCount = 3
 
   return (
     <div className="header">
@@ -41,6 +41,10 @@ const Header = ({ appRouter, appStatus }) => {
                   className="historyButton__img"
                 />
                 <span className="historyButton__txt">History</span>
+                {/* TODO: update state */}
+                <span className="historyButton__badge">
+                  {mockFinalizableExitCount}
+                </span>
               </a>
             </Link>
           )}
@@ -109,6 +113,13 @@ const Header = ({ appRouter, appStatus }) => {
         }
         .historyButton__txt {
           font-size: ${FZ_MEDIUM};
+        }
+        .historyButton__badge {
+          padding: 0 6px;
+          color: ${White()};
+          background: ${MAIN};
+          border-radius: 4px;
+          margin-left: 6px;
         }
       `}</style>
     </div>
