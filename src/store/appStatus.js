@@ -257,22 +257,6 @@ export const subscribeTransferCompleteEvent = async (dispatch, client) => {
 export const subscribeExitFinalizedEvent = async (dispatch, client) => {
   client.subscribeExitFinalized(async exitId => {
     console.info(`exit finalized for exit: ${exitId.toHexString()}`)
-    const exitList = await client.getPendingWithdrawals()
-    const exit = exitList.find(exit => exit.id === exitId)
-    const peth = getTokenByUnit('ETH')
-    if (
-      peth !== undefined &&
-      exit !== undefined &&
-      peth.depositContractAddress ===
-        exit.stateUpdate.depositContractAddress.data
-    ) {
-      const contract = new PETHContract(
-        peth.tokenContractAddress,
-        client.wallet.getEthersWallet()
-      )
-      await contract.unwrap(exit.stateUpdate.amount)
-      console.info(`unwrapped PETH: ${exit.stateUpdate.amount}`)
-    }
     dispatch(getL1Balance())
     dispatch(getL2Balance())
     dispatch(getTransactionHistories())
