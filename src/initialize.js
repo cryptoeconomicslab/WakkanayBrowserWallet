@@ -16,7 +16,6 @@ import {
   AdjudicationContract,
   OwnershipPayoutContract
 } from '@cryptoeconomicslab/eth-contract'
-import { PETHContract } from './contracts/PETHContract'
 import { WALLET_KIND } from './wallet'
 import * as Sentry from '@sentry/browser'
 if (process.env.SENTRY_ENDPOINT) {
@@ -27,7 +26,7 @@ if (process.env.SENTRY_ENDPOINT) {
 
 function getProvider(network) {
   if (network === 'local') {
-    return new ethers.providers.JsonRpcProvider(process.env.MAIN_CHAIN_HOST)
+    return new ethers.providers.JsonRpcProvider(process.env.MAIN_CHAIN_URL)
   } else if (network === 'kovan') {
     return new ethers.getDefaultProvider('kovan')
   }
@@ -66,8 +65,8 @@ async function instantiate(walletParams) {
     throw new Error(`gazelle-wallet doesn't support ${kind}`)
   }
 
-  const mainChainEnv = process.env.MAIN_CHAIN_ENV || 'local'
-  const config = await import(`../config.${mainChainEnv}`)
+  const ethNetwork = process.env.ETH_NETWORK || 'local'
+  const config = await import(`../config.${ethNetwork}`)
   const address = wallet.getAddress()
   const kvs = new IndexedDbKeyValueStore(
     Bytes.fromString('wallet_' + address.data)
@@ -107,7 +106,7 @@ async function instantiate(walletParams) {
     commitmentContract,
     ownershipPayoutContract,
     deciderConfig: config,
-    aggregatorEndpoint: process.env.AGGREGATOR_HOST
+    aggregatorEndpoint: process.env.AGGREGATOR_URL
   })
 
   // register Peth
