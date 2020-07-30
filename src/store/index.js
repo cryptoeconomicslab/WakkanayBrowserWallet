@@ -14,6 +14,7 @@ import { appStatusReducer } from './appStatus'
 import { appRouterReducer } from './appRouter'
 import { exchangeReducer } from './exchange'
 import { errorReducer } from './error'
+import { pendingExitListReducer } from './pendingExitList'
 
 const reducer = combineReducers({
   address: addressReducer,
@@ -27,7 +28,8 @@ const reducer = combineReducers({
   appStatus: appStatusReducer,
   appRouter: appRouterReducer,
   exchangeState: exchangeReducer,
-  errorState: errorReducer
+  errorState: errorReducer,
+  pendingExitList: pendingExitListReducer
 })
 
 export const initStore = initialState => {

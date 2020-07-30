@@ -2,12 +2,10 @@ import { createAction, createReducer } from '@reduxjs/toolkit'
 import { EthCoder } from '@cryptoeconomicslab/eth-coder'
 import { setupContext } from '@cryptoeconomicslab/context'
 import clientWrapper from '../client'
-import { PETHContract } from '../contracts/PETHContract'
-import { getTokenByUnit } from '../constants/tokens'
 import { getAddress } from './address'
+import { getPendingExitList } from './pendingExitList'
 import { getTransactionHistories } from './transaction_history'
 import { getL1Balance, getBalance, getETHtoUSD } from './tokenBalanceList'
-import { autoCompleteWithdrawal } from './withdraw'
 import { WALLET_KIND } from '../wallet'
 
 const APP_STATUS = {
@@ -38,6 +36,7 @@ const initialGetters = dispatch => {
   dispatch(getAddress())
   dispatch(getETHtoUSD()) // get the latest ETH price, returned value's unit is USD/ETH
   dispatch(getTransactionHistories())
+  dispatch(getPendingExitList())
 }
 
 export const checkClientInitialized = () => {
@@ -187,6 +186,7 @@ export const subscribeEvents = () => async dispatch => {
     dispatch(getBalance())
     dispatch(getL1Balance())
     dispatch(getTransactionHistories())
+    dispatch(getPendingExitList())
   })
 
   client.subscribeSyncFinished(blockNumber => {
@@ -194,6 +194,7 @@ export const subscribeEvents = () => async dispatch => {
     dispatch(getBalance())
     dispatch(getL1Balance())
     dispatch(getTransactionHistories())
+    dispatch(getPendingExitList())
   })
 
   client.subscribeTransferComplete(stateUpdate => {
@@ -205,6 +206,7 @@ export const subscribeEvents = () => async dispatch => {
     dispatch(getBalance())
     dispatch(getL1Balance())
     dispatch(getTransactionHistories())
+    dispatch(getPendingExitList())
   })
 
   client.subscribeExitFinalized(async exitId => {
@@ -212,7 +214,6 @@ export const subscribeEvents = () => async dispatch => {
     dispatch(getBalance())
     dispatch(getL1Balance())
     dispatch(getTransactionHistories())
+    dispatch(getPendingExitList())
   })
-
-  autoCompleteWithdrawal(dispatch)
 }

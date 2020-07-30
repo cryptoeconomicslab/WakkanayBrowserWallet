@@ -1,72 +1,33 @@
 import { connect } from 'react-redux'
-import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
-import Button from './Base/Button'
+import TransactionHistoryMessage from './TransactionHistoryMessage'
 import { SUBTEXT } from '../constants/colors'
 import { FZ_SMALL, FW_BOLD, FZ_MEDIUM } from '../constants/fonts'
-import { getTransactionHistories } from '../store/transaction_history'
-import { completeWithdrawal } from '../store/withdraw'
-import { shortenAddress } from '../utils'
 
-const Message = ({ message, counterParty }) => {
-  if (message === ActionType.Send) {
-    return <>{`${message} to ${shortenAddress(counterParty)}`}</>
-  } else if (message === ActionType.Receive) {
-    return <>{`${message} from ${shortenAddress(counterParty)}`}</>
-  } else if (message === ActionType.Exit) {
-    return (
-      <>
-        <div className="exitWrapper">
-          {message}
-          {/* TODO: how to get ExitID */}
-          <Button
-            size="tiny"
-            disable="false"
-            onClick={() => {
-              console.log('not implemented yet.')
-            }}
-          >
-            Complete
-          </Button>
-          <style jsx>{`
-            .exitWrapper {
-              display: flex;
-            }
-            :global(.button) {
-              margin-left: 4px;
-            }
-          `}</style>
-        </div>
-      </>
-    )
-  } else {
-    return <>{message}</>
-  }
-}
-
-const TransactionHistory = ({ historyList }) => {
+const TransactionHistory = ({ pendingExitList, historyList }) => {
   return (
     <ul>
-      {historyList.map(
-        ({ message, amount, unit, blockNumber, counterParty }, i) => (
-          <li
-            className="transaction"
-            key={`${i}-${message}-${amount}-${unit}-${blockNumber}-${counterParty}`}
-          >
-            <div className="transaction__item transaction__item--icon">
-              <img src={`/icon-${message}.svg`} />
-            </div>
-            <div className="transaction__item transaction__item--amount">
-              {amount} {unit}
-            </div>
-            <div className="transaction__item transaction__item--type">
-              <Message message={message} counterParty={counterParty} />
-            </div>
-            <div className="transaction__item transaction__item--time">
-              at {blockNumber} block
-            </div>
-          </li>
-        )
-      )}
+      {historyList.map((history, i) => (
+        <li
+          className="transaction"
+          key={`${i}-${history.message}-${history.amount}-${history.unit}-${history.blockNumber}-${history.counterParty}`}
+        >
+          <div className="transaction__item transaction__item--icon">
+            <img src={`/icon-${history.message}.svg`} />
+          </div>
+          <div className="transaction__item transaction__item--amount">
+            {history.amount} {history.unit}
+          </div>
+          <div className="transaction__item transaction__item--message">
+            <TransactionHistoryMessage
+              pendingExitList={pendingExitList}
+              history={history}
+            />
+          </div>
+          <div className="transaction__item transaction__item--time">
+            at {history.blockNumber} block
+          </div>
+        </li>
+      ))}
       <style jsx>{`
         .transaction {
           list-style-type: none;
@@ -107,12 +68,8 @@ const TransactionHistory = ({ historyList }) => {
   )
 }
 
-const mapStateToProps = ({ history }) => ({
+const mapStateToProps = ({ pendingExitList, history }) => ({
+  pendingExitList: pendingExitList.items,
   historyList: history.historyList
 })
-
-const mapDispatchToProps = {
-  getTransactionHistories
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(TransactionHistory)
+export default connect(mapStateToProps)(TransactionHistory)

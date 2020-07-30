@@ -48,43 +48,37 @@ export const withdraw = (amount, tokenContractAddress) => {
   }
 }
 
-export const completeWithdrawal = () => {
+export const completeWithdrawal = exit => {
   return async dispatch => {
     const client = await clientWrapper.getClient()
     if (!client) return
-    const exitList = await client.getPendingWithdrawals()
-    exitList.map(async exit => {
-      try {
-        await client.completeWithdrawal(exit)
-        // TODO: must wait until that tx is included
-        const peth = getTokenByUnit('ETH')
-        if (
-          peth.depositContractAddress.toLowerCase() ===
-          exit.stateUpdate.depositContractAddress.data
-        ) {
-          const contract = new PETHContract(
-            peth.tokenContractAddress,
-            client.wallet.provider.getSigner()
-          )
-          await contract.unwrap(exit.stateUpdate.amount)
-        }
-        dispatch({
-          type: `NOTIFY_FINALIZE_EXIT`,
-          payload: exit.id.toHexString()
-        })
-      } catch (e) {
-        // @NOTE: 'Exit property is not decidable' is fine
-        if (e.message === 'Exit property is not decidable') return
-        console.error(e)
-        return
+    try {
+      await client.completeWithdrawal(exit)
+      // TODO: must wait until that tx is included
+      const peth = getTokenByUnit('ETH')
+      if (
+        peth.depositContractAddress.toLowerCase() ===
+        exit.stateUpdate.depositContractAddress.data
+      ) {
+        const contract = new PETHContract(
+          peth.tokenContractAddress,
+          client.wallet.provider.getSigner()
+        )
+        await contract.unwrap(exit.stateUpdate.amount)
       }
-    })
-  }
-}
-export const sleep = msec => new Promise(resolve => setTimeout(resolve, msec))
+      dispatch({
+        type: `NOTIFY_FINALIZE_EXIT`,
+        payload: exit.id.toHexString()
+      })
+    } catch (e) {
+      // @NOTE: 'Exit property is not decidable' is fine
+      if (e.message === 'Exit property is not decidable') return
+      console.error(e)
 
-export const autoCompleteWithdrawal = async dispatch => {
-  await sleep(20000)
-  dispatch(completeWithdrawal())
-  return await autoCompleteWithdrawal(dispatch)
+      // TODO: add toast after merge #154
+      // dispatch(
+      //   pushToast({ message: e.message, type: 'error' })
+      // )
+    }
+  }
 }
