@@ -17,10 +17,10 @@ const WithdrawModal = ({ withdraw, progress, setProgress, balanceList }) => {
 
 const mapStateToProps = ({
   l2Balance: { balanceList },
-  withdrawState: { withdrawProgress }
+  withdrawState: { status }
 }) => ({
   balanceList,
-  progress: withdrawProgress
+  progress: status
 })
 const mapDispatchToProps = {
   withdraw,

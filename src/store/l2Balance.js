@@ -14,11 +14,13 @@ export const L2_BALANCE_PROGRESS = {
 
 export const setL2Balance = createAction('SET_L2_BALANCE')
 export const setL2BalanceStatus = createAction('SET_L2_BALANCE_STATUS')
+export const setL2BalanceError = createAction('SET_L2_BALANCE_ERROR')
 
 export const l2BalanceReducer = createReducer(
   {
     balanceList: {},
-    status: L2_BALANCE_PROGRESS.UNLOADED
+    status: L2_BALANCE_PROGRESS.UNLOADED,
+    error: null
   },
   {
     [setL2Balance]: (state, action) => {
@@ -27,6 +29,10 @@ export const l2BalanceReducer = createReducer(
     },
     [setL2BalanceStatus]: (state, action) => {
       state.status = action.payload
+    },
+    [setL2BalanceError]: (state, action) => {
+      state.error = action.payload
+      state.status = L2_BALANCE_PROGRESS.ERROR
     }
   }
 )
@@ -53,7 +59,7 @@ export const getL2Balance = () => {
       dispatch(setL2Balance(formatedBalanceList))
     } catch (e) {
       console.error(e)
-      dispatch(setL2BalanceStatus(L2_BALANCE_PROGRESS.ERROR))
+      dispatch(setL2BalanceError(e))
       dispatch(
         pushToast({ message: 'Get your L2 balance failed.', type: 'error' })
       )

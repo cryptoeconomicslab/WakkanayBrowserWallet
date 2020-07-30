@@ -19,12 +19,17 @@ export const APP_STATUS = {
 }
 
 export const setAppStatus = createAction('SET_APP_STATUS')
+export const setAppError = createAction('SET_APP_ERROR')
 
 export const appStatusReducer = createReducer(
-  { status: APP_STATUS.INITIAL },
+  { status: APP_STATUS.INITIAL, error: null },
   {
     [setAppStatus]: (state, action) => {
       state.status = action.payload
+    },
+    [setAppError]: (state, action) => {
+      state.error = action.payload
+      state.status = APP_STATUS.ERROR
     }
   }
 )
@@ -68,7 +73,7 @@ export const checkClientInitialized = () => {
     } catch (e) {
       console.error(e)
       dispatch(pushToast({ message: e.message, type: 'error' }))
-      dispatch(setAppStatus(APP_STATUS.ERROR))
+      dispatch(setAppError(e))
     }
   }
 }
@@ -86,7 +91,7 @@ export const initializeClient = privateKey => {
     } catch (e) {
       console.error(e)
       dispatch(pushToast({ message: e.message, type: 'error' }))
-      dispatch(setAppStatus(APP_STATUS.ERROR))
+      dispatch(setAppError(e))
     }
   }
 }
@@ -102,7 +107,7 @@ export const initializeMetamaskWallet = () => {
     } catch (e) {
       console.error(e)
       dispatch(pushToast({ message: e.message, type: 'error' }))
-      dispatch(setAppStatus(APP_STATUS.ERROR))
+      dispatch(setAppError(e))
     }
   }
 }
@@ -129,7 +134,7 @@ export const initializeMetamaskSnapWallet = () => {
     } catch (e) {
       console.error(e)
       dispatch(pushToast({ message: e.message, type: 'error' }))
-      dispatch(setAppStatus(APP_STATUS.ERROR))
+      dispatch(setAppError(e))
     }
   }
 }
@@ -145,7 +150,7 @@ export const initializeWalletConnect = () => {
     } catch (e) {
       console.error(e)
       dispatch(pushToast({ message: e.message, type: 'error' }))
-      dispatch(setAppStatus(APP_STATUS.ERROR))
+      dispatch(setAppError(e))
     }
   }
 }
@@ -162,7 +167,7 @@ export const initializeMagicLinkWallet = email => {
     } catch (e) {
       console.error(e)
       dispatch(pushToast({ message: e.message, type: 'error' }))
-      dispatch(setAppStatus(APP_STATUS.ERROR))
+      dispatch(setAppError(e))
     }
   }
 }

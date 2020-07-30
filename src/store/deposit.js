@@ -13,14 +13,20 @@ export const DEPOSIT_PROGRESS = {
 }
 
 export const setDepositProgress = createAction('SET_DEPOSIT_PROGRESS')
+export const setDepositError = createAction('SET_DEPOSIT_ERROR')
 
 export const depositReducer = createReducer(
   {
-    depositProgress: DEPOSIT_PROGRESS.INPUT
+    depositProgress: DEPOSIT_PROGRESS.INPUT,
+    error: null
   },
   {
     [setDepositProgress]: (state, action) => {
       state.depositProgress = action.payload
+    },
+    [setDepositError]: (state, action) => {
+      state.error = action.payload
+      state.status = DEPOSIT_PROGRESS.ERROR
     }
   }
 )
@@ -47,9 +53,9 @@ export const deposit = (amount, addr) => {
       }
       await client.deposit(amountWei, addr)
       dispatch(setDepositProgress(DEPOSIT_PROGRESS.COMPLETE))
-    } catch (error) {
-      console.error(error)
-      dispatch(setDepositProgress(DEPOSIT_PROGRESS.ERROR))
+    } catch (e) {
+      console.error(e)
+      dispatch(setDepositError(e))
     }
   }
 }
