@@ -31,16 +31,22 @@ export const SYNCING_STATUS = {
 export const setAppStatus = createAction('SET_APP_STATUS')
 export const setSyncingStatus = createAction('SET_SYNCING_STATUS')
 export const setSyncingBlockNumber = createAction('SET_SYNCING_BLOCK_NUMBER')
+export const setAppError = createAction('SET_APP_ERROR')
 
 export const appStatusReducer = createReducer(
   {
     status: APP_STATUS.UNLOADED,
+    error: null,
     syncingStatus: SYNCING_STATUS.LOADED,
     syncingBlockNumber: 0
   },
   {
     [setAppStatus]: (state, action) => {
       state.status = action.payload
+    },
+    [setAppError]: (state, action) => {
+      state.error = action.payload
+      state.status = APP_STATUS.ERROR
     },
     [setSyncingStatus]: (state, action) => {
       state.syncingStatus = action.payload
@@ -91,7 +97,7 @@ export const checkClientInitialized = () => {
     } catch (e) {
       console.error(e)
       dispatch(pushToast({ message: e.message, type: 'error' }))
-      dispatch(setAppStatus(APP_STATUS.ERROR))
+      dispatch(setAppError(e))
     }
   }
 }
@@ -110,7 +116,7 @@ export const initializeClient = privateKey => {
     } catch (e) {
       console.error(e)
       dispatch(pushToast({ message: e.message, type: 'error' }))
-      dispatch(setAppStatus(APP_STATUS.ERROR))
+      dispatch(setAppError(e))
     }
   }
 }
@@ -127,7 +133,7 @@ export const initializeMetamaskWallet = () => {
     } catch (e) {
       console.error(e)
       dispatch(pushToast({ message: e.message, type: 'error' }))
-      dispatch(setAppStatus(APP_STATUS.ERROR))
+      dispatch(setAppError(e))
     }
   }
 }
@@ -155,7 +161,7 @@ export const initializeMetamaskSnapWallet = () => {
     } catch (e) {
       console.error(e)
       dispatch(pushToast({ message: e.message, type: 'error' }))
-      dispatch(setAppStatus(APP_STATUS.ERROR))
+      dispatch(setAppError(e))
     }
   }
 }
@@ -172,7 +178,7 @@ export const initializeWalletConnect = () => {
     } catch (e) {
       console.error(e)
       dispatch(pushToast({ message: e.message, type: 'error' }))
-      dispatch(setAppStatus(APP_STATUS.ERROR))
+      dispatch(setAppError(e))
     }
   }
 }
@@ -190,7 +196,7 @@ export const initializeMagicLinkWallet = email => {
     } catch (e) {
       console.error(e)
       dispatch(pushToast({ message: e.message, type: 'error' }))
-      dispatch(setAppStatus(APP_STATUS.ERROR))
+      dispatch(setAppError(e))
     }
   }
 }

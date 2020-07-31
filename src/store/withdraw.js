@@ -14,14 +14,20 @@ export const WITHDRAW_PROGRESS = {
 }
 
 export const setWithdrawProgress = createAction('SET_WITHDRAW_PROGRESS')
+export const setWithdrawError = createAction('SET_WITHDRAW_ERROR')
 
 export const withdrawReducer = createReducer(
   {
-    withdrawProgress: WITHDRAW_PROGRESS.INPUT
+    status: WITHDRAW_PROGRESS.INPUT,
+    error: null
   },
   {
     [setWithdrawProgress]: (state, action) => {
-      state.withdrawProgress = action.payload
+      state.status = action.payload
+    },
+    [setWithdrawError]: (state, action) => {
+      state.error = action.payload
+      state.status = WITHDRAW_PROGRESS.ERROR
     }
   }
 )
@@ -40,9 +46,9 @@ export const withdraw = (amount, tokenContractAddress) => {
       await client.startWithdrawal(amountWei, tokenContractAddress)
       dispatch(setWithdrawProgress(WITHDRAW_PROGRESS.COMPLETE))
       dispatch(getL2Balance())
-    } catch (error) {
-      console.error(error)
-      dispatch(setWithdrawProgress(WITHDRAW_PROGRESS.ERROR))
+    } catch (e) {
+      console.error(e)
+      dispatch(setWithdrawError(e))
     }
   }
 }

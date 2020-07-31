@@ -14,11 +14,13 @@ export const ETH_USD_RATE_PROGRESS = {
 
 export const setEthUsdRate = createAction('SET_ETH_USD_RATE')
 export const setEthUsdRateStatus = createAction('SET_ETH_USD_RATE_STATUS')
+export const setEthUsdRateError = createAction('SET_ETH_USD_RATE_ERROR')
 
 export const ethUsdRateReducer = createReducer(
   {
     rate: 0,
-    status: ETH_USD_RATE_PROGRESS.UNLOADED
+    status: ETH_USD_RATE_PROGRESS.UNLOADED,
+    error: null
   },
   {
     [setEthUsdRate]: (state, action) => {
@@ -27,6 +29,10 @@ export const ethUsdRateReducer = createReducer(
     },
     [setEthUsdRateStatus]: (state, action) => {
       state.status = action.payload
+    },
+    [setEthUsdRateError]: (state, action) => {
+      state.error = action.payload
+      state.status = ETH_USD_RATE_PROGRESS.ERROR
     }
   }
 )
@@ -43,7 +49,7 @@ export const getEthUsdRate = () => {
       }
     } catch (e) {
       console.error(e)
-      dispatch(setEthUsdRateStatus(ETH_USD_RATE_PROGRESS.ERROR))
+      dispatch(setEthUsdRateError(e))
       dispatch(
         pushToast({ message: 'Get ETH-USD rate failed.', type: 'error' })
       )

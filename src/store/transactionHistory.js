@@ -13,11 +13,13 @@ export const TRANSACTION_HISTORY_PROGRESS = {
 
 export const setHistoryList = createAction('SET_HISTORY_LIST')
 export const setHistoryListStatus = createAction('SET_HISTORY_LIST_STATUS')
+export const setHistoryListError = createAction('SET_HISTORY_LIST_ERROR')
 
 export const historyReducer = createReducer(
   {
     historyList: [],
-    status: TRANSACTION_HISTORY_PROGRESS.UNLOADED
+    status: TRANSACTION_HISTORY_PROGRESS.UNLOADED,
+    error: null
   },
   {
     [setHistoryList]: (state, action) => {
@@ -26,6 +28,10 @@ export const historyReducer = createReducer(
     },
     [setHistoryListStatus]: (state, action) => {
       state.status = action.payload
+    },
+    [setHistoryListError]: (state, action) => {
+      state.error = action.payload
+      state.status = TRANSACTION_HISTORY_PROGRESS.ERROR
     }
   }
 )
@@ -48,7 +54,7 @@ export const getTransactionHistories = () => {
       dispatch(setHistoryList(histories))
     } catch (e) {
       console.error(e)
-      dispatch(setHistoryListStatus(TRANSACTION_HISTORY_PROGRESS.ERROR))
+      dispatch(setHistoryListError(e))
       dispatch(
         pushToast({
           message: 'Get your transaction history failed.',
