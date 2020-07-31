@@ -8,6 +8,6 @@ const getSyncingBlockNumber = state => state.appStatus.syncingBlockNumber
 export const getSyncProgress = createSelector(
   [getCurrentBlockNumber, getSyncingBlockNumber],
   (currentBlockNumber, syncingBlockNumber) => {
-    return roundBalance(syncingBlockNumber / currentBlockNumber) * 100
+    return roundBalance((syncingBlockNumber / currentBlockNumber) * 100)
   }
 )

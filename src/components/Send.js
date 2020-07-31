@@ -3,8 +3,8 @@ import { connect } from 'react-redux'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 library.add(faSignOutAlt)
+import { isAbleToTransfer } from '../selectors/transferSelector'
 import {
-  isAbleToSubmit,
   setTransferredToken,
   setTransferredAmount,
   setRecepientAddress,
@@ -58,7 +58,7 @@ const Send = props => {
             props.recepientAddress
           )
         }}
-        disabled={props.isAbleToSubmit}
+        disabled={props.isAbleToTransfer}
       >
         Send
       </Button>
@@ -79,7 +79,7 @@ const Send = props => {
 const mapStateToProps = state => ({
   address: state.address,
   l2Balance: state.l2Balance.balanceList,
-  isAbleToSubmit: isAbleToSubmit(state),
+  isAbleToTransfer: isAbleToTransfer(state),
   transferredToken: state.transferState.transferredToken,
   transferredAmount: state.transferState.transferredAmount,
   recepientAddress: state.transferState.recepientAddress,

@@ -20,6 +20,7 @@ import {
 
 function Wallet({
   address,
+  syncingStatus,
   l1Balance,
   l2Balance,
   l1TotalBalance,
@@ -60,6 +61,7 @@ function Wallet({
                   : 0
               }
               tokenContractAddress={tokenContractAddress}
+              syncingStatus={syncingStatus}
             />
           ))}
         </div>
@@ -110,6 +112,7 @@ function Wallet({
 
 const mapStateToProps = state => ({
   address: state.address,
+  syncingStatus: state.appStatus.syncingStatus,
   l1Balance: state.l1Balance,
   l2Balance: state.l2Balance,
   l1TotalBalance: getL1TotalBalance(state),

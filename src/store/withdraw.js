@@ -3,7 +3,7 @@ import { utils } from 'ethers'
 import JSBI from 'jsbi'
 import { getL2Balance } from './l2Balance'
 import clientWrapper from '../client'
-import { PETHContract } from '../contracts/PETHContract'
+import { PETHContract } from '../contracts/'
 import { getTokenByUnit } from '../constants/tokens'
 
 export const WITHDRAW_PROGRESS = {

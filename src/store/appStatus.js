@@ -3,8 +3,7 @@ import { EthCoder } from '@cryptoeconomicslab/eth-coder'
 import { setupContext } from '@cryptoeconomicslab/context'
 import clientWrapper from '../client'
 import { config } from '../config'
-import { CommitmentContract, PETHContract } from '../contracts'
-import { getTokenByUnit } from '../constants/tokens'
+import { CommitmentContract } from '../contracts'
 import { getAddress } from './address'
 import { pushToast } from './toast'
 import { getEthUsdRate } from './ethUsdRate'
@@ -44,7 +43,7 @@ export const appStatusReducer = createReducer(
       state.status = action.payload
     },
     [setSyncingStatus]: (state, action) => {
-      state.status = action.payload
+      state.syncingStatus = action.payload
     },
     [setSyncingBlockNumber]: (state, action) => {
       state.syncingBlockNumber = action.payload
