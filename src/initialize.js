@@ -93,7 +93,7 @@ async function instantiate(walletParams) {
   }
 
   const commitmentContract = new CommitmentContract(
-    Address.from(config.commitmentContract),
+    Address.from(config.commitment),
     eventDb,
     signer
   )
