@@ -1,7 +1,7 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import { utils } from 'ethers'
 import JSBI from 'jsbi'
-import { getBalance } from './tokenBalanceList'
+import { getL2Balance } from './l2Balance'
 import clientWrapper from '../client'
 import { PETHContract } from '../contracts/PETHContract'
 import { getTokenByUnit } from '../constants/tokens'
@@ -9,18 +9,25 @@ import { getTokenByUnit } from '../constants/tokens'
 export const WITHDRAW_PROGRESS = {
   INPUT: 'INPUT',
   CONFIRM: 'CONFIRM',
-  COMPLETE: 'COMPLETE'
+  COMPLETE: 'COMPLETE',
+  ERROR: 'ERROR'
 }
 
 export const setWithdrawProgress = createAction('SET_WITHDRAW_PROGRESS')
+export const setWithdrawError = createAction('SET_WITHDRAW_ERROR')
 
 export const withdrawReducer = createReducer(
   {
-    withdrawProgress: WITHDRAW_PROGRESS.INPUT
+    status: WITHDRAW_PROGRESS.INPUT,
+    error: null
   },
   {
     [setWithdrawProgress]: (state, action) => {
-      state.withdrawProgress = action.payload
+      state.status = action.payload
+    },
+    [setWithdrawError]: (state, action) => {
+      state.error = action.payload
+      state.status = WITHDRAW_PROGRESS.ERROR
     }
   }
 )
@@ -31,16 +38,17 @@ export const withdrawReducer = createReducer(
  * @param {*} tokenContractAddress token contract address of token
  */
 export const withdraw = (amount, tokenContractAddress) => {
-  const amountWei = JSBI.BigInt(utils.parseEther(amount).toString())
   return async dispatch => {
     try {
+      const amountWei = JSBI.BigInt(utils.parseEther(amount).toString())
       const client = await clientWrapper.getClient()
       if (!client) return
       await client.startWithdrawal(amountWei, tokenContractAddress)
       dispatch(setWithdrawProgress(WITHDRAW_PROGRESS.COMPLETE))
-      dispatch(getBalance())
-    } catch (error) {
-      console.log(error)
+      dispatch(getL2Balance())
+    } catch (e) {
+      console.error(e)
+      dispatch(setWithdrawError(e))
     }
   }
 }

@@ -34,13 +34,13 @@ import {
   // NFT_COLLECTIBLES,
   openModal
 } from '../routes'
-import { pushRouteHistory, popRouteHistory } from '../store/appRouter'
-import { checkClientInitialized } from '../store/appStatus'
 import {
   getL1TotalBalance,
-  getTokenTotalBalance
-} from '../store/tokenBalanceList'
-import { removeError } from '../store/error'
+  getL2TotalBalance
+} from '../selectors/totalBalanceSelectors'
+import { pushRouteHistory, popRouteHistory } from '../store/appRouter'
+import { APP_STATUS, checkClientInitialized } from '../store/appStatus'
+import { removeToast } from '../store/toast'
 import { useReactToast } from '../hooks'
 
 const Initial = ({
@@ -49,18 +49,18 @@ const Initial = ({
   popRouteHistory,
   appStatus,
   address,
-  errors,
-  removeError,
-  tokenTotalBalance,
+  toasts,
+  removeToast,
   l1TotalBalance,
+  l2TotalBalance,
   children
 }) => {
   const router = useRouter()
-  useReactToast({ toasts: errors, onDisappearToast: removeError })
+  useReactToast({ toasts: toasts, onDisappearToast: removeToast })
   const isWalletHidden =
     router.pathname === WALLET || router.pathname === HISTORY
   // const isTabShownHidden =
-  //   appStatus.status === 'loaded' &&
+  //   appStatus.status === APP_STATUS.LOADED &&
   //   (router.pathname === PAYMENT ||
   //     router.pathname === EXCHANGE ||
   //     router.pathname === NFT_COLLECTIBLES)
@@ -78,11 +78,12 @@ const Initial = ({
   }, [])
 
   const content =
-    appStatus.status === 'unloaded' || appStatus.status === 'error' ? (
+    appStatus.status === APP_STATUS.UNLOADED ||
+    appStatus.status === APP_STATUS.ERROR ? (
       <div>
         <StartupModal />
       </div>
-    ) : appStatus.status === 'loaded' ? (
+    ) : appStatus.status === APP_STATUS.LOADED ? (
       children
     ) : (
       <p>loading...</p>
@@ -104,11 +105,11 @@ const Initial = ({
         {!isWalletHidden && (
           <Box>
             <div className="wallet">
-              {appStatus.status !== 'loaded' ? (
+              {appStatus.status !== APP_STATUS.LOADED ? (
                 <span className="wallet__txt">No Wallet</span>
               ) : (
                 <Wallet
-                  l2={tokenTotalBalance}
+                  l2={l2TotalBalance}
                   mainchain={l1TotalBalance}
                   address={address}
                   onDeposit={() => {
@@ -125,13 +126,8 @@ const Initial = ({
         <Box>
           {/* {isTabShownHidden && <Tabs currentPath={router.pathname} />} */}
           {content}
-          {appStatus.status === 'error' && (
-            <div className="error">
-              {appStatus.error ? appStatus.error.message : 'Unexpected error'}
-            </div>
-          )}
         </Box>
-        {appStatus.status === 'loaded' && (
+        {appStatus.status === APP_STATUS.LOADED && (
           <div className="logoutButtonWrap">
             <a
               className="logoutButton"
@@ -258,18 +254,17 @@ const Initial = ({
 
 const mapStateToProps = state => ({
   address: state.address,
-  appRouter: state.appRouter,
   appStatus: state.appStatus,
-  errors: state.errorState.errors,
+  toasts: state.toastState.toasts,
   l1TotalBalance: getL1TotalBalance(state),
-  tokenTotalBalance: getTokenTotalBalance(state)
+  l2TotalBalance: getL2TotalBalance(state)
 })
 
 const mapDispatchToProps = {
   checkClientInitialized,
   pushRouteHistory,
   popRouteHistory,
-  removeError
+  removeToast
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Initial)

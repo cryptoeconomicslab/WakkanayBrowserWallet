@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
 import { SUBTEXT } from '../constants/colors'
 import { FZ_SMALL, FW_BOLD, FZ_MEDIUM } from '../constants/fonts'
-import { getTransactionHistories } from '../store/transaction_history'
+import { getTransactionHistories } from '../store/transactionHistory'
 import { shortenAddress } from '../utils'
 
 const Message = ({ message, counterParty }) => {

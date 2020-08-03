@@ -127,7 +127,8 @@ const Home = props => {
                     <div className="token-balance-number">{formatAmount}</div>
                     <hr className="line"></hr>
                     <div className="balance-in-usd">
-                      {roundBalance(props.ETHtoUSD * Number(formatAmount))} USD
+                      {roundBalance(props.ethUsdRate * Number(formatAmount))}{' '}
+                      USD
                     </div>
                   </div>
                   <div className="token-buttons-container">
@@ -529,8 +530,7 @@ const Home = props => {
 }
 
 const mapStateToProps = state => ({
-  tokenBalanceList: state.tokenBalance.tokenBalance,
-  ETHtoUSD: state.tokenBalance.ETHtoUSD,
+  ethUsdRate: state.ethUsdRate.rate,
   address: state.address,
   addressList: state.addressList,
   editedAddressListItem: state.editedAddressListItem
