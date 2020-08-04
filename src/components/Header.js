@@ -3,6 +3,7 @@ import { MAIN, Main, MAIN_DARK, White } from '../constants/colors'
 import { FW_NORMAL, FZ_MEDIUM } from '../constants/fonts'
 import { useRouter } from 'next/router'
 import { connect } from 'react-redux'
+import { APP_STATUS } from '../store/appStatus'
 import { HISTORY, PAYMENT } from '../routes'
 
 const Header = ({ appRouter, appStatus }) => {
@@ -32,7 +33,7 @@ const Header = ({ appRouter, appStatus }) => {
               <img src="/logo.svg" width="158" />
             </Link>
           </h1>
-          {appStatus.status === 'loaded' && (
+          {appStatus.status === APP_STATUS.LOADED && (
             <Link href={HISTORY} passHref>
               <a className="historyButton">
                 <img
@@ -48,7 +49,7 @@ const Header = ({ appRouter, appStatus }) => {
       ) : (
         <>
           <div />
-          {appStatus.status === 'loaded' && (
+          {appStatus.status === APP_STATUS.LOADED && (
             <LinkWrap>
               <a className="historyButton fill">
                 <img

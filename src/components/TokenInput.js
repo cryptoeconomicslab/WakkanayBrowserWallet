@@ -14,7 +14,7 @@ const TokenInput = props => {
     unit,
     handleAmount,
     /* redux */
-    ETHtoUSD
+    ethUsdRate
   } = props
   const [focused, setFocused] = useState(false)
 
@@ -46,7 +46,7 @@ const TokenInput = props => {
         />
         <div className="input__unit">{unit}</div>
         <div className="input__balance">
-          = {roundBalance(ETHtoUSD * (value || 0))} USD
+          = {roundBalance(ethUsdRate * (value || 0))} USD
         </div>
       </div>
       <style jsx>{`
@@ -77,7 +77,7 @@ const TokenInput = props => {
   )
 }
 
-const mapStateToProps = ({ tokenBalance }) => ({
-  ETHtoUSD: tokenBalance.ETHtoUSD
+const mapStateToProps = ({ ethUsdRate }) => ({
+  ethUsdRate: ethUsdRate.rate
 })
 export default connect(mapStateToProps)(TokenInput)
