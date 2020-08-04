@@ -6,6 +6,7 @@ export function findExit(exitList, blockNumber, range, depositContractAddress) {
     .filter(exit => exit.stateUpdate.blockNumber.raw === blockNumber.toString())
     .filter(
       exit =>
+        range &&
         exit.stateUpdate.range.start.raw === range.start &&
         exit.stateUpdate.range.end.raw === range.end
     )

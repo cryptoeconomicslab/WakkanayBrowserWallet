@@ -2,6 +2,7 @@ import { connect } from 'react-redux'
 import TransactionHistoryMessage from './TransactionHistoryMessage'
 import { SUBTEXT } from '../constants/colors'
 import { FZ_SMALL, FW_BOLD, FZ_MEDIUM } from '../constants/fonts'
+import TransactionHistoryIcon from './TransactionHistoryIcon'
 
 const TransactionHistory = ({ pendingExitList, historyList }) => {
   return (
@@ -12,7 +13,10 @@ const TransactionHistory = ({ pendingExitList, historyList }) => {
           key={`${i}-${history.message}-${history.amount}-${history.unit}-${history.blockNumber}-${history.counterParty}`}
         >
           <div className="transaction__item transaction__item--icon">
-            <img src={`/icon-${history.message}.svg`} />
+            <TransactionHistoryIcon
+              pendingExitList={pendingExitList}
+              history={history}
+            />
           </div>
           <div className="transaction__item transaction__item--amount">
             {history.amount} {history.unit}
@@ -38,7 +42,7 @@ const TransactionHistory = ({ pendingExitList, historyList }) => {
           font-weight: ${FW_BOLD};
         }
         .transaction + .transaction {
-          margin-top: 1rem;
+          margin-top: 0.5rem;
         }
         .transaction__item {
           flex: 1;
@@ -48,8 +52,10 @@ const TransactionHistory = ({ pendingExitList, historyList }) => {
         }
         .transaction__item--icon {
           flex: 0;
-          flex-basis: 2rem;
+          flex-basis: 3.25rem;
           text-align: left;
+          display: flex;
+          align-items: center;
         }
         .transaction__item--amount {
           flex: 0;
