@@ -86,10 +86,11 @@ export const completeWithdrawal = () => {
     })
   }
 }
-export const sleep = msec => new Promise(resolve => setTimeout(resolve, msec))
-
-export const autoCompleteWithdrawal = async dispatch => {
-  await sleep(20000)
-  dispatch(completeWithdrawal())
-  return await autoCompleteWithdrawal(dispatch)
+const sleep = msec => new Promise(resolve => setTimeout(resolve, msec))
+export const autoCompleteWithdrawal = () => {
+  return async dispatch => {
+    await sleep(20000)
+    dispatch(completeWithdrawal())
+    return await autoCompleteWithdrawal(dispatch)
+  }
 }

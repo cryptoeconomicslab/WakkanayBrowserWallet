@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import {
-  initializeClient,
   initializeMetamaskWallet,
   initializeMagicLinkWallet,
   initializeWalletConnect
@@ -79,7 +78,6 @@ const StartUpModal = props => {
 }
 
 const mapDispatchToProps = {
-  initializeClient,
   initializeMetamaskWallet,
   initializeMagicLinkWallet,
   initializeWalletConnect

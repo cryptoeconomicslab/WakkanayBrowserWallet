@@ -17,7 +17,7 @@ export default class CommitmentContract {
   /**
    * get current plasma block number
    */
-  async getCurrentBlock() {
+  async getCurrentBlockNumber() {
     const blockNumber = await this.connection.currentBlock()
     return blockNumber.toString()
   }
