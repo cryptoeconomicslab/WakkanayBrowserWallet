@@ -5,6 +5,7 @@ import Head from 'next/head'
 import Box from './Base/Box'
 import CircleProgress from './Base/CircleProgress'
 import { config } from '../config'
+import AttentionBox from './AttentionBox'
 import Header from './Header'
 import StartupModal from './StartupModal'
 // import { Tabs } from './Tabs'
@@ -106,6 +107,7 @@ const Initial = ({
       </Head>
       <Header />
       <div className="container">
+        <AttentionBox />
         <h2 className="headline">
           {router.pathname !== HISTORY ? 'Your Wallet' : 'Transaction History'}
         </h2>
