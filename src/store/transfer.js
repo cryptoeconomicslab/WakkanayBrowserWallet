@@ -4,6 +4,8 @@ import { utils } from 'ethers'
 import JSBI from 'jsbi'
 import clientWrapper from '../client'
 import { config } from '../config'
+import { getTokenByTokenContractAddress } from '../constants/tokens'
+import { isAddress } from '../utils'
 import { pushToast } from './toast'
 import { TRANSACTION_HISTORY_PROGRESS } from './transactionHistory'
 
@@ -63,14 +65,38 @@ export const transferReducer = createReducer(initialState, {
  * @param {*} recipientAddress the address of token recipient
  */
 export const transfer = (amount, tokenContractAddress, recipientAddress) => {
-  // TODO: validation check
-  // invalid address, insufficient funds
   return async dispatch => {
     try {
       dispatch(setTransferStatus(TRANSFER_PROGRESS.SENDING))
       const client = await clientWrapper.getClient()
-      if (!client) return
+      if (!client) {
+        throw Error('Client is not ready.')
+      }
+
+      // validation check
+      const errors = []
+      const balanceList = await client.getBalance()
+      const balance = balanceList.find(
+        balance =>
+          balance.tokenContractAddress.toLowerCase() ===
+          tokenContractAddress.toLowerCase()
+      )
       const amountWei = JSBI.BigInt(utils.parseEther(amount).toString())
+      if (JSBI.greaterThan(amountWei, balance.amount)) {
+        errors.push('Insufficient funds.')
+      }
+      if (!isAddress(recipientAddress)) {
+        errors.push('Invalid address.')
+      }
+      if (errors.length > 0) {
+        errors.map(error =>
+          dispatch(pushToast({ message: error, type: 'error' }))
+        )
+        dispatch(setTransferStatus(TRANSFER_PROGRESS.ERROR))
+        return
+      }
+
+      // transfer
       await client.transfer(amountWei, tokenContractAddress, recipientAddress)
       dispatch(clearTransferState())
       dispatch(setTransferPage('completion-page'))
