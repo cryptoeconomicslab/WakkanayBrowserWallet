@@ -2,7 +2,7 @@ import { createAction, createReducer } from '@reduxjs/toolkit'
 import clientWrapper from '../client'
 import { utils } from 'ethers'
 import JSBI from 'jsbi'
-import { PETHContract } from '../contracts/PETHContract'
+import { PETHContract } from '../contracts'
 import { TOKEN_LIST } from '../constants/tokens'
 
 export const DEPOSIT_PROGRESS = {

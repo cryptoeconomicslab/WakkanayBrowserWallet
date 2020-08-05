@@ -1,5 +1,4 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
-import { createSelector } from 'reselect'
 import { utils } from 'ethers'
 import JSBI from 'jsbi'
 import clientWrapper from '../client'
@@ -83,20 +82,3 @@ export const transfer = (amount, tokenContractAddress, recipientAddress) => {
     }
   }
 }
-
-// selector
-const getTransferState = state => state.transferState.state
-const getTransferredToken = state => state.transferState.transferredToken
-const getTransferredAmount = state => state.transferState.transferredAmount
-const getRecepientAddress = state => state.transferState.recepientAddress
-export const isAbleToSubmit = createSelector(
-  [
-    getTransferState,
-    getTransferredToken,
-    getTransferredAmount,
-    getRecepientAddress
-  ],
-  (state, token, amount, address) => {
-    return state === TRANSFER_PROGRESS.SENDING || !token || !amount || !address
-  }
-)

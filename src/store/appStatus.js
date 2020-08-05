@@ -2,27 +2,47 @@ import { createAction, createReducer } from '@reduxjs/toolkit'
 import { EthCoder } from '@cryptoeconomicslab/eth-coder'
 import { setupContext } from '@cryptoeconomicslab/context'
 import clientWrapper from '../client'
+import { config } from '../config'
+import { CommitmentContract } from '../contracts'
 import { getAddress } from './address'
 import { pushToast } from './toast'
 import { getEthUsdRate } from './ethUsdRate'
 import { getL1Balance } from './l1Balance'
 import { getL2Balance } from './l2Balance'
+import {
+  getCurrentBlockNumber,
+  setCurrentBlockNumber
+} from './plasmaBlockNumber'
 import { getTransactionHistories } from './transactionHistory'
 import { autoCompleteWithdrawal } from './withdraw'
 import { WALLET_KIND } from '../wallet'
 
 export const APP_STATUS = {
   UNLOADED: 'UNLOADED',
+  LOADING: 'LOADING',
   LOADED: 'LOADED',
-  INITIAL: 'INITIAL',
+  ERROR: 'ERROR'
+}
+
+export const SYNCING_STATUS = {
+  UNLOADED: 'UNLOADED',
+  LOADING: 'LOADING',
+  LOADED: 'LOADED',
   ERROR: 'ERROR'
 }
 
 export const setAppStatus = createAction('SET_APP_STATUS')
+export const setSyncingStatus = createAction('SET_SYNCING_STATUS')
+export const setSyncingBlockNumber = createAction('SET_SYNCING_BLOCK_NUMBER')
 export const setAppError = createAction('SET_APP_ERROR')
 
 export const appStatusReducer = createReducer(
-  { status: APP_STATUS.INITIAL, error: null },
+  {
+    status: APP_STATUS.UNLOADED,
+    error: null,
+    syncingStatus: SYNCING_STATUS.LOADED,
+    syncingBlockNumber: 0
+  },
   {
     [setAppStatus]: (state, action) => {
       state.status = action.payload
@@ -30,6 +50,12 @@ export const appStatusReducer = createReducer(
     [setAppError]: (state, action) => {
       state.error = action.payload
       state.status = APP_STATUS.ERROR
+    },
+    [setSyncingStatus]: (state, action) => {
+      state.syncingStatus = action.payload
+    },
+    [setSyncingBlockNumber]: (state, action) => {
+      state.syncingBlockNumber = action.payload
     }
   }
 )
@@ -40,6 +66,7 @@ const initialGetters = dispatch => {
   dispatch(getAddress())
   dispatch(getEthUsdRate()) // get the latest ETH price, returned value's unit is USD/ETH
   dispatch(getTransactionHistories())
+  dispatch(getCurrentBlockNumber())
 }
 
 export const checkClientInitialized = () => {
@@ -50,12 +77,13 @@ export const checkClientInitialized = () => {
     }
 
     try {
+      dispatch(setAppStatus(APP_STATUS.LOADING))
       setupContext({ coder: EthCoder })
       const client = clientWrapper.getClient()
       if (client) {
-        dispatch(setAppStatus(APP_STATUS.LOADED))
         dispatch(subscribeEvents())
         initialGetters(dispatch)
+        dispatch(setAppStatus(APP_STATUS.LOADED))
         return
       }
 
@@ -64,9 +92,10 @@ export const checkClientInitialized = () => {
         await clientWrapper.initializeClient({
           kind: loggedInWith
         })
-        dispatch(setAppStatus(APP_STATUS.LOADED))
         dispatch(subscribeEvents())
+        clientWrapper.start()
         initialGetters(dispatch)
+        dispatch(setAppStatus(APP_STATUS.LOADED))
       } else {
         dispatch(setAppStatus(APP_STATUS.UNLOADED))
       }
@@ -81,13 +110,15 @@ export const checkClientInitialized = () => {
 export const initializeClient = privateKey => {
   return async dispatch => {
     try {
+      dispatch(setAppStatus(APP_STATUS.LOADING))
       await clientWrapper.initializeClient({
         kind: WALLET_KIND.WALLET_PRIVATEKEY,
         privateKey
       })
+      dispatch(subscribeEvents())
+      clientWrapper.start()
       initialGetters(dispatch)
       dispatch(setAppStatus(APP_STATUS.LOADED))
-      dispatch(subscribeEvents())
     } catch (e) {
       console.error(e)
       dispatch(pushToast({ message: e.message, type: 'error' }))
@@ -99,9 +130,12 @@ export const initializeClient = privateKey => {
 export const initializeMetamaskWallet = () => {
   return async dispatch => {
     try {
+      dispatch(setAppStatus(APP_STATUS.LOADING))
       await clientWrapper.initializeClient({
         kind: WALLET_KIND.WALLET_METAMASK
       })
+      dispatch(subscribeEvents())
+      clientWrapper.start()
       initialGetters(dispatch)
       dispatch(setAppStatus(APP_STATUS.LOADED))
     } catch (e) {
@@ -115,11 +149,15 @@ export const initializeMetamaskWallet = () => {
 export const initializeMetamaskSnapWallet = () => {
   return async dispatch => {
     try {
+      dispatch(setAppStatus(APP_STATUS.LOADING))
       // identify the Snap by the location of its package.json file
       const snapId = new URL('package.json', window.location.href).toString()
       await clientWrapper.initializeClient({
         kind: WALLET_KIND.WALLET_METAMASK_SNAP
       })
+      dispatch(subscribeEvents())
+      clientWrapper.start()
+      initialGetters(dispatch)
 
       // get permissions to interact with and install the plugin
       await window.ethereum.send({
@@ -142,9 +180,12 @@ export const initializeMetamaskSnapWallet = () => {
 export const initializeWalletConnect = () => {
   return async dispatch => {
     try {
+      dispatch(setAppStatus(APP_STATUS.LOADING))
       await clientWrapper.initializeClient({
         kind: WALLET_KIND.WALLET_CONNECT
       })
+      dispatch(subscribeEvents())
+      clientWrapper.start()
       initialGetters(dispatch)
       dispatch(setAppStatus(APP_STATUS.LOADED))
     } catch (e) {
@@ -158,10 +199,13 @@ export const initializeWalletConnect = () => {
 export const initializeMagicLinkWallet = email => {
   return async dispatch => {
     try {
+      dispatch(setAppStatus(APP_STATUS.LOADING))
       await clientWrapper.initializeClient({
         kind: WALLET_KIND.WALLET_MAGIC_LINK,
         email
       })
+      dispatch(subscribeEvents())
+      clientWrapper.start()
       initialGetters(dispatch)
       dispatch(setAppStatus(APP_STATUS.LOADED))
     } catch (e) {
@@ -172,49 +216,98 @@ export const initializeMagicLinkWallet = email => {
   }
 }
 
-export const subscribeEvents = () => async dispatch => {
-  console.log('🔥Subscribe light client events')
-  const client = clientWrapper.getClient()
-  if (!client) {
-    throw new Error('client is not initialized yet.')
+const subscribeCheckpointFinalizedEvent = client => {
+  return dispatch => {
+    client.subscribeCheckpointFinalized((checkpointId, checkpoint) => {
+      console.info(
+        `new %ccheckpoint %cdetected: %c{ id: ${checkpointId.toHexString()}, checkpoint: (${checkpoint}) }`,
+        'color: pink; font-weight: bold;',
+        '',
+        'font-weight: bold;'
+      )
+      dispatch(getEthUsdRate())
+      dispatch(getL1Balance())
+      dispatch(getL2Balance())
+      dispatch(getTransactionHistories())
+    })
   }
+}
 
-  client.subscribeCheckpointFinalized((checkpointId, checkpoint) => {
-    console.info(
-      `new %ccheckpoint %cdetected: %c{ id: ${checkpointId.toHexString()}, checkpoint: (${checkpoint}) }`,
-      'color: pink; font-weight: bold;',
-      '',
-      'font-weight: bold;'
+const subscribeSyncStartedEvent = client => {
+  return dispatch => {
+    client.subscribeSyncStarted(blockNumber => {
+      console.info(`syncing... ${blockNumber.data}`)
+      dispatch(setSyncingStatus(SYNCING_STATUS.LOADING))
+    })
+  }
+}
+
+const subscribeSyncFinishedEvent = client => {
+  return async dispatch => {
+    // TODO: it has a problem of performance
+    const commitmentContract = new CommitmentContract(
+      config.commitment,
+      client.wallet.provider.getSigner()
     )
-    dispatch(getL1Balance())
-    dispatch(getL2Balance())
-    dispatch(getTransactionHistories())
-  })
+    client.subscribeSyncFinished(async blockNumber => {
+      console.info(`sync new state: ${blockNumber.data}`)
+      const currentBlockNumber = await commitmentContract.getCurrentBlockNumber()
+      dispatch(setCurrentBlockNumber(currentBlockNumber))
+      dispatch(setSyncingBlockNumber(blockNumber.raw))
+      if (currentBlockNumber === blockNumber.raw) {
+        dispatch(getEthUsdRate())
+        dispatch(getL1Balance())
+        dispatch(getL2Balance())
+        dispatch(getTransactionHistories())
+        dispatch(setSyncingStatus(SYNCING_STATUS.LOADED))
+      }
+    })
+  }
+}
 
-  client.subscribeSyncFinished(blockNumber => {
-    console.info(`sync new state: ${blockNumber.data}`)
-    dispatch(getL1Balance())
-    dispatch(getL2Balance())
-    dispatch(getTransactionHistories())
-  })
+const subscribeTransferCompleteEvent = client => {
+  return dispatch => {
+    client.subscribeTransferComplete(stateUpdate => {
+      console.info(
+        `%c transfer complete for range: %c (${stateUpdate.range.start.data}, ${stateUpdate.range.end.data})`,
+        'color: brown; font-weight: bold;',
+        'font-weight: bold;'
+      )
+      dispatch(getL1Balance())
+      dispatch(getL2Balance())
+      dispatch(getTransactionHistories())
+    })
+  }
+}
 
-  client.subscribeTransferComplete(stateUpdate => {
-    console.info(
-      `%c transfer complete for range: %c (${stateUpdate.range.start.data}, ${stateUpdate.range.end.data})`,
-      'color: brown; font-weight: bold;',
-      'font-weight: bold;'
-    )
-    dispatch(getL1Balance())
-    dispatch(getL2Balance())
-    dispatch(getTransactionHistories())
-  })
+const subscribeExitFinalizedEvent = client => {
+  return dispatch => {
+    client.subscribeExitFinalized(async exitId => {
+      console.info(`exit finalized for exit: ${exitId.toHexString()}`)
+      dispatch(getL1Balance())
+      dispatch(getL2Balance())
+      dispatch(getTransactionHistories())
+    })
+  }
+}
 
-  client.subscribeExitFinalized(async exitId => {
-    console.info(`exit finalized for exit: ${exitId.toHexString()}`)
-    dispatch(getL1Balance())
-    dispatch(getL2Balance())
-    dispatch(getTransactionHistories())
-  })
-
-  autoCompleteWithdrawal(dispatch)
+export const subscribeEvents = () => {
+  return dispatch => {
+    try {
+      console.log('start subscribing events')
+      const client = clientWrapper.getClient()
+      if (!client) {
+        throw new Error('client is not initialized yet.')
+      }
+      dispatch(subscribeSyncStartedEvent(client))
+      dispatch(subscribeSyncFinishedEvent(client))
+      dispatch(subscribeCheckpointFinalizedEvent(client))
+      dispatch(subscribeTransferCompleteEvent(client))
+      dispatch(subscribeExitFinalizedEvent(client))
+      dispatch(autoCompleteWithdrawal(client))
+    } catch (e) {
+      console.error(e)
+      dispatch(pushToast({ message: e.message, type: 'error' }))
+    }
+  }
 }

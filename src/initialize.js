@@ -121,8 +121,6 @@ async function instantiate(walletParams) {
 
 export default async function initialize(walletParams) {
   const lightClient = await instantiate(walletParams)
-  await lightClient.start()
-
   localStorage.setItem('loggedInWith', walletParams.kind)
   return lightClient
 }
