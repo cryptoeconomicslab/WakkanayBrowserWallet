@@ -1,11 +1,5 @@
 import * as ethers from 'ethers'
 import LightClient from '@cryptoeconomicslab/plasma-light-client'
-import {
-  MetamaskService,
-  MetamaskSnapWallet,
-  MagicLinkService,
-  WalletConnectService
-} from './wallet'
 import { EthWallet } from '@cryptoeconomicslab/eth-wallet'
 import { Address, Bytes } from '@cryptoeconomicslab/primitives'
 import { IndexedDbKeyValueStore } from '@cryptoeconomicslab/indexeddb-kvs'
@@ -16,9 +10,15 @@ import {
   AdjudicationContract,
   OwnershipPayoutContract
 } from '@cryptoeconomicslab/eth-contract'
-import { PETHContract } from './contracts/PETHContract'
-import { WALLET_KIND } from './wallet'
 import * as Sentry from '@sentry/browser'
+import {
+  MetamaskService,
+  MetamaskSnapWallet,
+  MagicLinkService,
+  WalletConnectService,
+  WALLET_KIND
+} from './wallet'
+
 if (process.env.SENTRY_ENDPOINT) {
   Sentry.init({
     dsn: process.env.SENTRY_ENDPOINT
@@ -54,7 +54,7 @@ async function instantiate(walletParams) {
     }
     signer = wallet.provider.getSigner()
   } else if (kind === WALLET_KIND.WALLET_CONNECT) {
-    wallet = await WalletConnectService.initilize()
+    wallet = await WalletConnectService.initilize(networkName)
     signer = wallet.provider.getSigner()
   } else if (kind === WALLET_KIND.WALLET_METAMASK_SNAP) {
     await window.ethereum.enable()
@@ -93,7 +93,7 @@ async function instantiate(walletParams) {
   }
 
   const commitmentContract = new CommitmentContract(
-    Address.from(config.commitmentContract),
+    Address.from(config.commitment),
     eventDb,
     signer
   )

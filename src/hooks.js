@@ -10,7 +10,7 @@ export function usePrevious(value) {
   return ref.current
 }
 
-export function useReactToast({ toasts, onDisappearToast, type = 'error' }) {
+export function useReactToast({ toasts, onDisappearToast }) {
   const { addToast, toastStack } = useToasts()
   const prev = usePrevious({ toasts, toastStack })
 
@@ -19,7 +19,7 @@ export function useReactToast({ toasts, onDisappearToast, type = 'error' }) {
     if (toasts.length > prevToasts.length) {
       const diff = _.difference(toasts, prevToasts)
       diff.forEach(toastContent => {
-        addToast(toastContent, { appearance: type })
+        addToast(toastContent.message, { appearance: toastContent.type })
       })
     }
   }, [toasts])

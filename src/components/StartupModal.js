@@ -45,9 +45,11 @@ const StartUpModal = props => {
         <Button full onClick={props.initializeMetamaskWallet}>
           Connect to MetaMask
         </Button>
-        <Button full onClick={props.initializeWalletConnect}>
-          Connect to WalletConnect compatible wallet
-        </Button>
+        {process.env.ETH_NETWORK === 'homestead' && (
+          <Button full onClick={props.initializeWalletConnect}>
+            Connect to WalletConnect compatible wallet
+          </Button>
+        )}
       </div>
       <style jsx>{`
         .container {
