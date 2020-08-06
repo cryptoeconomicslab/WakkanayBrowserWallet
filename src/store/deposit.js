@@ -2,24 +2,31 @@ import { createAction, createReducer } from '@reduxjs/toolkit'
 import clientWrapper from '../client'
 import { utils } from 'ethers'
 import JSBI from 'jsbi'
-import { PETHContract } from '../contracts/PETHContract'
+import { PETHContract } from '../contracts'
 import { TOKEN_LIST } from '../constants/tokens'
 
 export const DEPOSIT_PROGRESS = {
   INPUT: 'INPUT',
   CONFIRM: 'CONFIRM',
-  COMPLETE: 'COMPLETE'
+  COMPLETE: 'COMPLETE',
+  ERROR: 'ERROR'
 }
 
 export const setDepositProgress = createAction('SET_DEPOSIT_PROGRESS')
+export const setDepositError = createAction('SET_DEPOSIT_ERROR')
 
 export const depositReducer = createReducer(
   {
-    depositProgress: DEPOSIT_PROGRESS.INPUT
+    depositProgress: DEPOSIT_PROGRESS.INPUT,
+    error: null
   },
   {
     [setDepositProgress]: (state, action) => {
       state.depositProgress = action.payload
+    },
+    [setDepositError]: (state, action) => {
+      state.error = action.payload
+      state.status = DEPOSIT_PROGRESS.ERROR
     }
   }
 )
@@ -30,10 +37,9 @@ export const depositReducer = createReducer(
  * @param {*} addr deposit contract address
  */
 export const deposit = (amount, addr) => {
-  const amountWei = JSBI.BigInt(utils.parseEther(amount).toString())
-
   return async dispatch => {
     try {
+      const amountWei = JSBI.BigInt(utils.parseEther(amount).toString())
       const client = await clientWrapper.getClient()
       if (!client) return
       const peth = TOKEN_LIST.find(token => token.unit === 'ETH')
@@ -47,8 +53,9 @@ export const deposit = (amount, addr) => {
       }
       await client.deposit(amountWei, addr)
       dispatch(setDepositProgress(DEPOSIT_PROGRESS.COMPLETE))
-    } catch (error) {
-      console.error(error)
+    } catch (e) {
+      console.error(e)
+      dispatch(setDepositError(e))
     }
   }
 }

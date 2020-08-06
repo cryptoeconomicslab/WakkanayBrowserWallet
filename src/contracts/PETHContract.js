@@ -1,7 +1,7 @@
 import { Contract } from 'ethers'
 import { BigNumber } from 'ethers/utils'
 
-export class PETHContract {
+export default class PETHContract {
   static abi = [
     'function wrap(uint256 _amount) payable',
     'function unwrap(uint256 _amount)'

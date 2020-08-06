@@ -3,7 +3,7 @@ import { ethers } from 'ethers'
 import { Magic } from 'magic-sdk'
 
 function getNetworkObject(network) {
-  const rpcUrl = process.env.MAIN_CHAIN_HOST || 'http://localhost:8545'
+  const rpcUrl = process.env.MAIN_CHAIN_URL || 'http://localhost:8545'
   return network === 'local'
     ? {
         rpcUrl

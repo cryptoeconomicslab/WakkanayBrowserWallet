@@ -1,5 +1,6 @@
-import { Web3Wallet } from './Web3Wallet'
 import { ethers } from 'ethers'
+import { Web3Wallet } from './Web3Wallet'
+import { validateNetwork } from './WalletUtils'
 
 /**
  * MetamaskWallet is wallet implementation for Metamask
@@ -18,11 +19,7 @@ export class MetamaskService {
     const address = await provider.getSigner().getAddress()
     // wait the network is ready
     const network = await provider.ready
-    if (networkName !== 'local' && network.name !== networkName) {
-      throw new Error(
-        `Your wallet is connecting to ${network.name} but ${networkName} is expected.`
-      )
-    }
+    validateNetwork(networkName, network.name)
     return new Web3Wallet(address, provider)
   }
 }

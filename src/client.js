@@ -29,6 +29,11 @@ class ClientWrapper {
       this.instance = client
     }
   }
+
+  start() {
+    if (!this.instance) return
+    this.instance.start()
+  }
 }
 
 const clientWrapper = new ClientWrapper()

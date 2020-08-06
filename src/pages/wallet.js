@@ -15,10 +15,17 @@ import { TOKEN_LIST } from '../constants/tokens'
 import { PAYMENT } from '../routes'
 import {
   getL1TotalBalance,
-  getTokenTotalBalance
-} from '../store/tokenBalanceList'
+  getL2TotalBalance
+} from '../selectors/totalBalanceSelectors'
 
-function Wallet({ address, tokenBalance, l1TotalBalance, tokenTotalBalance }) {
+function Wallet({
+  address,
+  syncingStatus,
+  l1Balance,
+  l2Balance,
+  l1TotalBalance,
+  l2TotalBalance
+}) {
   return (
     <Layout>
       <Link className="back" href={PAYMENT} passHref>
@@ -31,7 +38,7 @@ function Wallet({ address, tokenBalance, l1TotalBalance, tokenTotalBalance }) {
           <div className="total__list">
             <div className="total__item">
               <h3 className="total__head">L2</h3>
-              <div className="total__amount">${tokenTotalBalance}</div>
+              <div className="total__amount">${l2TotalBalance}</div>
             </div>
             <div className="total__item">
               <h3 className="total__head">Mainchain</h3>
@@ -44,16 +51,17 @@ function Wallet({ address, tokenBalance, l1TotalBalance, tokenTotalBalance }) {
             <WalletTokenItem
               unit={unit}
               l2={
-                tokenBalance.tokenBalance[unit]
-                  ? tokenBalance.tokenBalance[unit].amount
+                l2Balance.balanceList[unit]
+                  ? l2Balance.balanceList[unit].amount
                   : 0
               }
               mainchain={
-                tokenBalance.l1Balance[unit]
-                  ? tokenBalance.l1Balance[unit].amount
+                l1Balance.balanceList[unit]
+                  ? l1Balance.balanceList[unit].amount
                   : 0
               }
               tokenContractAddress={tokenContractAddress}
+              syncingStatus={syncingStatus}
             />
           ))}
         </div>
@@ -104,8 +112,10 @@ function Wallet({ address, tokenBalance, l1TotalBalance, tokenTotalBalance }) {
 
 const mapStateToProps = state => ({
   address: state.address,
-  tokenBalance: state.tokenBalance,
+  syncingStatus: state.appStatus.syncingStatus,
+  l1Balance: state.l1Balance,
+  l2Balance: state.l2Balance,
   l1TotalBalance: getL1TotalBalance(state),
-  tokenTotalBalance: getTokenTotalBalance(state)
+  l2TotalBalance: getL2TotalBalance(state)
 })
 export default connect(mapStateToProps, undefined)(Wallet)

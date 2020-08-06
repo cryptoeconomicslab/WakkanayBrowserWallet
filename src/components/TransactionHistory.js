@@ -1,8 +1,8 @@
 import { connect } from 'react-redux'
 import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
-import { SUBTEXT } from '../constants/colors'
+import { TEXT, SUBTEXT } from '../constants/colors'
 import { FZ_SMALL, FW_BOLD, FZ_MEDIUM } from '../constants/fonts'
-import { getTransactionHistories } from '../store/transaction_history'
+import { getTransactionHistories } from '../store/transactionHistory'
 import { shortenAddress } from '../utils'
 
 const Message = ({ message, counterParty }) => {
@@ -19,23 +19,41 @@ const TransactionHistory = ({ historyList }) => {
   return (
     <ul>
       {historyList.map(
-        ({ message, amount, unit, blockNumber, counterParty }, i) => (
+        (
+          {
+            message,
+            amount,
+            unit,
+            blockNumber,
+            counterParty,
+            depositContractAddress,
+            range
+          },
+          i
+        ) => (
           <li
             className="transaction"
             key={`${i}-${message}-${amount}-${unit}-${blockNumber}-${counterParty}`}
           >
-            <div className="transaction__item transaction__item--icon">
-              <img src={`/icon-${message}.svg`} />
-            </div>
-            <div className="transaction__item transaction__item--amount">
-              {amount} {unit}
-            </div>
-            <div className="transaction__item transaction__item--type">
-              <Message message={message} counterParty={counterParty} />
-            </div>
-            <div className="transaction__item transaction__item--time">
-              at {blockNumber} block
-            </div>
+            <a
+              href={`${process.env.BLOCK_EXPLORER_URL}/transaction?blockNumber=${blockNumber}&depositContractAddress=${depositContractAddress}&start=${range.start}&end=${range.end}`}
+              className="transaction__link"
+              target="_blank"
+              rel="noopener"
+            >
+              <div className="transaction__item transaction__item--icon">
+                <img src={`/icon-${message}.svg`} />
+              </div>
+              <div className="transaction__item transaction__item--amount">
+                {amount} {unit}
+              </div>
+              <div className="transaction__item transaction__item--type">
+                <Message message={message} counterParty={counterParty} />
+              </div>
+              <div className="transaction__item transaction__item--time">
+                at {blockNumber} block
+              </div>
+            </a>
           </li>
         )
       )}
@@ -50,6 +68,15 @@ const TransactionHistory = ({ historyList }) => {
         }
         .transaction + .transaction {
           margin-top: 1rem;
+        }
+        .transaction__link {
+          display: flex;
+          width: 100%;
+          color: ${TEXT};
+          text-decoration: none;
+        }
+        .transaction__link:hover {
+          text-decoration: underline;
         }
         .transaction__item {
           flex: 1;

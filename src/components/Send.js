@@ -3,19 +3,18 @@ import { connect } from 'react-redux'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 library.add(faSignOutAlt)
+import { isAbleToTransfer } from '../selectors/transferSelector'
 import {
-  isAbleToSubmit,
   setTransferredToken,
   setTransferredAmount,
   setRecepientAddress,
   transfer
 } from '../store/transfer'
-import { MAIN, SECTION_BACKGROUND, TEXT_ERROR } from '../constants/colors'
+import { SECTION_BACKGROUND } from '../constants/colors'
 import { getTokenByTokenContractAddress, TOKEN_LIST } from '../constants/tokens'
 import { TokenSelector } from './TokenSelector'
 import AddressInput from './AddressInput'
 import Button from './Base/Button'
-import Message from './Base/Message'
 import { SectionTitle } from './SectionTitle'
 import TokenInput from './TokenInput'
 
@@ -25,9 +24,9 @@ const Send = props => {
   )
   const tokensWithCurrentAmount = TOKEN_LIST.map(token => ({
     ...token,
-    amount: props.tokenBalance[token.unit]
-      ? props.tokenBalance[token.unit].amount /
-        10 ** props.tokenBalance[token.unit].decimals
+    amount: props.l2Balance[token.unit]
+      ? props.l2Balance[token.unit].amount /
+        10 ** props.l2Balance[token.unit].decimals
       : 0
   }))
 
@@ -59,16 +58,10 @@ const Send = props => {
             props.recepientAddress
           )
         }}
-        disabled={props.isAbleToSubmit}
+        disabled={props.isAbleToTransfer}
       >
         Send
       </Button>
-      {props.transferError && (
-        <Message color={TEXT_ERROR}>{props.transferError}</Message>
-      )}
-      {props.transferPage === 'completion-page' && (
-        <Message color={MAIN}>Transfer Success!</Message>
-      )}
 
       <style jsx>{`
         .send-section {
@@ -85,14 +78,12 @@ const Send = props => {
 
 const mapStateToProps = state => ({
   address: state.address,
-  tokenBalance: state.tokenBalance.tokenBalance,
-  ETHtoUSD: state.tokenBalance.ETHtoUSD,
-  isAbleToSubmit: isAbleToSubmit(state),
+  l2Balance: state.l2Balance.balanceList,
+  isAbleToTransfer: isAbleToTransfer(state),
   transferredToken: state.transferState.transferredToken,
   transferredAmount: state.transferState.transferredAmount,
   recepientAddress: state.transferState.recepientAddress,
-  transferPage: state.transferState.transferPage,
-  transferError: state.transferState.transferError
+  transferPage: state.transferState.transferPage
 })
 
 const mapDispatchToProps = {

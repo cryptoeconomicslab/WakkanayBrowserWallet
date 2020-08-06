@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import {
-  initializeClient,
   initializeMetamaskWallet,
   initializeMagicLinkWallet,
   initializeWalletConnect
@@ -45,9 +44,11 @@ const StartUpModal = props => {
         <Button full onClick={props.initializeMetamaskWallet}>
           Connect to MetaMask
         </Button>
-        <Button full onClick={props.initializeWalletConnect}>
-          Connect to WalletConnect compatible wallet
-        </Button>
+        {process.env.ETH_NETWORK === 'homestead' && (
+          <Button full onClick={props.initializeWalletConnect}>
+            Connect to WalletConnect compatible wallet
+          </Button>
+        )}
       </div>
       <style jsx>{`
         .container {
@@ -77,7 +78,6 @@ const StartUpModal = props => {
 }
 
 const mapDispatchToProps = {
-  initializeClient,
   initializeMetamaskWallet,
   initializeMagicLinkWallet,
   initializeWalletConnect
