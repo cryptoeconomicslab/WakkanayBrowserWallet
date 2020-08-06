@@ -51,9 +51,7 @@ export const getTransactionHistories = () => {
           blockNumber: history.blockNumber.toString(),
           counterParty: history.counterParty,
           depositContractAddress: token.depositContractAddress,
-          // TODO: update after publish light-client
-          // range: { start: history.range.start, end: history.range.end }
-          range: { start: '0', end: '0' }
+          range: { start: history.range.start, end: history.range.end }
         }
       })
       dispatch(setHistoryList(histories))
