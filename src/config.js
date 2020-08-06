@@ -6,5 +6,5 @@ const configs = {
   kovan: configKovan
 }
 
-const mainChainEnv = process.env.MAIN_CHAIN_ENV || 'local'
-export const config = configs[mainChainEnv]
+const ethNetwork = process.env.ETH_NETWORK || 'local'
+export const config = configs[ethNetwork]

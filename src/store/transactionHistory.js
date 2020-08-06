@@ -43,12 +43,15 @@ export const getTransactionHistories = () => {
       const client = await clientWrapper.getClient()
       if (!client) return
       const histories = (await client.getAllUserActions()).map(history => {
+        const token = getTokenByTokenContractAddress(history.tokenAddress)
         return {
           message: history.type,
           amount: formatEther(history.amount.toString()),
-          unit: getTokenByTokenContractAddress(history.tokenAddress).unit,
+          unit: token.unit,
           blockNumber: history.blockNumber.toString(),
-          counterParty: history.counterParty
+          counterParty: history.counterParty,
+          depositContractAddress: token.depositContractAddress,
+          range: { start: history.range.start, end: history.range.end }
         }
       })
       dispatch(setHistoryList(histories))
