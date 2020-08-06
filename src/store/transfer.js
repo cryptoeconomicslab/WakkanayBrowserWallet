@@ -2,12 +2,11 @@ import { createAction, createReducer } from '@reduxjs/toolkit'
 import { createSelector } from 'reselect'
 import { utils } from 'ethers'
 import JSBI from 'jsbi'
-import clientWrapper from '../client'
-import { config } from '../config'
-import { getTokenByTokenContractAddress } from '../constants/tokens'
-import { isAddress } from '../utils'
 import { pushToast } from './toast'
 import { TRANSACTION_HISTORY_PROGRESS } from './transactionHistory'
+import clientWrapper from '../client'
+import { config } from '../config'
+import validateTransfer from '../validators/transferValidator'
 
 export const TRANSFER_PROGRESS = {
   INITIAL: 'INITIAL',
@@ -74,20 +73,13 @@ export const transfer = (amount, tokenContractAddress, recipientAddress) => {
       }
 
       // validation check
-      const errors = []
-      const balanceList = await client.getBalance()
-      const balance = balanceList.find(
-        balance =>
-          balance.tokenContractAddress.toLowerCase() ===
-          tokenContractAddress.toLowerCase()
-      )
       const amountWei = JSBI.BigInt(utils.parseEther(amount).toString())
-      if (JSBI.greaterThan(amountWei, balance.amount)) {
-        errors.push('Insufficient funds.')
-      }
-      if (!isAddress(recipientAddress)) {
-        errors.push('Invalid address.')
-      }
+      const errors = await validateTransfer(
+        client,
+        amountWei,
+        tokenContractAddress,
+        recipientAddress
+      )
       if (errors.length > 0) {
         errors.map(error =>
           dispatch(pushToast({ message: error, type: 'error' }))
