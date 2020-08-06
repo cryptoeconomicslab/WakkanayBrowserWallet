@@ -16,6 +16,7 @@ import { appStatusReducer } from './appStatus'
 import { appRouterReducer } from './appRouter'
 import { exchangeReducer } from './exchange'
 import { toastReducer } from './toast'
+import { plasmaBlockNumberReducer } from './plasmaBlockNumber'
 
 const reducer = combineReducers({
   address: addressReducer,
@@ -31,7 +32,8 @@ const reducer = combineReducers({
   appStatus: appStatusReducer,
   appRouter: appRouterReducer,
   exchangeState: exchangeReducer,
-  toastState: toastReducer
+  toastState: toastReducer,
+  plasmaBlockNumber: plasmaBlockNumberReducer
 })
 
 export const initStore = initialState => {

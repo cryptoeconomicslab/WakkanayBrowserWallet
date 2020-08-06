@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import Router, { useRouter } from 'next/router'
 import Head from 'next/head'
 import Box from './Base/Box'
+import CircleProgress from './Base/CircleProgress'
 import { config } from '../config'
 import Header from './Header'
 import StartupModal from './StartupModal'
@@ -34,12 +35,17 @@ import {
   // NFT_COLLECTIBLES,
   openModal
 } from '../routes'
+import { getSyncProgress } from '../selectors/syncProgressSelectors'
 import {
   getL1TotalBalance,
   getL2TotalBalance
 } from '../selectors/totalBalanceSelectors'
 import { pushRouteHistory, popRouteHistory } from '../store/appRouter'
-import { APP_STATUS, checkClientInitialized } from '../store/appStatus'
+import {
+  APP_STATUS,
+  SYNCING_STATUS,
+  checkClientInitialized
+} from '../store/appStatus'
 import { removeToast } from '../store/toast'
 import { useReactToast } from '../hooks'
 
@@ -53,6 +59,7 @@ const Initial = ({
   removeToast,
   l1TotalBalance,
   l2TotalBalance,
+  syncProgress,
   children
 }) => {
   const router = useRouter()
@@ -139,6 +146,9 @@ const Initial = ({
               Logout
             </a>
           </div>
+        )}
+        {appStatus.syncingStatus === SYNCING_STATUS.LOADING && (
+          <CircleProgress percent={syncProgress} />
         )}
       </div>
       <style>{`
@@ -257,7 +267,8 @@ const mapStateToProps = state => ({
   appStatus: state.appStatus,
   toasts: state.toastState.toasts,
   l1TotalBalance: getL1TotalBalance(state),
-  l2TotalBalance: getL2TotalBalance(state)
+  l2TotalBalance: getL2TotalBalance(state),
+  syncProgress: getSyncProgress(state)
 })
 
 const mapDispatchToProps = {
