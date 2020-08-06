@@ -4,10 +4,12 @@ import { EthWallet } from '@cryptoeconomicslab/eth-wallet'
 import { Address, Bytes } from '@cryptoeconomicslab/primitives'
 import { IndexedDbKeyValueStore } from '@cryptoeconomicslab/indexeddb-kvs'
 import {
+  AdjudicationContract,
+  CommitmentContract,
+  CheckpointDisputeContract,
   DepositContract,
   ERC20Contract,
-  CommitmentContract,
-  AdjudicationContract,
+  ExitDisputeContract,
   OwnershipPayoutContract
 } from '@cryptoeconomicslab/eth-contract'
 import * as Sentry from '@sentry/browser'
@@ -98,6 +100,18 @@ async function instantiate(walletParams) {
     signer
   )
 
+  const checkpointDisputeContract = new CheckpointDisputeContract(
+    Address.from(config.checkpointDispute),
+    eventDb,
+    signer
+  )
+
+  const exitDisputeContract = new ExitDisputeContract(
+    Address.from(config.exitDispute),
+    eventDb,
+    signer
+  )
+
   const client = await LightClient.initilize({
     wallet,
     witnessDb: kvs,
@@ -106,6 +120,8 @@ async function instantiate(walletParams) {
     tokenContractFactory,
     commitmentContract,
     ownershipPayoutContract,
+    checkpointDisputeContract,
+    exitDisputeContract,
     deciderConfig: config,
     aggregatorEndpoint: process.env.AGGREGATOR_URL
   })
