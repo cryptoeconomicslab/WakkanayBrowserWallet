@@ -26,14 +26,16 @@ steps:
       arguments: '--force'
 
   - task: DownloadSecureFile@1
-    displayName: 'Download wallet.$(ethNetworkName).env'
+    name: env
+    displayName: 'Download v0.wallet.$(ethNetworkName).env'
     inputs:
-      secureFile: wallet.$(ethNetworkName).env
+      secureFile: v0.wallet.$(ethNetworkName).env
 
   - task: DownloadSecureFile@1
-    displayName: 'Download config.$(ethNetworkName).json'
+    name: config
+    displayName: 'Download v0.config.$(ethNetworkName).json'
     inputs:
-      secureFile: config.$(ethNetworkName).json
+      secureFile: v0.config.$(ethNetworkName).json
 
   - script: |
       copy $(env.secureFilePath) .env
