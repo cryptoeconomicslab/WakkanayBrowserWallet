@@ -1,10 +1,11 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import { utils } from 'ethers'
 import JSBI from 'jsbi'
-import clientWrapper from '../client'
-import { config } from '../config'
 import { pushToast } from './toast'
 import { TRANSACTION_HISTORY_PROGRESS } from './transactionHistory'
+import clientWrapper from '../client'
+import { config } from '../config'
+import validateTransfer from '../validators/transferValidator'
 
 export const TRANSFER_PROGRESS = {
   INITIAL: 'INITIAL',
@@ -62,14 +63,31 @@ export const transferReducer = createReducer(initialState, {
  * @param {*} recipientAddress the address of token recipient
  */
 export const transfer = (amount, tokenContractAddress, recipientAddress) => {
-  // TODO: validation check
-  // invalid address, insufficient funds
   return async dispatch => {
     try {
       dispatch(setTransferStatus(TRANSFER_PROGRESS.SENDING))
       const client = await clientWrapper.getClient()
-      if (!client) return
+      if (!client) {
+        throw Error('Client is not ready.')
+      }
+
+      // validation check
       const amountWei = JSBI.BigInt(utils.parseEther(amount).toString())
+      const errors = await validateTransfer(
+        client,
+        amountWei,
+        tokenContractAddress,
+        recipientAddress
+      )
+      if (errors.length > 0) {
+        errors.map(error =>
+          dispatch(pushToast({ message: error, type: 'error' }))
+        )
+        dispatch(setTransferStatus(TRANSFER_PROGRESS.ERROR))
+        return
+      }
+
+      // transfer
       await client.transfer(amountWei, tokenContractAddress, recipientAddress)
       dispatch(clearTransferState())
       dispatch(setTransferPage('completion-page'))
