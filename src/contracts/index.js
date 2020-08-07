@@ -1,2 +1,4 @@
-import { PETHContract } from './PETHContract'
-export { PETHContract }
+import CommitmentContract from './CommitmentContract'
+import PETHContract from './PETHContract'
+
+export { CommitmentContract, PETHContract }

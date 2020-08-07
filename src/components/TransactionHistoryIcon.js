@@ -42,6 +42,8 @@ const TransactionHistoryIcon = ({
     history.depositContractAddress
   )
 
+  // TODO: fix after updating light-client
+  // return exit.isCompletable ? (
   return exit ? (
     <>
       <div

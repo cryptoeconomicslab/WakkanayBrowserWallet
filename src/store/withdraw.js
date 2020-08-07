@@ -3,9 +3,11 @@ import { utils } from 'ethers'
 import JSBI from 'jsbi'
 import { getL1Balance } from './l1Balance'
 import { getL2Balance } from './l2Balance'
+import { getPendingExitList } from './pendingExitList'
+import { pushToast } from './toast'
 import { getTransactionHistories } from './transactionHistory'
 import clientWrapper from '../client'
-import { PETHContract } from '../contracts/PETHContract'
+import { PETHContract } from '../contracts/'
 import { getTokenByUnit } from '../constants/tokens'
 
 export const WITHDRAW_PROGRESS = {
@@ -50,6 +52,7 @@ export const withdraw = (amount, tokenContractAddress) => {
       dispatch(getL1Balance())
       dispatch(getL2Balance())
       dispatch(getTransactionHistories())
+      dispatch(getPendingExitList())
     } catch (e) {
       console.error(e)
       dispatch(setWithdrawError(e))
@@ -75,19 +78,15 @@ export const completeWithdrawal = exit => {
         )
         await contract.unwrap(exit.stateUpdate.amount)
       }
-      dispatch({
-        type: `NOTIFY_FINALIZE_EXIT`,
-        payload: exit.id.toHexString()
-      })
+      dispatch(getL1Balance())
+      dispatch(getL2Balance())
+      dispatch(getTransactionHistories())
+      dispatch(getPendingExitList())
     } catch (e) {
       // @NOTE: 'Exit property is not decidable' is fine
       if (e.message === 'Exit property is not decidable') return
       console.error(e)
-
-      // TODO: add toast after merge #154
-      // dispatch(
-      //   pushToast({ message: e.message, type: 'error' })
-      // )
+      dispatch(pushToast({ message: e.message, type: 'error' }))
     }
   }
 }

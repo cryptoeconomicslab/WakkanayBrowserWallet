@@ -1,8 +1,8 @@
 import { connect } from 'react-redux'
-import TransactionHistoryMessage from './TransactionHistoryMessage'
-import { SUBTEXT } from '../constants/colors'
-import { FZ_SMALL, FW_BOLD, FZ_MEDIUM } from '../constants/fonts'
 import TransactionHistoryIcon from './TransactionHistoryIcon'
+import TransactionHistoryMessage from './TransactionHistoryMessage'
+import { TEXT, SUBTEXT } from '../constants/colors'
+import { FZ_SMALL, FW_BOLD, FZ_MEDIUM } from '../constants/fonts'
 
 const TransactionHistory = ({ pendingExitList, historyList }) => {
   return (
@@ -18,18 +18,25 @@ const TransactionHistory = ({ pendingExitList, historyList }) => {
               history={history}
             />
           </div>
-          <div className="transaction__item transaction__item--amount">
-            {history.amount} {history.unit}
-          </div>
-          <div className="transaction__item transaction__item--message">
-            <TransactionHistoryMessage
-              pendingExitList={pendingExitList}
-              history={history}
-            />
-          </div>
-          <div className="transaction__item transaction__item--time">
-            at {history.blockNumber} block
-          </div>
+          <a
+            href={`${process.env.BLOCK_EXPLORER_URL}/transaction?blockNumber=${history.blockNumber}&depositContractAddress=${history.depositContractAddress}&start=${history.range.start}&end=${history.range.end}`}
+            className="transaction__link"
+            target="_blank"
+            rel="noopener"
+          >
+            <div className="transaction__item transaction__item--amount">
+              {history.amount} {history.unit}
+            </div>
+            <div className="transaction__item transaction__item--message">
+              <TransactionHistoryMessage
+                pendingExitList={pendingExitList}
+                history={history}
+              />
+            </div>
+            <div className="transaction__item transaction__item--time">
+              at {history.blockNumber} block
+            </div>
+          </a>
         </li>
       ))}
       <style jsx>{`
@@ -43,6 +50,15 @@ const TransactionHistory = ({ pendingExitList, historyList }) => {
         }
         .transaction + .transaction {
           margin-top: 0.5rem;
+        }
+        .transaction__link {
+          display: flex;
+          width: 100%;
+          color: ${TEXT};
+          text-decoration: none;
+        }
+        .transaction__link:hover {
+          text-decoration: underline;
         }
         .transaction__item {
           flex: 1;

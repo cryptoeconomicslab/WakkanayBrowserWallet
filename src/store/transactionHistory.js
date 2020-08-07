@@ -50,8 +50,8 @@ export const getTransactionHistories = () => {
           unit: token.unit,
           blockNumber: history.blockNumber.toString(),
           counterParty: history.counterParty,
-          range: history.range,
-          depositContractAddress: token.depositContractAddress
+          depositContractAddress: token.depositContractAddress,
+          range: { start: history.range.start, end: history.range.end }
         }
       })
       dispatch(setHistoryList(histories))
