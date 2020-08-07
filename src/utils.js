@@ -5,6 +5,13 @@ export const shortenAddress = address => {
   return `${former}...${latter}`
 }
 
+export const isAddress = address => {
+  if (!address || !address.match(/^0x[0-9A-Fa-f]{40}$/)) {
+    return false
+  }
+  return true
+}
+
 /**
  * round off the number
  * e.g. the second place after the decimal point: base = 100
