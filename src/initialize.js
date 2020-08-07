@@ -75,10 +75,19 @@ async function instantiate(walletParams) {
     Bytes.fromString('wallet_' + address.data)
   )
   const eventDb = await kvs.bucket(Bytes.fromString('event'))
+  const provider = getProvider(networkName)
+  const eventWatcherOptions = {
+    interval: 12000
+  }
+  const disputeContractEventWatcherOptions = {
+    interval: 20000
+  }
   const adjudicationContract = new AdjudicationContract(
     Address.from(config.adjudicationContract),
     eventDb,
-    signer
+    signer,
+    provider,
+    eventWatcherOptions
   )
 
   const ownershipPayoutContract = new OwnershipPayoutContract(
@@ -87,7 +96,13 @@ async function instantiate(walletParams) {
   )
 
   function depositContractFactory(address) {
-    return new DepositContract(address, eventDb, signer)
+    return new DepositContract(
+      address,
+      eventDb,
+      signer,
+      provider,
+      eventWatcherOptions
+    )
   }
 
   function tokenContractFactory(address) {
@@ -97,19 +112,25 @@ async function instantiate(walletParams) {
   const commitmentContract = new CommitmentContract(
     Address.from(config.commitment),
     eventDb,
-    signer
+    signer,
+    provider,
+    eventWatcherOptions
   )
 
   const checkpointDisputeContract = new CheckpointDisputeContract(
     Address.from(config.checkpointDispute),
     eventDb,
-    signer
+    signer,
+    provider,
+    disputeContractEventWatcherOptions
   )
 
   const exitDisputeContract = new ExitDisputeContract(
     Address.from(config.exitDispute),
     eventDb,
-    signer
+    signer,
+    provider,
+    disputeContractEventWatcherOptions
   )
 
   const client = await LightClient.initilize({
