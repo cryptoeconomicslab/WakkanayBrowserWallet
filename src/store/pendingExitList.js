@@ -18,7 +18,7 @@ export const setPendingExitListError = createAction(
 
 export const pendingExitListReducer = createReducer(
   {
-    items: {},
+    items: [],
     status: EXIT_LIST_PROGRESS.UNLOADED,
     error: null
   },

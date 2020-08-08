@@ -1,8 +1,44 @@
 import { connect } from 'react-redux'
+import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
 import TransactionHistoryIcon from './TransactionHistoryIcon'
 import TransactionHistoryMessage from './TransactionHistoryMessage'
 import { TEXT, SUBTEXT } from '../constants/colors'
 import { FZ_SMALL, FW_BOLD, FZ_MEDIUM } from '../constants/fonts'
+
+const BlockExplorerLinkWrapper = ({ history, children }) => {
+  return (
+    <div className="transaction__link-wrapper">
+      {history.message === ActionType.Send ||
+      history.message === ActionType.Receive ? (
+        <a
+          href={`${process.env.BLOCK_EXPLORER_URL}/transaction?blockNumber=${history.blockNumber}&depositContractAddress=${history.depositContractAddress}&start=${history.range.start}&end=${history.range.end}`}
+          className="transaction__link"
+          target="_blank"
+          rel="noopener"
+        >
+          {children}
+        </a>
+      ) : (
+        <>{children}</>
+      )}
+      <style jsx>{`
+        .transaction__link-wrapper {
+          display: flex;
+          width: 100%;
+        }
+        .transaction__link {
+          color: ${TEXT};
+          text-decoration: none;
+          display: flex;
+          width: 100%;
+        }
+        .transaction__link:hover {
+          text-decoration: underline;
+        }
+      `}</style>
+    </div>
+  )
+}
 
 const TransactionHistory = ({ pendingExitList, historyList }) => {
   return (
@@ -18,12 +54,7 @@ const TransactionHistory = ({ pendingExitList, historyList }) => {
               history={history}
             />
           </div>
-          <a
-            href={`${process.env.BLOCK_EXPLORER_URL}/transaction?blockNumber=${history.blockNumber}&depositContractAddress=${history.depositContractAddress}&start=${history.range.start}&end=${history.range.end}`}
-            className="transaction__link"
-            target="_blank"
-            rel="noopener"
-          >
+          <BlockExplorerLinkWrapper history={history}>
             <div className="transaction__item transaction__item--amount">
               {history.amount} {history.unit}
             </div>
@@ -36,7 +67,7 @@ const TransactionHistory = ({ pendingExitList, historyList }) => {
             <div className="transaction__item transaction__item--time">
               at {history.blockNumber} block
             </div>
-          </a>
+          </BlockExplorerLinkWrapper>
         </li>
       ))}
       <style jsx>{`
@@ -50,15 +81,6 @@ const TransactionHistory = ({ pendingExitList, historyList }) => {
         }
         .transaction + .transaction {
           margin-top: 0.5rem;
-        }
-        .transaction__link {
-          display: flex;
-          width: 100%;
-          color: ${TEXT};
-          text-decoration: none;
-        }
-        .transaction__link:hover {
-          text-decoration: underline;
         }
         .transaction__item {
           flex: 1;
