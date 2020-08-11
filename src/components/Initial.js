@@ -120,6 +120,7 @@ const Initial = ({
           >
             here
           </a>
+          .
         </Alert>
         <h2 className="headline">
           {router.pathname !== HISTORY ? 'Your Wallet' : 'Transaction History'}
