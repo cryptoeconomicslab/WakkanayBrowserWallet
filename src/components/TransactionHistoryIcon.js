@@ -1,9 +1,11 @@
-import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
-import ReactTooltip from 'react-tooltip'
-import { completeWithdrawal } from '../store/withdraw'
-import { findExit } from '../helper/withdrawHelper'
-import { MAIN, MAIN_DARK } from '../constants/colors'
+import { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
+import ReactTooltip from 'react-tooltip'
+import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
+import clientWrapper from '../client'
+import { MAIN, MAIN_DARK } from '../constants/colors'
+import { findExit } from '../helper/withdrawHelper'
+import { completeWithdrawal } from '../store/withdraw'
 
 const TransactionHistoryIcon = ({
   history,
@@ -35,22 +37,37 @@ const TransactionHistoryIcon = ({
     return iconEl
   }
 
-  const exit = findExit(
-    pendingExitList,
-    history.blockNumber,
-    history.range,
-    history.depositContractAddress
-  )
+  const [exit, setExit] = useState(null)
+  const [isWithdrawalCompletable, setIsWithdrawalCompletable] = useState(false)
+  useEffect(() => {
+    const foundExit = findExit(
+      pendingExitList,
+      history.blockNumber,
+      history.range,
+      history.depositContractAddress
+    )
+    if (!foundExit) return
+    setExit(foundExit)
+    const getIsWithdrawalComplete = async () => {
+      const client = clientWrapper.getClient()
+      if (client) {
+        setIsWithdrawalCompletable(
+          await client.isWithdrawalCompletable(foundExit)
+        )
+      }
+    }
+    getIsWithdrawalComplete()
+  }, [])
 
-  // TODO: fix after updating light-client
-  // return exit.isCompletable ? (
-  return exit ? (
+  return isWithdrawalCompletable ? (
     <>
       <div
         className="historyIcon__btn"
         data-tip="React-tooltip"
         data-for={`history-icon-btn-${history.message}-${history.amount}-${history.unit}-${history.blockNumber}-${history.counterParty}`}
-        onClick={completeWithdrawal(exit)}
+        onClick={() => {
+          completeWithdrawal(exit)
+        }}
       >
         <img src={`/icon-Withdraw.svg`} className="historyIcon__iconImg" />
       </div>
@@ -90,8 +107,8 @@ const TransactionHistoryIcon = ({
   )
 }
 
-const mapDispatchToProps = () => ({
+const mapDispatchToProps = {
   completeWithdrawal
-})
+}
 
-export default connect(undefined, mapDispatchToProps)(TransactionHistoryIcon)
+export default connect(null, mapDispatchToProps)(TransactionHistoryIcon)

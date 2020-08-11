@@ -1,4 +1,5 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
+import { pushToast } from './toast'
 import clientWrapper from '../client'
 
 export const EXIT_LIST_PROGRESS = {
@@ -48,10 +49,9 @@ export const getPendingExitList = () => {
     } catch (e) {
       console.error(e)
       dispatch(setPendingExitListError(e))
-      // TODO: add toast after merge #154
-      // dispatch(
-      //   pushToast({ message: 'Get your exit list failed.', type: 'error' })
-      // )
+      dispatch(
+        pushToast({ message: 'Get your exit list failed.', type: 'error' })
+      )
     }
   }
 }

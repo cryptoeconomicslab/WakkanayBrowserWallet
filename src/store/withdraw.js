@@ -1,6 +1,7 @@
-import { createAction, createReducer } from '@reduxjs/toolkit'
 import { utils } from 'ethers'
 import JSBI from 'jsbi'
+import { Address } from '@cryptoeconomicslab/primitives'
+import { createAction, createReducer } from '@reduxjs/toolkit'
 import { getL1Balance } from './l1Balance'
 import { getL2Balance } from './l2Balance'
 import { getPendingExitList } from './pendingExitList'
@@ -65,7 +66,7 @@ export const completeWithdrawal = exit => {
     const client = await clientWrapper.getClient()
     if (!client) return
     try {
-      await client.completeWithdrawal(exit)
+      await client.completeWithdrawal(exit, Address.from(client.address))
       // TODO: must wait until that tx is included
       const peth = getTokenByUnit('ETH')
       if (
