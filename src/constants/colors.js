@@ -17,6 +17,8 @@ export const PRIMARY_BUTTON_TEXT = White(0.85)
 export const AREA = '#2D2A2C'
 export const PLACEHOLDER = '#DBD6DF'
 export const ERROR = '#E93902'
+export const WARNING = '#DA6901'
+export const WARNING_BACK = 'rgba(230, 138, 0, 0.1)'
 
 export const MAIN = '#00E6CC'
 export const MAIN_DARK = '#06DBC3'
