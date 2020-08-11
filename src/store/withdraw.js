@@ -3,7 +3,7 @@ import { utils } from 'ethers'
 import JSBI from 'jsbi'
 import { getL2Balance } from './l2Balance'
 import clientWrapper from '../client'
-import { PETHContract } from '../contracts/PETHContract'
+import { PETHContract } from '../contracts/'
 import { getTokenByUnit } from '../constants/tokens'
 
 export const WITHDRAW_PROGRESS = {
@@ -86,10 +86,11 @@ export const completeWithdrawal = () => {
     })
   }
 }
-export const sleep = msec => new Promise(resolve => setTimeout(resolve, msec))
-
-export const autoCompleteWithdrawal = async dispatch => {
-  await sleep(20000)
-  dispatch(completeWithdrawal())
-  return await autoCompleteWithdrawal(dispatch)
+const sleep = msec => new Promise(resolve => setTimeout(resolve, msec))
+export const autoCompleteWithdrawal = () => {
+  return async dispatch => {
+    await sleep(20000)
+    dispatch(completeWithdrawal())
+    return await autoCompleteWithdrawal(dispatch)
+  }
 }

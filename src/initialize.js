@@ -4,10 +4,12 @@ import { EthWallet } from '@cryptoeconomicslab/eth-wallet'
 import { Address, Bytes } from '@cryptoeconomicslab/primitives'
 import { IndexedDbKeyValueStore } from '@cryptoeconomicslab/indexeddb-kvs'
 import {
+  AdjudicationContract,
+  CommitmentContract,
+  CheckpointDisputeContract,
   DepositContract,
   ERC20Contract,
-  CommitmentContract,
-  AdjudicationContract,
+  ExitDisputeContract,
   OwnershipPayoutContract
 } from '@cryptoeconomicslab/eth-contract'
 import * as Sentry from '@sentry/browser'
@@ -27,7 +29,7 @@ if (process.env.SENTRY_ENDPOINT) {
 
 function getProvider(network) {
   if (network === 'local') {
-    return new ethers.providers.JsonRpcProvider(process.env.MAIN_CHAIN_HOST)
+    return new ethers.providers.JsonRpcProvider(process.env.MAIN_CHAIN_URL)
   } else if (network === 'kovan') {
     return new ethers.getDefaultProvider('kovan')
   }
@@ -66,17 +68,26 @@ async function instantiate(walletParams) {
     throw new Error(`gazelle-wallet doesn't support ${kind}`)
   }
 
-  const mainChainEnv = process.env.MAIN_CHAIN_ENV || 'local'
-  const config = await import(`../config.${mainChainEnv}`)
+  const ethNetwork = process.env.ETH_NETWORK || 'local'
+  const config = await import(`../config.${ethNetwork}`)
   const address = wallet.getAddress()
   const kvs = new IndexedDbKeyValueStore(
     Bytes.fromString('wallet_' + address.data)
   )
   const eventDb = await kvs.bucket(Bytes.fromString('event'))
+  const provider = getProvider(networkName)
+  const eventWatcherOptions = {
+    interval: 12000
+  }
+  const disputeContractEventWatcherOptions = {
+    interval: 20000
+  }
   const adjudicationContract = new AdjudicationContract(
     Address.from(config.adjudicationContract),
     eventDb,
-    signer
+    signer,
+    provider,
+    eventWatcherOptions
   )
 
   const ownershipPayoutContract = new OwnershipPayoutContract(
@@ -85,7 +96,13 @@ async function instantiate(walletParams) {
   )
 
   function depositContractFactory(address) {
-    return new DepositContract(address, eventDb, signer)
+    return new DepositContract(
+      address,
+      eventDb,
+      signer,
+      provider,
+      eventWatcherOptions
+    )
   }
 
   function tokenContractFactory(address) {
@@ -95,7 +112,25 @@ async function instantiate(walletParams) {
   const commitmentContract = new CommitmentContract(
     Address.from(config.commitment),
     eventDb,
-    signer
+    signer,
+    provider,
+    eventWatcherOptions
+  )
+
+  const checkpointDisputeContract = new CheckpointDisputeContract(
+    Address.from(config.checkpointDispute),
+    eventDb,
+    signer,
+    provider,
+    disputeContractEventWatcherOptions
+  )
+
+  const exitDisputeContract = new ExitDisputeContract(
+    Address.from(config.exitDispute),
+    eventDb,
+    signer,
+    provider,
+    disputeContractEventWatcherOptions
   )
 
   const client = await LightClient.initilize({
@@ -106,8 +141,10 @@ async function instantiate(walletParams) {
     tokenContractFactory,
     commitmentContract,
     ownershipPayoutContract,
+    checkpointDisputeContract,
+    exitDisputeContract,
     deciderConfig: config,
-    aggregatorEndpoint: process.env.AGGREGATOR_HOST
+    aggregatorEndpoint: process.env.AGGREGATOR_URL
   })
 
   // register Peth
@@ -121,8 +158,6 @@ async function instantiate(walletParams) {
 
 export default async function initialize(walletParams) {
   const lightClient = await instantiate(walletParams)
-  await lightClient.start()
-
   localStorage.setItem('loggedInWith', walletParams.kind)
   return lightClient
 }

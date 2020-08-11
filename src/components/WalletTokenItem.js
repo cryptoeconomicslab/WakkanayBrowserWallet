@@ -1,5 +1,7 @@
+import { useRouter } from 'next/router'
 import _ from 'lodash'
-import { TOKEN_LIST } from '../constants/tokens'
+import Button from './Base/Button'
+import { SUBTEXT, BORDER } from '../constants/colors'
 import {
   FZ_MEDIUM,
   FW_BLACK,
@@ -8,17 +10,16 @@ import {
   FW_BOLD,
   FW_NORMAL
 } from '../constants/fonts'
-import { SUBTEXT, BORDER } from '../constants/colors'
-import Button from './Base/Button'
-import { Fragment } from 'react'
-import { useRouter } from 'next/router'
+import { TOKEN_LIST } from '../constants/tokens'
 import { openModal, PAYMENT } from '../routes'
+import { SYNCING_STATUS } from '../store/appStatus'
 
 export const WalletTokenItem = ({
   l2,
   mainchain,
   tokenContractAddress,
-  unit
+  unit,
+  syncingStatus
 }) => {
   const router = useRouter()
   const { imgSrc, imgAspect } = _.find(TOKEN_LIST, { unit })
@@ -32,7 +33,7 @@ export const WalletTokenItem = ({
         <div className="layer l2">
           <div className="layer__label">L2</div>
           {l2 ? (
-            <Fragment>
+            <>
               <div className="layer__amount">
                 {l2.toFixed(2)}
                 {/* <span className="layer__dollar">
@@ -50,6 +51,7 @@ export const WalletTokenItem = ({
                         token: tokenContractAddress
                       })
                     }}
+                    disabled={syncingStatus === SYNCING_STATUS.LOADING}
                   >
                     <img src="/withdraw-arrow.svg" className="btn__icon" />
                     Withdraw
@@ -61,6 +63,7 @@ export const WalletTokenItem = ({
                     onClick={() => {
                       router.push(PAYMENT)
                     }}
+                    disabled={syncingStatus === SYNCING_STATUS.LOADING}
                   >
                     Send
                   </Button>
@@ -76,7 +79,7 @@ export const WalletTokenItem = ({
                   </Button>
                 </div> */}
               </div>
-            </Fragment>
+            </>
           ) : (
             <div className="empty">
               <h3 className="empty__headline">No tokens</h3>
@@ -102,6 +105,7 @@ export const WalletTokenItem = ({
                 onClick={() => {
                   openModal({ modal: 'deposit', token: tokenContractAddress })
                 }}
+                disabled={syncingStatus === SYNCING_STATUS.LOADING}
               >
                 <img src="/deposit-arrow.svg" className="btn__icon" />
                 Deposit
