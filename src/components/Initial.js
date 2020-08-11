@@ -5,6 +5,7 @@ import Head from 'next/head'
 import Box from './Base/Box'
 import CircleProgress from './Base/CircleProgress'
 import { config } from '../config'
+import Alert from './Base/Alert'
 import Header from './Header'
 import StartupModal from './StartupModal'
 // import { Tabs } from './Tabs'
@@ -15,7 +16,8 @@ import {
   SUBTEXT,
   ERROR,
   MAIN,
-  MAIN_DARK
+  MAIN_DARK,
+  WARNING
 } from '../constants/colors'
 import {
   FW_BOLD,
@@ -106,6 +108,20 @@ const Initial = ({
       </Head>
       <Header />
       <div className="container">
+        <Alert>
+          Please note that this wallet is the alpha version and there is a
+          possibility of losing your deposited funds. If you want to use testnet
+          token, you can get Kovan Ether (KETH) from{' '}
+          <a
+            href="https://faucet.kovan.network/"
+            className="alert__link"
+            target="_blank"
+            rel="noopener"
+          >
+            here
+          </a>
+          .
+        </Alert>
         <h2 className="headline">
           {router.pathname !== HISTORY ? 'Your Wallet' : 'Transaction History'}
         </h2>
@@ -222,19 +238,24 @@ const Initial = ({
       <style jsx>{`
         .container {
           max-width: 37.5rem;
-          margin: 0 auto;
+          margin: 1rem auto 0;
         }
         .headline {
           font-weight: ${FW_BOLD};
           font-size: ${FZ_MEDIUM};
           color: ${SUBTEXT};
           margin-bottom: 0.5rem;
+          margin-top: 1.5rem;
         }
         .wallet {
           margin: -0.375rem 0;
         }
         .wallet__txt {
           color: ${SUBTEXT};
+        }
+        .alert__link {
+          color: ${WARNING};
+          font-weight: ${FW_BLACK};
         }
         .error {
           color: ${ERROR};
