@@ -83,9 +83,13 @@ export const completeWithdrawal = exit => {
       dispatch(getL2Balance())
       dispatch(getTransactionHistories())
       dispatch(getPendingExitList())
+      dispatch(
+        pushToast({
+          message: 'Complete withdrawal transaction submitted.',
+          type: 'info'
+        })
+      )
     } catch (e) {
-      // @NOTE: 'Exit property is not decidable' is fine
-      if (e.message === 'Exit property is not decidable') return
       console.error(e)
       dispatch(pushToast({ message: e.message, type: 'error' }))
     }

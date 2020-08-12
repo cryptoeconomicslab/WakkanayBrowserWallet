@@ -42,7 +42,6 @@ const TransactionHistoryIcon = ({
   useEffect(() => {
     const foundExit = findExit(
       pendingExitList,
-      history.blockNumber,
       history.range,
       history.depositContractAddress
     )
@@ -57,7 +56,7 @@ const TransactionHistoryIcon = ({
       }
     }
     getIsWithdrawalComplete()
-  }, [])
+  }, [pendingExitList])
 
   return isWithdrawalCompletable ? (
     <>
@@ -107,8 +106,13 @@ const TransactionHistoryIcon = ({
   )
 }
 
+const mapStateToProps = ({ pendingExitList }) => ({
+  pendingExitList: pendingExitList.items
+})
 const mapDispatchToProps = {
   completeWithdrawal
 }
-
-export default connect(null, mapDispatchToProps)(TransactionHistoryIcon)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TransactionHistoryIcon)

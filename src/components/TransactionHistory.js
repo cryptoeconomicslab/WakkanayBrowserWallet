@@ -1,9 +1,11 @@
+import { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
 import TransactionHistoryIcon from './TransactionHistoryIcon'
 import TransactionHistoryMessage from './TransactionHistoryMessage'
 import { TEXT, SUBTEXT } from '../constants/colors'
 import { FZ_SMALL, FW_BOLD, FZ_MEDIUM } from '../constants/fonts'
+import { getTransactionHistories } from '../store/transactionHistory'
 
 const BlockExplorerLinkWrapper = ({ history, children }) => {
   return (
@@ -40,7 +42,11 @@ const BlockExplorerLinkWrapper = ({ history, children }) => {
   )
 }
 
-const TransactionHistory = ({ pendingExitList, historyList }) => {
+const TransactionHistory = ({ historyList, getTransactionHistories }) => {
+  useEffect(() => {
+    getTransactionHistories()
+  }, [])
+
   return (
     <ul>
       {historyList.map((history, i) => (
@@ -49,20 +55,14 @@ const TransactionHistory = ({ pendingExitList, historyList }) => {
           key={`${i}-${history.message}-${history.amount}-${history.unit}-${history.blockNumber}-${history.counterParty}`}
         >
           <div className="transaction__item transaction__item--icon">
-            <TransactionHistoryIcon
-              pendingExitList={pendingExitList}
-              history={history}
-            />
+            <TransactionHistoryIcon history={history} />
           </div>
           <BlockExplorerLinkWrapper history={history}>
             <div className="transaction__item transaction__item--amount">
               {history.amount} {history.unit}
             </div>
             <div className="transaction__item transaction__item--message">
-              <TransactionHistoryMessage
-                pendingExitList={pendingExitList}
-                history={history}
-              />
+              <TransactionHistoryMessage history={history} />
             </div>
             <div className="transaction__item transaction__item--time">
               at {history.blockNumber} block
@@ -112,8 +112,10 @@ const TransactionHistory = ({ pendingExitList, historyList }) => {
   )
 }
 
-const mapStateToProps = ({ pendingExitList, history }) => ({
-  pendingExitList: pendingExitList.items,
+const mapStateToProps = ({ history }) => ({
   historyList: history.historyList
 })
-export default connect(mapStateToProps)(TransactionHistory)
+const mapDispatchToProps = {
+  getTransactionHistories
+}
+export default connect(mapStateToProps, mapDispatchToProps)(TransactionHistory)

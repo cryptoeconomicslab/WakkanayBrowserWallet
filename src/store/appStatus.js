@@ -286,12 +286,15 @@ const subscribeTransferCompleteEvent = client => {
 
 const subscribeExitFinalizedEvent = client => {
   return dispatch => {
-    client.subscribeExitFinalized(async exitId => {
-      console.info(`exit finalized for exit: ${exitId.toHexString()}`)
+    client.subscribeExitFinalized(async stateUpdate => {
+      console.info(`completed withdrawal: ${stateUpdate}`)
       dispatch(getL1Balance())
       dispatch(getL2Balance())
       dispatch(getTransactionHistories())
       dispatch(getPendingExitList())
+      dispatch(
+        pushToast({ message: 'Complete withdrawal success.', type: 'info' })
+      )
     })
   }
 }

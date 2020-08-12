@@ -1,9 +1,8 @@
 /**
  * find exit data that fits the conditional
  */
-export function findExit(exitList, blockNumber, range, depositContractAddress) {
+export function findExit(exitList, range, depositContractAddress) {
   const queriedExit = exitList
-    .filter(exit => exit.stateUpdate.blockNumber.raw === blockNumber.toString())
     .filter(
       exit =>
         range &&
