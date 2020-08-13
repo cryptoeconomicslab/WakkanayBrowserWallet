@@ -1,62 +1,75 @@
+import { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
+import TransactionHistoryIcon from './TransactionHistoryIcon'
+import TransactionHistoryMessage from './TransactionHistoryMessage'
 import { TEXT, SUBTEXT } from '../constants/colors'
 import { FZ_SMALL, FW_BOLD, FZ_MEDIUM } from '../constants/fonts'
 import { getTransactionHistories } from '../store/transactionHistory'
-import { shortenAddress } from '../utils'
 
-const Message = ({ message, counterParty }) => {
-  if (message === ActionType.Send) {
-    return <>{`${message} to ${shortenAddress(counterParty)}`}</>
-  } else if (message === ActionType.Receive) {
-    return <>{`${message} from ${shortenAddress(counterParty)}`}</>
-  } else {
-    return <>{message}</>
-  }
+const BlockExplorerLinkWrapper = ({ history, children }) => {
+  return (
+    <div className="transaction__link-wrapper">
+      {history.message === ActionType.Send ||
+      history.message === ActionType.Receive ? (
+        <a
+          href={`${process.env.BLOCK_EXPLORER_URL}/transaction?blockNumber=${history.blockNumber}&depositContractAddress=${history.depositContractAddress}&start=${history.range.start}&end=${history.range.end}`}
+          className="transaction__link"
+          target="_blank"
+          rel="noopener"
+        >
+          {children}
+        </a>
+      ) : (
+        <>{children}</>
+      )}
+      <style jsx>{`
+        .transaction__link-wrapper {
+          display: flex;
+          width: 100%;
+        }
+        .transaction__link {
+          color: ${TEXT};
+          text-decoration: none;
+          display: flex;
+          width: 100%;
+        }
+        .transaction__link:hover {
+          text-decoration: underline;
+        }
+      `}</style>
+    </div>
+  )
 }
 
-const TransactionHistory = ({ historyList }) => {
+const TransactionHistory = ({ historyList, getTransactionHistories }) => {
+  useEffect(() => {
+    getTransactionHistories()
+  }, [])
+
   return (
     <ul>
-      {historyList.map(
-        (
-          {
-            message,
-            amount,
-            unit,
-            blockNumber,
-            counterParty,
-            depositContractAddress,
-            range
-          },
-          i
-        ) => (
-          <li
-            className="transaction"
-            key={`${i}-${message}-${amount}-${unit}-${blockNumber}-${counterParty}`}
-          >
-            <a
-              href={`${process.env.BLOCK_EXPLORER_URL}/transaction?blockNumber=${blockNumber}&depositContractAddress=${depositContractAddress}&start=${range.start}&end=${range.end}`}
-              className="transaction__link"
-              target="_blank"
-              rel="noopener"
-            >
-              <div className="transaction__item transaction__item--icon">
-                <img src={`/icon-${message}.svg`} />
-              </div>
-              <div className="transaction__item transaction__item--amount">
-                {amount} {unit}
-              </div>
-              <div className="transaction__item transaction__item--type">
-                <Message message={message} counterParty={counterParty} />
-              </div>
-              <div className="transaction__item transaction__item--time">
-                at {blockNumber} block
-              </div>
-            </a>
-          </li>
-        )
-      )}
+      {historyList.map((history, i) => (
+        <li
+          className="transaction"
+          key={`${i}-${history.message}-${history.amount}-${history.unit}-${history.blockNumber}-${history.counterParty}`}
+        >
+          <div className="transaction__item transaction__item--icon">
+            <TransactionHistoryIcon history={history} />
+          </div>
+          <BlockExplorerLinkWrapper history={history}>
+            <div className="transaction__item transaction__item--amount">
+              {history.amount} {history.unit}
+            </div>
+            <div className="transaction__item transaction__item--message">
+              <TransactionHistoryMessage history={history} />
+            </div>
+            <div className="transaction__item transaction__item--time">
+              at {history.blockNumber} block
+            </div>
+          </BlockExplorerLinkWrapper>
+        </li>
+      ))}
       <style jsx>{`
         .transaction {
           list-style-type: none;
@@ -67,16 +80,7 @@ const TransactionHistory = ({ historyList }) => {
           font-weight: ${FW_BOLD};
         }
         .transaction + .transaction {
-          margin-top: 1rem;
-        }
-        .transaction__link {
-          display: flex;
-          width: 100%;
-          color: ${TEXT};
-          text-decoration: none;
-        }
-        .transaction__link:hover {
-          text-decoration: underline;
+          margin-top: 0.5rem;
         }
         .transaction__item {
           flex: 1;
@@ -86,8 +90,10 @@ const TransactionHistory = ({ historyList }) => {
         }
         .transaction__item--icon {
           flex: 0;
-          flex-basis: 2rem;
+          flex-basis: 3.25rem;
           text-align: left;
+          display: flex;
+          align-items: center;
         }
         .transaction__item--amount {
           flex: 0;
@@ -109,9 +115,7 @@ const TransactionHistory = ({ historyList }) => {
 const mapStateToProps = ({ history }) => ({
   historyList: history.historyList
 })
-
 const mapDispatchToProps = {
   getTransactionHistories
 }
-
 export default connect(mapStateToProps, mapDispatchToProps)(TransactionHistory)

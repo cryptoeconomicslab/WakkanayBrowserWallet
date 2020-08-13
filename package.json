@@ -11,11 +11,11 @@
   "dependencies": {
     "@cryptoeconomicslab/context": "^0.5.0",
     "@cryptoeconomicslab/eth-coder": "^0.5.0",
-    "@cryptoeconomicslab/eth-contract": "^0.5.1",
+    "@cryptoeconomicslab/eth-contract": "^0.5.2-alpha.1",
     "@cryptoeconomicslab/eth-wallet": "^0.5.0",
     "@cryptoeconomicslab/indexeddb-kvs": "0.0.5",
     "@cryptoeconomicslab/ovm": "^0.5.0",
-    "@cryptoeconomicslab/plasma-light-client": "^0.5.2-alpha.0",
+    "@cryptoeconomicslab/plasma-light-client": "^0.5.2-alpha.2",
     "@cryptoeconomicslab/primitives": "^0.5.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.30",
     "@fortawesome/free-brands-svg-icons": "^5.14.0",

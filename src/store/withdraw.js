@@ -1,7 +1,12 @@
-import { createAction, createReducer } from '@reduxjs/toolkit'
 import { utils } from 'ethers'
 import JSBI from 'jsbi'
+import { Address } from '@cryptoeconomicslab/primitives'
+import { createAction, createReducer } from '@reduxjs/toolkit'
+import { getL1Balance } from './l1Balance'
 import { getL2Balance } from './l2Balance'
+import { getPendingExitList } from './pendingExitList'
+import { pushToast } from './toast'
+import { getTransactionHistories } from './transactionHistory'
 import clientWrapper from '../client'
 import { PETHContract } from '../contracts/'
 import { getTokenByUnit } from '../constants/tokens'
@@ -45,7 +50,10 @@ export const withdraw = (amount, tokenContractAddress) => {
       if (!client) return
       await client.startWithdrawal(amountWei, tokenContractAddress)
       dispatch(setWithdrawProgress(WITHDRAW_PROGRESS.COMPLETE))
+      dispatch(getL1Balance())
       dispatch(getL2Balance())
+      dispatch(getTransactionHistories())
+      dispatch(getPendingExitList())
     } catch (e) {
       console.error(e)
       dispatch(setWithdrawError(e))
@@ -53,44 +61,37 @@ export const withdraw = (amount, tokenContractAddress) => {
   }
 }
 
-export const completeWithdrawal = () => {
+export const completeWithdrawal = exit => {
   return async dispatch => {
     const client = await clientWrapper.getClient()
     if (!client) return
-    const exitList = await client.getPendingWithdrawals()
-    exitList.map(async exit => {
-      try {
-        await client.completeWithdrawal(exit)
-        // TODO: must wait until that tx is included
-        const peth = getTokenByUnit('ETH')
-        if (
-          peth.depositContractAddress.toLowerCase() ===
-          exit.stateUpdate.depositContractAddress.data
-        ) {
-          const contract = new PETHContract(
-            peth.tokenContractAddress,
-            client.wallet.provider.getSigner()
-          )
-          await contract.unwrap(exit.stateUpdate.amount)
-        }
-        dispatch({
-          type: `NOTIFY_FINALIZE_EXIT`,
-          payload: exit.id.toHexString()
-        })
-      } catch (e) {
-        // @NOTE: 'Exit property is not decidable' is fine
-        if (e.message === 'Exit property is not decidable') return
-        console.error(e)
-        return
+    try {
+      await client.completeWithdrawal(exit, Address.from(client.address))
+      // TODO: must wait until that tx is included
+      const peth = getTokenByUnit('ETH')
+      if (
+        peth.depositContractAddress.toLowerCase() ===
+        exit.stateUpdate.depositContractAddress.data
+      ) {
+        const contract = new PETHContract(
+          peth.tokenContractAddress,
+          client.wallet.provider.getSigner()
+        )
+        await contract.unwrap(exit.stateUpdate.amount)
       }
-    })
-  }
-}
-const sleep = msec => new Promise(resolve => setTimeout(resolve, msec))
-export const autoCompleteWithdrawal = () => {
-  return async dispatch => {
-    await sleep(20000)
-    dispatch(completeWithdrawal())
-    return await autoCompleteWithdrawal(dispatch)
+      dispatch(getL1Balance())
+      dispatch(getL2Balance())
+      dispatch(getTransactionHistories())
+      dispatch(getPendingExitList())
+      dispatch(
+        pushToast({
+          message: 'Complete withdrawal transaction submitted.',
+          type: 'info'
+        })
+      )
+    } catch (e) {
+      console.error(e)
+      dispatch(pushToast({ message: e.message, type: 'error' }))
+    }
   }
 }
