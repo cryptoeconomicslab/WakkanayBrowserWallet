@@ -47,6 +47,14 @@ export const getPendingExitList = () => {
       const pendingExitList = await client.getPendingWithdrawals()
       dispatch(setPendingExitList(pendingExitList))
     } catch (e) {
+      // FIXME: temporary measures
+      if (
+        e.message ===
+        `Failed to execute 'transaction' on 'IDBDatabase': One of the specified object stores was not found.`
+      ) {
+        dispatch(getPendingExitList())
+        return
+      }
       console.error(e)
       dispatch(setPendingExitListError(e))
       dispatch(

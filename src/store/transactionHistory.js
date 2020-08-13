@@ -56,6 +56,14 @@ export const getTransactionHistories = () => {
       })
       dispatch(setHistoryList(histories))
     } catch (e) {
+      // FIXME: temporary measures
+      if (
+        e.message ===
+        `Failed to execute 'transaction' on 'IDBDatabase': One of the specified object stores was not found.`
+      ) {
+        dispatch(getTransactionHistories())
+        return
+      }
       console.error(e)
       dispatch(setHistoryListError(e))
       dispatch(
