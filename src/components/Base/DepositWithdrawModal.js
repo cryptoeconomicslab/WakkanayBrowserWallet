@@ -8,7 +8,7 @@ import Confirmation from '../Confirmation'
 import TokenInput from '../TokenInput'
 import { config } from '../../config'
 import { DEPOSIT_PROGRESS } from '../../store/deposit'
-import { TEXT_ERROR, SUBTEXT } from '../../constants/colors'
+import { SUBTEXT, ERROR } from '../../constants/colors'
 import { FZ_MEDIUM, FW_BLACK } from '../../constants/fonts'
 import { getTokenByTokenContractAddress } from '../../constants/tokens'
 
@@ -50,6 +50,9 @@ const DepositWithdrawModal = ({
   const selectedTokenBalance = balance[selectedTokenObj.unit]
     ? balance[selectedTokenObj.unit].amount
     : 0
+  const isInsufficientFunds = () => {
+    return tokenAmount > selectedTokenBalance
+  }
   return (
     <BaseModal
       title={modalTexts[type].title}
@@ -69,9 +72,14 @@ const DepositWithdrawModal = ({
                   unit={selectedTokenObj.unit}
                   handleAmount={setTokenAmount}
                 />
+                {isInsufficientFunds() && (
+                  <p className="depositWithdrawModal__insufficient-funds-message">
+                    Insufficient funds.
+                  </p>
+                )}
                 <Button
                   size="full"
-                  disabled={!tokenAmount || tokenAmount > selectedTokenBalance}
+                  disabled={!tokenAmount || isInsufficientFunds()}
                   onClick={updateProgress(DEPOSIT_PROGRESS.CONFIRM)}
                 >
                   {modalTexts[type].inputButton}
@@ -104,7 +112,7 @@ const DepositWithdrawModal = ({
               </div>
             ) : (
               <>
-                <Message color={TEXT_ERROR}>
+                <Message color={ERROR}>
                   Something went wrong.
                   <br />
                   Please try again later.
@@ -118,6 +126,11 @@ const DepositWithdrawModal = ({
           <style jsx>{`
             .depositWithdrawModal {
               min-width: 18.75rem;
+            }
+            .depositWithdrawModal__insufficient-funds-message {
+              padding: 0rem 0.5rem 0.875rem;
+              color: ${ERROR};
+              font-size: ${FZ_MEDIUM};
             }
             .complete {
               text-align: center;
