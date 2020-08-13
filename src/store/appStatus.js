@@ -69,6 +69,12 @@ const initialGetters = dispatch => {
   dispatch(getPendingExitList())
   dispatch(getCurrentBlockNumber())
 }
+const subscribedEventGetters = dispatch => {
+  dispatch(getL1Balance())
+  dispatch(getL2Balance())
+  dispatch(getTransactionHistories())
+  dispatch(getPendingExitList())
+}
 
 export const checkClientInitialized = () => {
   return async dispatch => {
@@ -226,11 +232,7 @@ const subscribeCheckpointFinalizedEvent = client => {
         '',
         'font-weight: bold;'
       )
-      dispatch(getEthUsdRate())
-      dispatch(getL1Balance())
-      dispatch(getL2Balance())
-      dispatch(getTransactionHistories())
-      dispatch(getPendingExitList())
+      subscribedEventGetters(dispatch)
     })
   }
 }
@@ -257,11 +259,7 @@ const subscribeSyncFinishedEvent = client => {
       dispatch(setCurrentBlockNumber(currentBlockNumber))
       dispatch(setSyncingBlockNumber(blockNumber.raw))
       if (currentBlockNumber === blockNumber.raw) {
-        dispatch(getEthUsdRate())
-        dispatch(getL1Balance())
-        dispatch(getL2Balance())
-        dispatch(getTransactionHistories())
-        dispatch(getPendingExitList())
+        subscribedEventGetters(dispatch)
         dispatch(setSyncingStatus(SYNCING_STATUS.LOADED))
       }
     })
@@ -276,10 +274,7 @@ const subscribeTransferCompleteEvent = client => {
         'color: brown; font-weight: bold;',
         'font-weight: bold;'
       )
-      dispatch(getL1Balance())
-      dispatch(getL2Balance())
-      dispatch(getTransactionHistories())
-      dispatch(getPendingExitList())
+      subscribedEventGetters(dispatch)
     })
   }
 }
@@ -288,10 +283,7 @@ const subscribeExitFinalizedEvent = client => {
   return dispatch => {
     client.subscribeExitFinalized(async stateUpdate => {
       console.info(`completed withdrawal: ${stateUpdate}`)
-      dispatch(getL1Balance())
-      dispatch(getL2Balance())
-      dispatch(getTransactionHistories())
-      dispatch(getPendingExitList())
+      subscribedEventGetters(dispatch)
       dispatch(
         pushToast({ message: 'Complete withdrawal success.', type: 'info' })
       )
