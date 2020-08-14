@@ -5,8 +5,9 @@ import clientWrapper from '../client'
 import { config } from '../config'
 import { CommitmentContract } from '../contracts'
 import { getAddress } from './address'
-import { pushToast } from './toast'
 import { getEthUsdRate } from './ethUsdRate'
+import { getPendingExitList } from './pendingExitList'
+import { pushToast } from './toast'
 import { getL1Balance } from './l1Balance'
 import { getL2Balance } from './l2Balance'
 import {
@@ -14,7 +15,6 @@ import {
   setCurrentBlockNumber
 } from './plasmaBlockNumber'
 import { getTransactionHistories } from './transactionHistory'
-import { autoCompleteWithdrawal } from './withdraw'
 import { WALLET_KIND } from '../wallet'
 
 export const APP_STATUS = {
@@ -66,7 +66,14 @@ const initialGetters = dispatch => {
   dispatch(getAddress())
   dispatch(getEthUsdRate()) // get the latest ETH price, returned value's unit is USD/ETH
   dispatch(getTransactionHistories())
+  dispatch(getPendingExitList())
   dispatch(getCurrentBlockNumber())
+}
+const subscribedEventGetters = dispatch => {
+  dispatch(getL1Balance())
+  dispatch(getL2Balance())
+  dispatch(getTransactionHistories())
+  dispatch(getPendingExitList())
 }
 
 export const checkClientInitialized = () => {
@@ -225,10 +232,7 @@ const subscribeCheckpointFinalizedEvent = client => {
         '',
         'font-weight: bold;'
       )
-      dispatch(getEthUsdRate())
-      dispatch(getL1Balance())
-      dispatch(getL2Balance())
-      dispatch(getTransactionHistories())
+      subscribedEventGetters(dispatch)
     })
   }
 }
@@ -255,10 +259,7 @@ const subscribeSyncFinishedEvent = client => {
       dispatch(setCurrentBlockNumber(currentBlockNumber))
       dispatch(setSyncingBlockNumber(blockNumber.raw))
       if (currentBlockNumber === blockNumber.raw) {
-        dispatch(getEthUsdRate())
-        dispatch(getL1Balance())
-        dispatch(getL2Balance())
-        dispatch(getTransactionHistories())
+        subscribedEventGetters(dispatch)
         dispatch(setSyncingStatus(SYNCING_STATUS.LOADED))
       }
     })
@@ -273,20 +274,19 @@ const subscribeTransferCompleteEvent = client => {
         'color: brown; font-weight: bold;',
         'font-weight: bold;'
       )
-      dispatch(getL1Balance())
-      dispatch(getL2Balance())
-      dispatch(getTransactionHistories())
+      subscribedEventGetters(dispatch)
     })
   }
 }
 
 const subscribeExitFinalizedEvent = client => {
   return dispatch => {
-    client.subscribeExitFinalized(async exitId => {
-      console.info(`exit finalized for exit: ${exitId.toHexString()}`)
-      dispatch(getL1Balance())
-      dispatch(getL2Balance())
-      dispatch(getTransactionHistories())
+    client.subscribeExitFinalized(async stateUpdate => {
+      console.info(`completed withdrawal: ${stateUpdate}`)
+      subscribedEventGetters(dispatch)
+      dispatch(
+        pushToast({ message: 'Complete withdrawal success.', type: 'info' })
+      )
     })
   }
 }
@@ -304,7 +304,6 @@ export const subscribeEvents = () => {
       dispatch(subscribeCheckpointFinalizedEvent(client))
       dispatch(subscribeTransferCompleteEvent(client))
       dispatch(subscribeExitFinalizedEvent(client))
-      dispatch(autoCompleteWithdrawal(client))
     } catch (e) {
       console.error(e)
       dispatch(pushToast({ message: e.message, type: 'error' }))

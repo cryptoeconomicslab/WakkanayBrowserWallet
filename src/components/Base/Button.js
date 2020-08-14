@@ -45,6 +45,10 @@ export default props => {
           font-size: ${FZ_SMALL};
           padding: 0.25rem 0.75rem;
         }
+        .tiny {
+          font-size: ${FZ_SMALL};
+          padding: 0.125rem 0.5rem;
+        }
         .border {
           background: transparent;
           border: 1px solid ${MAIN};

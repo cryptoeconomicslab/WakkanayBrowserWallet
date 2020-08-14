@@ -15,6 +15,7 @@ import { withdrawReducer } from './withdraw'
 import { appStatusReducer } from './appStatus'
 import { appRouterReducer } from './appRouter'
 import { exchangeReducer } from './exchange'
+import { pendingExitListReducer } from './pendingExitList'
 import { toastReducer } from './toast'
 import { plasmaBlockNumberReducer } from './plasmaBlockNumber'
 
@@ -32,6 +33,7 @@ const reducer = combineReducers({
   appStatus: appStatusReducer,
   appRouter: appRouterReducer,
   exchangeState: exchangeReducer,
+  pendingExitList: pendingExitListReducer,
   toastState: toastReducer,
   plasmaBlockNumber: plasmaBlockNumberReducer
 })
