@@ -1,3 +1,4 @@
+import React from 'react'
 import classNames from 'classnames'
 import { BACKGROUND } from '../../constants/colors'
 import { FW_BOLD, FZ_DEFAULT } from '../../constants/fonts'

@@ -1,16 +1,15 @@
+import LightClient from '@cryptoeconomicslab/plasma-light-client'
 import initialize from './initialize'
 
 class ClientWrapper {
-  constructor() {
-    this.instance = null
-  }
+  private instance: LightClient
 
   /**
    * Returns client singleton. Lazily initialized on client side.
    * Returns null on server side.
    * @returns {?Client}
    */
-  getClient() {
+  getClient(): LightClient | null {
     if (this.instance) return this.instance
 
     return null

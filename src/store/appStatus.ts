@@ -17,6 +17,11 @@ import {
 import { getTransactionHistories } from './transactionHistory'
 import { WALLET_KIND } from '../wallet'
 
+export enum APP_STATUS_ACTION_TYPES {
+  SET_APP_STATUS = 'SET_APP_STATUS',
+  SET_APP_ERROR = 'SET_APP_ERROR'
+}
+
 export const APP_STATUS = {
   UNLOADED: 'UNLOADED',
   LOADING: 'LOADING',
@@ -31,10 +36,12 @@ export const SYNCING_STATUS = {
   ERROR: 'ERROR'
 }
 
-export const setAppStatus = createAction('SET_APP_STATUS')
-export const setSyncingStatus = createAction('SET_SYNCING_STATUS')
-export const setSyncingBlockNumber = createAction('SET_SYNCING_BLOCK_NUMBER')
-export const setAppError = createAction('SET_APP_ERROR')
+export const setAppStatus = createAction<string>('SET_APP_STATUS')
+export const setSyncingStatus = createAction<string>('SET_SYNCING_STATUS')
+export const setSyncingBlockNumber = createAction<number>(
+  'SET_SYNCING_BLOCK_NUMBER'
+)
+export const setAppError = createAction<Error>('SET_APP_ERROR')
 
 export const appStatusReducer = createReducer(
   {
@@ -44,17 +51,17 @@ export const appStatusReducer = createReducer(
     syncingBlockNumber: 0
   },
   {
-    [setAppStatus]: (state, action) => {
+    [setAppStatus.type]: (state, action) => {
       state.status = action.payload
     },
-    [setAppError]: (state, action) => {
+    [setAppError.type]: (state, action) => {
       state.error = action.payload
       state.status = APP_STATUS.ERROR
     },
-    [setSyncingStatus]: (state, action) => {
+    [setSyncingStatus.type]: (state, action) => {
       state.syncingStatus = action.payload
     },
-    [setSyncingBlockNumber]: (state, action) => {
+    [setSyncingBlockNumber.type]: (state, action) => {
       state.syncingBlockNumber = action.payload
     }
   }

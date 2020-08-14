@@ -7,11 +7,13 @@ import {
   TEXT
 } from '../../constants/colors'
 
-/**
- * General Modal Component for Browser Plasma Wallet
- */
+type Props = {
+  title: string
+  render: any
+  onClose: any
+}
 
-const BaseModal = ({ title, render, onClose }) => {
+export default ({ title, render, onClose }: Props) => {
   const close = () => {
     Router.push(Router.route)
     if (onClose) onClose()
@@ -59,5 +61,3 @@ const BaseModal = ({ title, render, onClose }) => {
     </div>
   )
 }
-
-export { BaseModal }

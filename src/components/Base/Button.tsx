@@ -1,9 +1,20 @@
+import React, { ReactNode } from 'react'
 import classnames from 'classnames'
 import { MAIN, White, MAIN_DARK, Main } from '../../constants/colors'
 import { FZ_MEDIUM, FW_BLACK, FZ_SMALL } from '../../constants/fonts'
 
-export default props => {
-  const { full, size, className, border } = props
+type Props = {
+  children: ReactNode
+  className?: string
+  full?: any
+  border?: any
+  size?: any
+  onClick?: any
+  disabled?: boolean
+}
+
+export default (props: Props) => {
+  const { full, size, className, border, children } = props
   return (
     <button
       {...props}
@@ -14,7 +25,7 @@ export default props => {
         border
       })}`}
     >
-      {props.children}
+      {children}
       <style jsx>{`
         .button {
           background: ${MAIN};

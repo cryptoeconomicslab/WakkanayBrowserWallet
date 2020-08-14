@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
-import { BaseModal } from './BaseModal'
+import BaseModal from './BaseModal'
 import Message from './Message'
 import Button from './Button'
 import { TokenSelector } from '../TokenSelector'
@@ -29,13 +29,21 @@ const modalTexts = {
   }
 }
 
+type Props = {
+  type: string
+  progress: string
+  setProgress: any
+  action: any
+  balance: any
+}
+
 const DepositWithdrawModal = ({
   type,
   progress,
   setProgress,
   action,
   balance
-}) => {
+}: Props) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [tokenAmount, setTokenAmount] = useState(undefined)

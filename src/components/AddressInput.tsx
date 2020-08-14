@@ -4,8 +4,17 @@ import classnames from 'classnames'
 import Input from './Base/Input'
 import { BACKGROUND, MAIN } from '../constants/colors'
 
-const AddressInput = props => {
-  const { className, handleAddress, recepientAddress } = props
+type Props = {
+  className: string
+  handleAddress: any
+  recepientAddress: string
+}
+
+const AddressInput = ({
+  className,
+  handleAddress,
+  recepientAddress
+}: Props) => {
   const [focused, setFocused] = useState(false)
   return (
     <>

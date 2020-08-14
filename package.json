@@ -2,11 +2,12 @@
   "name": "gazelle-wallet",
   "version": "0.1.0",
   "scripts": {
-    "dev": "NODE_OPTIONS=--max_old_space_size=4096 next dev src -p 5001",
+    "dev": "next dev src -p 5001",
     "build": "next build src",
     "start": "next start src -p $PORT",
-    "lint": "eslint --ext js,jsx src",
-    "lint:fix": "eslint --fix --ext js,jsx src"
+    "tsc": "tsc",
+    "lint": "eslint --ext js,jsx,ts,tsx src",
+    "lint:fix": "eslint --fix --ext js,jsx,ts,tsx src"
   },
   "dependencies": {
     "@cryptoeconomicslab/context": "^0.5.0",
@@ -54,6 +55,7 @@
     "@types/node": "^14.0.26",
     "@types/react": "^16.9.43",
     "@types/react-dom": "^16.9.8",
+    "@types/react-redux": "^7.1.9",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.0",
     "eslint-config-prettier": "^6.11.0",

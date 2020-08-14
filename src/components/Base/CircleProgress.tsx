@@ -1,12 +1,17 @@
+import React from 'react'
 import { Circle } from 'rc-progress'
 import { MAIN } from '../../constants/colors'
 import { FZ_TINY } from '../../constants/fonts'
 
-export default ({ percent }) => {
+type Props = {
+  percent: number
+}
+
+export default ({ percent }: Props) => {
   return (
     <div className="circleBoxWrapper">
       <div className="circleBox">
-        <Circle percent={percent} strokeWidth="8" strokeColor={MAIN} />
+        <Circle percent={percent} strokeWidth={8} strokeColor={MAIN} />
         <span className="circleBox__progress-character">
           syncing...{percent}%
         </span>
