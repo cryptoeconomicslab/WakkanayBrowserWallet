@@ -5,7 +5,7 @@ import { FW_BOLD, FZ_DEFAULT } from '../../constants/fonts'
 export default props => {
   const { options } = props
   return (
-    <React.Fragment>
+    <>
       <div className="selectWrap">
         <select
           {...props}
@@ -50,6 +50,6 @@ export default props => {
           width: 100%;
         }
       `}</style>
-    </React.Fragment>
+    </>
   )
 }

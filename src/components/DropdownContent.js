@@ -1,5 +1,5 @@
 import { TEXT, SUBTEXT, BACKGROUND, White } from '../constants/colors'
-import React, { Fragment } from 'react'
+import React from 'react'
 import { Z_DROPDOWN } from '../constants/zindex'
 
 const DropdownContent = ({ onSelect, items, renderItem }) => {
@@ -9,7 +9,7 @@ const DropdownContent = ({ onSelect, items, renderItem }) => {
   }
 
   return (
-    <Fragment>
+    <>
       <div className="dropdown-content">
         {items.map(item => (
           <div
@@ -44,7 +44,7 @@ const DropdownContent = ({ onSelect, items, renderItem }) => {
           background: ${BACKGROUND};
         }
       `}</style>
-    </Fragment>
+    </>
   )
 }
 

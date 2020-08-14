@@ -8,7 +8,6 @@ import { config } from '../config'
 import Alert from './Base/Alert'
 import Header from './Header'
 import StartupModal from './StartupModal'
-// import { Tabs } from './Tabs'
 import Wallet from './Wallet'
 import {
   TEXT,
@@ -29,14 +28,7 @@ import {
   FW_NORMAL,
   FW_BLACK
 } from '../constants/fonts'
-import {
-  WALLET,
-  HISTORY,
-  // PAYMENT,
-  // EXCHANGE,
-  // NFT_COLLECTIBLES,
-  openModal
-} from '../routes'
+import { WALLET, HISTORY, openModal } from '../routes'
 import { getSyncProgress } from '../selectors/syncProgressSelectors'
 import {
   getL1TotalBalance,
@@ -68,11 +60,6 @@ const Initial = ({
   useReactToast({ toasts: toasts, onDisappearToast: removeToast })
   const isWalletHidden =
     router.pathname === WALLET || router.pathname === HISTORY
-  // const isTabShownHidden =
-  //   appStatus.status === APP_STATUS.LOADED &&
-  //   (router.pathname === PAYMENT ||
-  //     router.pathname === EXCHANGE ||
-  //     router.pathname === NFT_COLLECTIBLES)
 
   useEffect(() => {
     checkClientInitialized()
@@ -146,10 +133,7 @@ const Initial = ({
             </div>
           </Box>
         )}
-        <Box>
-          {/* {isTabShownHidden && <Tabs currentPath={router.pathname} />} */}
-          {content}
-        </Box>
+        <Box>{content}</Box>
         {appStatus.status === APP_STATUS.LOADED && (
           <div className="logoutButtonWrap">
             <a

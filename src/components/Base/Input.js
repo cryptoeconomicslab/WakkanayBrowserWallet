@@ -5,7 +5,7 @@ import { FZ_MEDIUM, FW_BOLD } from '../../constants/fonts'
 export default props => {
   const { full, className } = props
   return (
-    <React.Fragment>
+    <>
       <input
         {...props}
         className={`${classnames(className, {
@@ -29,6 +29,6 @@ export default props => {
           color: ${Black(0.1)};
         }
       `}</style>
-    </React.Fragment>
+    </>
   )
 }

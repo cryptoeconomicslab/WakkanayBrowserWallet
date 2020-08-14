@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import classnames from 'classnames'
 import Input from './Base/Input'
@@ -19,7 +19,7 @@ const TokenInput = props => {
   const [focused, setFocused] = useState(false)
 
   return (
-    <Fragment>
+    <>
       <div
         className={`${classnames(className, {
           inputWrap: true,
@@ -73,7 +73,7 @@ const TokenInput = props => {
           bottom: 0.875rem;
         }
       `}</style>
-    </Fragment>
+    </>
   )
 }
 

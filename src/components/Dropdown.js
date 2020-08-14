@@ -1,6 +1,6 @@
 import ClickOutside from 'react-click-outside'
 import { BACKGROUND } from '../constants/colors'
-import React, { useState, Fragment } from 'react'
+import React, { useState } from 'react'
 import DropdownContent from './DropdownContent'
 const Dropdown = ({
   onselect,
@@ -18,7 +18,7 @@ const Dropdown = ({
   }
 
   return (
-    <Fragment>
+    <>
       <ClickOutside onClickOutside={() => setIsOpen(false)}>
         <div className="dropdown">
           <button
@@ -66,7 +66,7 @@ const Dropdown = ({
           width: 100%;
         }
       `}</style>
-    </Fragment>
+    </>
   )
 }
 
