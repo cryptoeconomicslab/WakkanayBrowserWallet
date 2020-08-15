@@ -11,16 +11,16 @@ export enum DEPOSIT_ACTION_TYPES {
   SET_DEPOSIT_ERROR = 'SET_DEPOSIT_ERROR'
 }
 
-export interface State {
-  depositProgress: string
-  error: Error | null
-}
-
 export const DEPOSIT_PROGRESS = {
   INPUT: 'INPUT',
   CONFIRM: 'CONFIRM',
   COMPLETE: 'COMPLETE',
   ERROR: 'ERROR'
+}
+
+export interface State {
+  depositProgress: string
+  error: Error | null
 }
 
 const initialState: State = {
@@ -31,6 +31,7 @@ const initialState: State = {
 interface DepositAction {
   type: DEPOSIT_ACTION_TYPES
   payload?: any
+  error?: boolean
 }
 
 export const setDepositProgress = createAction<string>(

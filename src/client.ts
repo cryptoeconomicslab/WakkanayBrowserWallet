@@ -1,5 +1,6 @@
 import LightClient from '@cryptoeconomicslab/plasma-light-client'
 import initialize from './initialize'
+import WALLET_KIND from './wallet/kind'
 
 class ClientWrapper {
   private instance: LightClient
@@ -20,7 +21,7 @@ class ClientWrapper {
    * @param {*} walletParams is object which to create wallet
    *   walletParams must have "kind" property. It is a way of creating wallet.
    */
-  async initializeClient(walletParams) {
+  async initializeClient(walletParams: { kind: WALLET_KIND; email?: string }) {
     if (this.instance) return
 
     if (process.browser) {
