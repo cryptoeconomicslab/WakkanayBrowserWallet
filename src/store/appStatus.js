@@ -2,18 +2,12 @@ import { createAction, createReducer } from '@reduxjs/toolkit'
 import { EthCoder } from '@cryptoeconomicslab/eth-coder'
 import { setupContext } from '@cryptoeconomicslab/context'
 import clientWrapper from '../client'
-import { config } from '../config'
-import { CommitmentContract } from '../contracts'
 import { getAddress } from './address'
 import { getEthUsdRate } from './ethUsdRate'
 import { getPendingExitList } from './pendingExitList'
 import { pushToast } from './toast'
 import { getL1Balance } from './l1Balance'
 import { getL2Balance } from './l2Balance'
-import {
-  getCurrentBlockNumber,
-  setCurrentBlockNumber
-} from './plasmaBlockNumber'
 import { getTransactionHistories } from './transactionHistory'
 import { WALLET_KIND } from '../wallet'
 
@@ -33,7 +27,6 @@ export const SYNCING_STATUS = {
 
 export const setAppStatus = createAction('SET_APP_STATUS')
 export const setSyncingStatus = createAction('SET_SYNCING_STATUS')
-export const setSyncingBlockNumber = createAction('SET_SYNCING_BLOCK_NUMBER')
 export const setAppError = createAction('SET_APP_ERROR')
 
 export const appStatusReducer = createReducer(
@@ -53,9 +46,6 @@ export const appStatusReducer = createReducer(
     },
     [setSyncingStatus]: (state, action) => {
       state.syncingStatus = action.payload
-    },
-    [setSyncingBlockNumber]: (state, action) => {
-      state.syncingBlockNumber = action.payload
     }
   }
 )
@@ -67,7 +57,6 @@ const initialGetters = dispatch => {
   dispatch(getEthUsdRate()) // get the latest ETH price, returned value's unit is USD/ETH
   dispatch(getTransactionHistories())
   dispatch(getPendingExitList())
-  dispatch(getCurrentBlockNumber())
 }
 const subscribedEventGetters = dispatch => {
   dispatch(getL1Balance())
@@ -247,21 +236,11 @@ const subscribeSyncStartedEvent = client => {
 }
 
 const subscribeSyncFinishedEvent = client => {
-  return async dispatch => {
-    // TODO: it has a problem of performance
-    const commitmentContract = new CommitmentContract(
-      config.commitment,
-      client.wallet.provider.getSigner()
-    )
+  return dispatch => {
     client.subscribeSyncFinished(async blockNumber => {
       console.info(`sync new state: ${blockNumber.data}`)
-      const currentBlockNumber = await commitmentContract.getCurrentBlockNumber()
-      dispatch(setCurrentBlockNumber(currentBlockNumber))
-      dispatch(setSyncingBlockNumber(blockNumber.raw))
-      if (currentBlockNumber === blockNumber.raw) {
-        subscribedEventGetters(dispatch)
-        dispatch(setSyncingStatus(SYNCING_STATUS.LOADED))
-      }
+      subscribedEventGetters(dispatch)
+      dispatch(setSyncingStatus(SYNCING_STATUS.LOADED))
     })
   }
 }

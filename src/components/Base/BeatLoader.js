@@ -7,7 +7,7 @@ const override = css`
 `
 export default ({ isLoading }) => {
   return (
-    <div className="sweet-loading">
+    <div>
       <BeatLoader
         css={override}
         size={15}

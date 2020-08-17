@@ -34,7 +34,6 @@
     "next": "^9.5.1",
     "next-redux-wrapper": "^4.0.1",
     "qrcode.react": "^1.0.0",
-    "rc-progress": "^3.0.0",
     "react": "^16.13.1",
     "react-click-outside": "github:tj/react-click-outside",
     "react-copy-to-clipboard": "^5.0.2",
