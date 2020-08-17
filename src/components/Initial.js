@@ -4,7 +4,6 @@ import Router, { useRouter } from 'next/router'
 import Head from 'next/head'
 import Box from './Base/Box'
 import ClipLoader from './Base/ClipLoader'
-import { config } from '../config'
 import Alert from './Base/Alert'
 import Header from './Header'
 import StartupModal from './StartupModal'
@@ -31,16 +30,11 @@ import {
 } from '../constants/fonts'
 import {
   WALLET,
-  HISTORY,
+  HISTORY
   // PAYMENT,
   // EXCHANGE,
   // NFT_COLLECTIBLES,
-  openModal
 } from '../routes'
-import {
-  getL1TotalBalance,
-  getL2TotalBalance
-} from '../selectors/totalBalanceSelectors'
 import { pushRouteHistory, popRouteHistory } from '../store/appRouter'
 import {
   APP_STATUS,
@@ -55,12 +49,8 @@ const Initial = ({
   pushRouteHistory,
   popRouteHistory,
   appStatus,
-  address,
   toasts,
   removeToast,
-  l1TotalBalance,
-  l2TotalBalance,
-  syncProgress,
   children
 }) => {
   const router = useRouter()
@@ -130,17 +120,7 @@ const Initial = ({
               {appStatus.status !== APP_STATUS.LOADED ? (
                 <span className="wallet__txt">No Wallet</span>
               ) : (
-                <Wallet
-                  l2={l2TotalBalance}
-                  mainchain={l1TotalBalance}
-                  address={address}
-                  onDeposit={() => {
-                    openModal({
-                      modal: 'deposit',
-                      token: config.PlasmaETH
-                    })
-                  }}
-                />
+                <Wallet />
               )}
             </div>
           </Box>
@@ -281,11 +261,8 @@ const Initial = ({
 }
 
 const mapStateToProps = state => ({
-  address: state.address,
   appStatus: state.appStatus,
-  toasts: state.toastState.toasts,
-  l1TotalBalance: getL1TotalBalance(state),
-  l2TotalBalance: getL2TotalBalance(state)
+  toasts: state.toastState.toasts
 })
 
 const mapDispatchToProps = {

@@ -2,7 +2,7 @@ import { createAction, createReducer } from '@reduxjs/toolkit'
 import { pushToast } from './toast'
 import clientWrapper from '../client'
 
-export const EXIT_LIST_PROGRESS = {
+export const PENDING_EXIT_LIST_PROGRESS = {
   UNLOADED: 'UNLOADED',
   LOADING: 'LOADING',
   LOADED: 'LOADED',
@@ -20,28 +20,34 @@ export const setPendingExitListError = createAction(
 export const pendingExitListReducer = createReducer(
   {
     items: [],
-    status: EXIT_LIST_PROGRESS.UNLOADED,
+    status: PENDING_EXIT_LIST_PROGRESS.UNLOADED,
     error: null
   },
   {
     [setPendingExitList]: (state, action) => {
       state.items = action.payload
-      state.status = EXIT_LIST_PROGRESS.LOADED
+      state.status = PENDING_EXIT_LIST_PROGRESS.LOADED
     },
     [setPendingExitListStatus]: (state, action) => {
       state.status = action.payload
     },
     [setPendingExitListError]: (state, action) => {
       state.error = action.payload
-      state.status = EXIT_LIST_PROGRESS.ERROR
+      state.status = PENDING_EXIT_LIST_PROGRESS.ERROR
     }
   }
 )
 
 export const getPendingExitList = () => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     try {
-      dispatch(setPendingExitListStatus(EXIT_LIST_PROGRESS.LOADING))
+      if (
+        getState().pendingExitList.status === PENDING_EXIT_LIST_PROGRESS.LOADING
+      ) {
+        return
+      }
+
+      dispatch(setPendingExitListStatus(PENDING_EXIT_LIST_PROGRESS.LOADING))
       const client = await clientWrapper.getClient()
       if (!client) return
       const pendingExitList = await client.getPendingWithdrawals()

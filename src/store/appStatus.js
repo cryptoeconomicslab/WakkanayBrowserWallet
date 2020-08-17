@@ -33,7 +33,7 @@ export const appStatusReducer = createReducer(
   {
     status: APP_STATUS.UNLOADED,
     error: null,
-    syncingStatus: SYNCING_STATUS.LOADED,
+    syncingStatus: SYNCING_STATUS.UNLOADED,
     syncingBlockNumber: 0
   },
   {
@@ -50,23 +50,39 @@ export const appStatusReducer = createReducer(
   }
 )
 
-const initialGetters = dispatch => {
-  dispatch(getL1Balance())
-  dispatch(getL2Balance())
-  dispatch(getAddress())
-  dispatch(getEthUsdRate()) // get the latest ETH price, returned value's unit is USD/ETH
-  dispatch(getTransactionHistories())
-  dispatch(getPendingExitList())
+export const initialGetters = (dispatch, getState) => {
+  if (getState().appStatus.syncingStatus === SYNCING_STATUS.LOADED) {
+    dispatch(getEthUsdRate())
+    dispatch(getAddress())
+    dispatch(getL1Balance())
+    dispatch(getL2Balance())
+    dispatch(getTransactionHistories())
+    dispatch(getPendingExitList())
+  }
 }
-const subscribedEventGetters = dispatch => {
-  dispatch(getL1Balance())
-  dispatch(getL2Balance())
-  dispatch(getTransactionHistories())
-  dispatch(getPendingExitList())
+const subscribedEventGetters = (dispatch, getState) => {
+  if (getState().appStatus.syncingStatus === SYNCING_STATUS.LOADED) {
+    dispatch(getL1Balance())
+    dispatch(getL2Balance())
+    dispatch(getTransactionHistories())
+    dispatch(getPendingExitList())
+  }
+}
+const initializeClientWrapper = async (dispatch, getState, kind, email) => {
+  await clientWrapper.initializeClient({
+    kind,
+    email
+  })
+  dispatch(subscribeEvents())
+  clientWrapper.start().then(() => {
+    dispatch(setSyncingStatus(SYNCING_STATUS.LOADED))
+    initialGetters(dispatch, getState)
+  })
+  initialGetters(dispatch, getState)
 }
 
 export const checkClientInitialized = () => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     if (!process.browser) {
       dispatch(setAppStatus(APP_STATUS.UNLOADED))
       return
@@ -78,19 +94,14 @@ export const checkClientInitialized = () => {
       const client = clientWrapper.getClient()
       if (client) {
         dispatch(subscribeEvents())
-        initialGetters(dispatch)
+        initialGetters(dispatch, getState)
         dispatch(setAppStatus(APP_STATUS.LOADED))
         return
       }
 
       const loggedInWith = localStorage.getItem('loggedInWith')
       if (loggedInWith) {
-        await clientWrapper.initializeClient({
-          kind: loggedInWith
-        })
-        dispatch(subscribeEvents())
-        clientWrapper.start()
-        initialGetters(dispatch)
+        initializeClientWrapper(dispatch, getState, loggedInWith)
         dispatch(setAppStatus(APP_STATUS.LOADED))
       } else {
         dispatch(setAppStatus(APP_STATUS.UNLOADED))
@@ -103,36 +114,11 @@ export const checkClientInitialized = () => {
   }
 }
 
-export const initializeClient = privateKey => {
-  return async dispatch => {
-    try {
-      dispatch(setAppStatus(APP_STATUS.LOADING))
-      await clientWrapper.initializeClient({
-        kind: WALLET_KIND.WALLET_PRIVATEKEY,
-        privateKey
-      })
-      dispatch(subscribeEvents())
-      clientWrapper.start()
-      initialGetters(dispatch)
-      dispatch(setAppStatus(APP_STATUS.LOADED))
-    } catch (e) {
-      console.error(e)
-      dispatch(pushToast({ message: e.message, type: 'error' }))
-      dispatch(setAppError(e))
-    }
-  }
-}
-
 export const initializeMetamaskWallet = () => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     try {
       dispatch(setAppStatus(APP_STATUS.LOADING))
-      await clientWrapper.initializeClient({
-        kind: WALLET_KIND.WALLET_METAMASK
-      })
-      dispatch(subscribeEvents())
-      clientWrapper.start()
-      initialGetters(dispatch)
+      initializeClientWrapper(dispatch, getState, WALLET_KIND.WALLET_METAMASK)
       dispatch(setAppStatus(APP_STATUS.LOADED))
     } catch (e) {
       console.error(e)
@@ -143,17 +129,16 @@ export const initializeMetamaskWallet = () => {
 }
 
 export const initializeMetamaskSnapWallet = () => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     try {
       dispatch(setAppStatus(APP_STATUS.LOADING))
       // identify the Snap by the location of its package.json file
       const snapId = new URL('package.json', window.location.href).toString()
-      await clientWrapper.initializeClient({
-        kind: WALLET_KIND.WALLET_METAMASK_SNAP
-      })
-      dispatch(subscribeEvents())
-      clientWrapper.start()
-      initialGetters(dispatch)
+      initializeClientWrapper(
+        dispatch,
+        getState,
+        WALLET_KIND.WALLET_METAMASK_SNAP
+      )
 
       // get permissions to interact with and install the plugin
       await window.ethereum.send({
@@ -174,15 +159,10 @@ export const initializeMetamaskSnapWallet = () => {
 }
 
 export const initializeWalletConnect = () => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     try {
       dispatch(setAppStatus(APP_STATUS.LOADING))
-      await clientWrapper.initializeClient({
-        kind: WALLET_KIND.WALLET_CONNECT
-      })
-      dispatch(subscribeEvents())
-      clientWrapper.start()
-      initialGetters(dispatch)
+      initializeClientWrapper(dispatch, getState, WALLET_KIND.WALLET_CONNECT)
       dispatch(setAppStatus(APP_STATUS.LOADED))
     } catch (e) {
       console.error(e)
@@ -193,16 +173,15 @@ export const initializeWalletConnect = () => {
 }
 
 export const initializeMagicLinkWallet = email => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     try {
       dispatch(setAppStatus(APP_STATUS.LOADING))
-      await clientWrapper.initializeClient({
-        kind: WALLET_KIND.WALLET_MAGIC_LINK,
+      initializeClientWrapper(
+        dispatch,
+        getState,
+        WALLET_KIND.WALLET_CONNECT,
         email
-      })
-      dispatch(subscribeEvents())
-      clientWrapper.start()
-      initialGetters(dispatch)
+      )
       dispatch(setAppStatus(APP_STATUS.LOADED))
     } catch (e) {
       console.error(e)
@@ -213,7 +192,7 @@ export const initializeMagicLinkWallet = email => {
 }
 
 const subscribeCheckpointFinalizedEvent = client => {
-  return dispatch => {
+  return (dispatch, getState) => {
     client.subscribeCheckpointFinalized((checkpointId, checkpoint) => {
       console.info(
         `new %ccheckpoint %cdetected: %c{ id: ${checkpointId.toHexString()}, checkpoint: (${checkpoint}) }`,
@@ -221,7 +200,7 @@ const subscribeCheckpointFinalizedEvent = client => {
         '',
         'font-weight: bold;'
       )
-      subscribedEventGetters(dispatch)
+      subscribedEventGetters(dispatch, getState)
     })
   }
 }
@@ -236,33 +215,33 @@ const subscribeSyncStartedEvent = client => {
 }
 
 const subscribeSyncFinishedEvent = client => {
-  return dispatch => {
+  return (dispatch, getState) => {
     client.subscribeSyncFinished(async blockNumber => {
       console.info(`sync new state: ${blockNumber.data}`)
-      subscribedEventGetters(dispatch)
       dispatch(setSyncingStatus(SYNCING_STATUS.LOADED))
+      subscribedEventGetters(dispatch, getState)
     })
   }
 }
 
 const subscribeTransferCompleteEvent = client => {
-  return dispatch => {
+  return (dispatch, getState) => {
     client.subscribeTransferComplete(stateUpdate => {
       console.info(
         `%c transfer complete for range: %c (${stateUpdate.range.start.data}, ${stateUpdate.range.end.data})`,
         'color: brown; font-weight: bold;',
         'font-weight: bold;'
       )
-      subscribedEventGetters(dispatch)
+      subscribedEventGetters(dispatch, getState)
     })
   }
 }
 
 const subscribeExitFinalizedEvent = client => {
-  return dispatch => {
+  return (dispatch, getState) => {
     client.subscribeExitFinalized(async stateUpdate => {
       console.info(`completed withdrawal: ${stateUpdate}`)
-      subscribedEventGetters(dispatch)
+      subscribedEventGetters(dispatch, getState)
       dispatch(
         pushToast({ message: 'Complete withdrawal success.', type: 'info' })
       )

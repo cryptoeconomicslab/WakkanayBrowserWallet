@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import Link from 'next/link'
 import Layout from '../components/Layout'
-import { WalletTokenItem } from '../components/WalletTokenItem'
+import WalletTokenItem from '../components/WalletTokenItem'
 import { BACKGROUND, SUBTEXT } from '../constants/colors'
 import {
   FZ_MEDIUM,
@@ -20,9 +20,8 @@ import {
 
 function Wallet({
   address,
-  syncingStatus,
-  l1Balance,
-  l2Balance,
+  l1BalanceList,
+  l2BalanceList,
   l1TotalBalance,
   l2TotalBalance
 }) {
@@ -49,19 +48,10 @@ function Wallet({
         <div className="mtl">
           {TOKEN_LIST.map(({ unit, tokenContractAddress }) => (
             <WalletTokenItem
+              l1Balance={l1BalanceList[unit] ? l1BalanceList[unit].amount : 0}
+              l2Balance={l2BalanceList[unit] ? l2BalanceList[unit].amount : 0}
               unit={unit}
-              l2={
-                l2Balance.balanceList[unit]
-                  ? l2Balance.balanceList[unit].amount
-                  : 0
-              }
-              mainchain={
-                l1Balance.balanceList[unit]
-                  ? l1Balance.balanceList[unit].amount
-                  : 0
-              }
               tokenContractAddress={tokenContractAddress}
-              syncingStatus={syncingStatus}
             />
           ))}
         </div>
@@ -112,9 +102,8 @@ function Wallet({
 
 const mapStateToProps = state => ({
   address: state.address,
-  syncingStatus: state.appStatus.syncingStatus,
-  l1Balance: state.l1Balance,
-  l2Balance: state.l2Balance,
+  l1BalanceList: state.l1Balance.balanceList,
+  l2BalanceList: state.l2Balance.balanceList,
   l1TotalBalance: getL1TotalBalance(state),
   l2TotalBalance: getL2TotalBalance(state)
 })

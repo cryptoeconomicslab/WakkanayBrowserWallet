@@ -1,4 +1,9 @@
 import initialize from './initialize'
+import {
+  initialGetters,
+  setSyncingStatus,
+  SYNCING_STATUS
+} from './store/appStatus'
 
 class ClientWrapper {
   constructor() {
@@ -30,9 +35,9 @@ class ClientWrapper {
     }
   }
 
-  start() {
+  async start() {
     if (!this.instance) return
-    this.instance.start()
+    await this.instance.start()
   }
 }
 

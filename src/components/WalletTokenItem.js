@@ -1,3 +1,4 @@
+import React from 'react'
 import { useRouter } from 'next/router'
 import _ from 'lodash'
 import Button from './Base/Button'
@@ -14,9 +15,9 @@ import { TOKEN_LIST } from '../constants/tokens'
 import { openModal, PAYMENT } from '../routes'
 import { SYNCING_STATUS } from '../store/appStatus'
 
-export const WalletTokenItem = ({
-  l2,
-  mainchain,
+const WalletTokenItem = ({
+  l1Balance,
+  l2Balance,
   tokenContractAddress,
   unit,
   syncingStatus
@@ -32,14 +33,9 @@ export const WalletTokenItem = ({
       <div className="row">
         <div className="layer l2">
           <div className="layer__label">L2</div>
-          {l2 ? (
+          {l2Balance ? (
             <>
-              <div className="layer__amount">
-                {l2.toFixed(2)}
-                {/* <span className="layer__dollar">
-                  = {(l2 * 100).toFixed(2)} USD
-                </span> */}
-              </div>
+              <div className="layer__amount">{l2Balance.toFixed(2)}</div>
               <div className="btns">
                 <div className="btn">
                   <Button
@@ -68,16 +64,6 @@ export const WalletTokenItem = ({
                     Send
                   </Button>
                 </div>
-                {/* <div className="btn">
-                  <Button
-                    size="medium"
-                    onClick={() => {
-                      openModal({ modal: 'orderRequest', token: tokenContractAddress })
-                    }}
-                  >
-                    Exchange
-                  </Button>
-                </div> */}
               </div>
             </>
           ) : (
@@ -91,12 +77,7 @@ export const WalletTokenItem = ({
         </div>
         <div className="layer mainchain">
           <div className="layer__label">mainchain</div>
-          <div className="layer__amount">
-            {mainchain.toFixed(2)}
-            {/* <span className="layer__dollar">
-              = {(mainchain * 100).toFixed(2)} USD
-            </span> */}
-          </div>
+          <div className="layer__amount">{l1Balance.toFixed(2)}</div>
           <div className="btns">
             <div className="btn">
               <Button
@@ -186,3 +167,5 @@ export const WalletTokenItem = ({
     </div>
   )
 }
+
+export default WalletTokenItem
