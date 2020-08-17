@@ -32,7 +32,16 @@ class ClientWrapper {
 
   start() {
     if (!this.instance) return
-    this.instance.start()
+    // FIXME: temporary measures for `DOMException: Failed to execute 'transaction' on 'IDBDatabase': One of the specified object stores was not found.`
+    this.instance.start().catch(e => {
+      console.error(e)
+      if (
+        e.message ===
+        `Failed to execute 'transaction' on 'IDBDatabase': One of the specified object stores was not found.`
+      ) {
+        this.start()
+      }
+    })
   }
 }
 
