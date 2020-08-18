@@ -10,7 +10,6 @@ import { getL1Balance } from './l1Balance'
 import { getL2Balance } from './l2Balance'
 import { getTransactionHistories } from './transactionHistory'
 import { WALLET_KIND } from '../wallet'
-import { sleep } from '../utils'
 
 export const APP_STATUS = {
   UNLOADED: 'UNLOADED',
@@ -194,14 +193,13 @@ export const initializeMagicLinkWallet = email => {
 
 const subscribeCheckpointFinalizedEvent = client => {
   return (dispatch, getState) => {
-    client.subscribeCheckpointFinalized(async (checkpointId, checkpoint) => {
+    client.subscribeCheckpointFinalized((checkpointId, checkpoint) => {
       console.info(
         `new %ccheckpoint %cdetected: %c{ id: ${checkpointId.toHexString()}, checkpoint: (${checkpoint}) }`,
         'color: pink; font-weight: bold;',
         '',
         'font-weight: bold;'
       )
-      await sleep(500)
       subscribedEventGetters(dispatch, getState)
     })
   }
