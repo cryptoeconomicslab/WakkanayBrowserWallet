@@ -24,7 +24,7 @@ export const L1_BALANCE_PROGRESS = {
 }
 
 export interface State {
-  balanceList: object
+  balanceList: any
   status: string
   error: Error | null
 }
@@ -41,7 +41,7 @@ interface L1BalanceAction {
   error?: boolean
 }
 
-export const setL1Balance = createAction<object>(
+export const setL1Balance = createAction<any>(
   L1_BALANCE_ACTION_TYPES.SET_L1_BALANCE
 )
 export const setL1BalanceStatus = createAction<string>(

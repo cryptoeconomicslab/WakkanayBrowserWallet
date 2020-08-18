@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { ethers } from 'ethers'
 import WalletConnectQRCodeModal from '@walletconnect/qrcode-modal'
 import Web3 from 'web3'

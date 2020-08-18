@@ -1,17 +1,20 @@
 {
-  "parser": "babel-eslint",
-  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
-  "plugins": ["react", "prettier"],
-  "env": { "es6": true, "browser": true, "node": true },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:prettier/recommended",
+    "prettier/@typescript-eslint"
+  ],
+  "plugins": ["@typescript-eslint", "prettier"],
+  "parser": "@typescript-eslint/parser",
+  "env": { "node": true, "es6": true },
   "parserOptions": {
-    "sourceType": "module",
-    "ecmaVersion": 2018,
-    "ecmaFeatures": {
-      "jsx": true
-    }
+    "sourceType": "module"
   },
   "rules": {
-    "react/jsx-uses-react": "error",
-    "react/jsx-uses-vars": "error"
+    "@typescript-eslint/explicit-function-return-type": 0,
+    "@typescript-eslint/no-use-before-define": 0,
+    "@typescript-eslint/interface-name-prefix": 0
   }
 }
