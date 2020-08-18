@@ -74,7 +74,8 @@ const DepositWithdrawModal = ({
                 />
                 {isInsufficientFunds() && (
                   <p className="depositWithdrawModal__insufficient-funds-message">
-                    Insufficient funds.
+                    Insufficient funds. (your balance is {selectedTokenBalance}{' '}
+                    {selectedTokenObj.unit})
                   </p>
                 )}
                 <Button
