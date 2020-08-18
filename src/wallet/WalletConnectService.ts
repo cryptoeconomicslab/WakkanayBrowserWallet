@@ -37,9 +37,11 @@ export class WalletConnectService {
       await walletConnectProvider.close()
     }
     const web3 = new Web3(walletConnectProvider)
-    const provider = new ethers.providers.Web3Provider(web3.currentProvider)
+    // TODO: test operation on browser
+    // const provider = new ethers.providers.Web3Provider(web3.currentProvider)
+    const provider = new ethers.providers.Web3Provider(walletConnectProvider)
     const address = await provider.getSigner().getAddress()
-    const network = await provider.ready
+    const network = await provider.getNetwork()
     validateNetwork(networkName, network.name)
     return new Web3Wallet(address, provider)
   }

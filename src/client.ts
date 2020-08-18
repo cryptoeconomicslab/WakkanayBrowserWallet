@@ -1,9 +1,10 @@
 import LightClient from '@cryptoeconomicslab/plasma-light-client'
 import initialize from './initialize'
-import WALLET_KIND from './wallet/kind'
+import { Web3Wallet, WALLET_KIND } from './wallet'
 
 class ClientWrapper {
   private instance: LightClient
+  private _wallet: Web3Wallet
 
   /**
    * Returns client singleton. Lazily initialized on client side.
@@ -25,14 +26,20 @@ class ClientWrapper {
     if (this.instance) return
 
     if (process.browser) {
-      const client = await initialize(walletParams)
+      const { client, wallet } = await initialize(walletParams)
       this.instance = client
+      this._wallet = wallet
     }
   }
 
   start() {
     if (!this.instance) return
     this.instance.start()
+  }
+
+  get wallet(): Web3Wallet | null {
+    if (this._wallet) return this._wallet
+    return null
   }
 }
 

@@ -25,7 +25,7 @@ export class MagicLinkService {
     if (isLoggedIn) {
       const provider = new ethers.providers.Web3Provider(magic.rpcProvider)
       const address = await provider.getSigner().getAddress()
-      await provider.ready
+      await provider.getNetwork()
       return new Web3Wallet(address, provider)
     } else {
       await magic.auth.loginWithMagicLink({ email })

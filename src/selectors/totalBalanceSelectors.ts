@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect'
+import { BalanceList } from '../types/Balance'
 import { roundBalance } from '../utils'
 
 // selector
@@ -6,7 +7,7 @@ const getL1Balance = state => state.l1Balance.balanceList
 const getL2Balance = state => state.l2Balance.balanceList
 const getEthUsdRate = state => state.ethUsdRate.rate
 
-const calcTotalBalance = (balance, ethUsdRate) => {
+const calcTotalBalance = (balance: BalanceList, ethUsdRate: number) => {
   let total = 0
   for (const [key, value] of Object.entries(balance)) {
     if (key === 'ETH') {

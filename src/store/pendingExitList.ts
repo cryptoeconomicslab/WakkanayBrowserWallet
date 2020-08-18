@@ -2,6 +2,12 @@ import { createAction, createReducer } from '@reduxjs/toolkit'
 import { pushToast } from './toast'
 import clientWrapper from '../client'
 
+export enum PENDING_EXIT_LIST_ACTION_TYPES {
+  SET_PENDING_EXIT_LIST = 'SET_PENDING_EXIT_LIST',
+  SET_PENDING_EXIT_LIST_STATUS = 'SET_PENDING_EXIT_LIST_STATUS',
+  SET_PENDING_EXIT_LIST_ERROR = 'SET_PENDING_EXIT_LIST_ERROR'
+}
+
 export const EXIT_LIST_PROGRESS = {
   UNLOADED: 'UNLOADED',
   LOADING: 'LOADING',
@@ -9,40 +15,61 @@ export const EXIT_LIST_PROGRESS = {
   ERROR: 'ERROR'
 }
 
-export const setPendingExitList = createAction('SET_PENDING_EXIT_LIST')
-export const setPendingExitListStatus = createAction(
-  'SET_PENDING_EXIT_LIST_STATUS'
+export interface State {
+  items: any[]
+  status: string
+  error: Error | null
+}
+
+const initialState: State = {
+  items: [],
+  status: EXIT_LIST_PROGRESS.UNLOADED,
+  error: null
+}
+
+interface PendingExitListAction {
+  type: PENDING_EXIT_LIST_ACTION_TYPES
+  payload?: any
+  error?: boolean
+}
+
+export const setPendingExitList = createAction<any[]>(
+  PENDING_EXIT_LIST_ACTION_TYPES.SET_PENDING_EXIT_LIST
 )
-export const setPendingExitListError = createAction(
-  'SET_PENDING_EXIT_LIST_ERROR'
+export const setPendingExitListStatus = createAction<string>(
+  PENDING_EXIT_LIST_ACTION_TYPES.SET_PENDING_EXIT_LIST_STATUS
+)
+export const setPendingExitListError = createAction<Error>(
+  PENDING_EXIT_LIST_ACTION_TYPES.SET_PENDING_EXIT_LIST_ERROR
 )
 
-export const pendingExitListReducer = createReducer(
-  {
-    items: [],
-    status: EXIT_LIST_PROGRESS.UNLOADED,
-    error: null
+const reducer = createReducer(initialState, {
+  [setPendingExitList.type]: (state: State, action: PendingExitListAction) => {
+    state.items = action.payload
+    state.status = EXIT_LIST_PROGRESS.LOADED
   },
-  {
-    [setPendingExitList]: (state, action) => {
-      state.items = action.payload
-      state.status = EXIT_LIST_PROGRESS.LOADED
-    },
-    [setPendingExitListStatus]: (state, action) => {
-      state.status = action.payload
-    },
-    [setPendingExitListError]: (state, action) => {
-      state.error = action.payload
-      state.status = EXIT_LIST_PROGRESS.ERROR
-    }
+  [setPendingExitListStatus.type]: (
+    state: State,
+    action: PendingExitListAction
+  ) => {
+    state.status = action.payload
+  },
+  [setPendingExitListError.type]: (
+    state: State,
+    action: PendingExitListAction
+  ) => {
+    state.error = action.payload
+    state.status = EXIT_LIST_PROGRESS.ERROR
   }
-)
+})
+
+export default reducer
 
 export const getPendingExitList = () => {
   return async dispatch => {
     try {
       dispatch(setPendingExitListStatus(EXIT_LIST_PROGRESS.LOADING))
-      const client = await clientWrapper.getClient()
+      const client = clientWrapper.getClient()
       if (!client) return
       const pendingExitList = await client.getPendingWithdrawals()
       dispatch(setPendingExitList(pendingExitList))

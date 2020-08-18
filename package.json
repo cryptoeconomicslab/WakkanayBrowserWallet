@@ -2,10 +2,9 @@
   "name": "gazelle-wallet",
   "version": "0.1.0",
   "scripts": {
-    "dev": "next dev src -p 5001",
+    "dev": "next src -p 5001",
     "build": "next build src",
     "start": "next start src -p $PORT",
-    "tsc": "tsc",
     "lint": "eslint --ext js,jsx,ts,tsx src",
     "lint:fix": "eslint --fix --ext js,jsx,ts,tsx src"
   },
@@ -16,6 +15,7 @@
     "@cryptoeconomicslab/eth-wallet": "^0.5.2-alpha.3",
     "@cryptoeconomicslab/indexeddb-kvs": "0.0.5",
     "@cryptoeconomicslab/ovm": "^0.5.2-alpha.3",
+    "@cryptoeconomicslab/plasma": "^0.5.2-alpha.3",
     "@cryptoeconomicslab/plasma-light-client": "^0.5.2-alpha.3",
     "@cryptoeconomicslab/primitives": "^0.5.2-alpha.3",
     "@fortawesome/fontawesome-svg-core": "^1.2.30",

@@ -1,3 +1,4 @@
+import { Dispatch } from 'redux'
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import { utils } from 'ethers'
 import JSBI from 'jsbi'
@@ -7,6 +8,17 @@ import clientWrapper from '../client'
 import { config } from '../config'
 import validateTransfer from '../validators/transferValidator'
 
+export enum TRANSFER_ACTION_TYPES {
+  SET_TRANSFER_IS_SENDING = 'SET_TRANSFER_IS_SENDING',
+  SET_TRANSFERRED_TOKEN = 'SET_TRANSFERRED_TOKEN',
+  SET_TRANSFERRED_AMOUNT = 'SET_TRANSFERRED_AMOUNT',
+  SET_RECEPIENT_ADDRESS = 'SET_RECEPIENT_ADDRESS',
+  SET_TRANSFER_PAGE = 'SET_TRANSFER_PAGE',
+  SET_TRANSFER_STATUS = 'SET_TRANSFER_STATUS',
+  SET_TRANSFER_ERROR = 'SET_TRANSFER_ERROR',
+  CLEAR_TRANSFER_STATE = 'CLEAR_TRANSFER_STATE'
+}
+
 export const TRANSFER_PROGRESS = {
   INITIAL: 'INITIAL',
   SENDING: 'SENDING',
@@ -14,16 +26,16 @@ export const TRANSFER_PROGRESS = {
   ERROR: 'ERROR'
 }
 
-export const setTransferIsSending = createAction('SET_TRANSFER_IS_SENDING')
-export const setTransferredToken = createAction('SET_TRANSFERRED_TOKEN')
-export const setTransferredAmount = createAction('SET_TRANSFERRED_AMOUNT')
-export const setRecepientAddress = createAction('SET_RECEPIENT_ADDRESS')
-export const setTransferPage = createAction('SET_TRANSFER_PAGE')
-export const setTransferStatus = createAction('SET_TRANSFER_STATUS')
-export const setTransferError = createAction('SET_TRANSFER_ERROR')
-export const clearTransferState = createAction('CLEAR_TRANSFER_STATE')
+export interface State {
+  transferredToken: string
+  transferredAmount: string
+  recepientAddress: string
+  transferPage: string
+  status: string
+  error: Error | null
+}
 
-const initialState = {
+const initialState: State = {
   transferredToken: config.PlasmaETH,
   transferredAmount: '',
   recepientAddress: '',
@@ -31,30 +43,64 @@ const initialState = {
   status: TRANSFER_PROGRESS.INITIAL,
   error: null
 }
-export const transferReducer = createReducer(initialState, {
-  [setTransferredToken]: (state, action) => {
+
+interface TransferAction {
+  type: TRANSFER_ACTION_TYPES
+  payload?: any
+  error?: boolean
+}
+
+export const setTransferIsSending = createAction<string>(
+  TRANSFER_ACTION_TYPES.SET_TRANSFER_IS_SENDING
+)
+export const setTransferredToken = createAction<string>(
+  TRANSFER_ACTION_TYPES.SET_TRANSFERRED_TOKEN
+)
+export const setTransferredAmount = createAction<string>(
+  TRANSFER_ACTION_TYPES.SET_TRANSFERRED_AMOUNT
+)
+export const setRecepientAddress = createAction<string>(
+  TRANSFER_ACTION_TYPES.SET_RECEPIENT_ADDRESS
+)
+export const setTransferPage = createAction<string>(
+  TRANSFER_ACTION_TYPES.SET_TRANSFER_PAGE
+)
+export const setTransferStatus = createAction<string>(
+  TRANSFER_ACTION_TYPES.SET_TRANSFER_STATUS
+)
+export const setTransferError = createAction<Error>(
+  TRANSFER_ACTION_TYPES.SET_TRANSFER_ERROR
+)
+export const clearTransferState = createAction(
+  TRANSFER_ACTION_TYPES.CLEAR_TRANSFER_STATE
+)
+
+const reducer = createReducer(initialState, {
+  [setTransferredToken.type]: (state: State, action: TransferAction) => {
     state.transferredToken = action.payload
   },
-  [setTransferredAmount]: (state, action) => {
+  [setTransferredAmount.type]: (state: State, action: TransferAction) => {
     state.transferredAmount = action.payload
   },
-  [setRecepientAddress]: (state, action) => {
+  [setRecepientAddress.type]: (state: State, action: TransferAction) => {
     state.recepientAddress = action.payload
   },
-  [setTransferPage]: (state, action) => {
+  [setTransferPage.type]: (state: State, action: TransferAction) => {
     state.transferPage = action.payload
   },
-  [setTransferStatus]: (state, action) => {
+  [setTransferStatus.type]: (state: State, action: TransferAction) => {
     state.status = action.payload
   },
-  [setTransferError]: (state, action) => {
+  [setTransferError.type]: (state: State, action: TransferAction) => {
     state.error = action.payload
     state.status = TRANSACTION_HISTORY_PROGRESS.ERROR
   },
-  [clearTransferState]: () => {
+  [clearTransferState.type]: () => {
     return initialState
   }
 })
+
+export default reducer
 
 /**
  * transfer token
@@ -62,11 +108,15 @@ export const transferReducer = createReducer(initialState, {
  * @param {*} tokenContractAddress token contract address of token
  * @param {*} recipientAddress the address of token recipient
  */
-export const transfer = (amount, tokenContractAddress, recipientAddress) => {
-  return async dispatch => {
+export const transfer = (
+  amount: string,
+  tokenContractAddress: string,
+  recipientAddress: string
+) => {
+  return async (dispatch: Dispatch) => {
     try {
       dispatch(setTransferStatus(TRANSFER_PROGRESS.SENDING))
-      const client = await clientWrapper.getClient()
+      const client = clientWrapper.getClient()
       if (!client) {
         throw Error('Client is not ready.')
       }

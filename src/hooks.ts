@@ -2,8 +2,13 @@ import { useRef, useEffect } from 'react'
 import _ from 'lodash'
 import { useToasts } from 'react-toast-notifications'
 
-export function usePrevious(value) {
-  const ref = useRef()
+type ToastStack = {
+  toasts: any
+  toastStack: any
+}
+
+export function usePrevious(value: ToastStack) {
+  const ref = useRef<ToastStack>()
   useEffect(() => {
     ref.current = value
   })

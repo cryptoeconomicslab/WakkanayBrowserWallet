@@ -20,11 +20,11 @@ interface ToastAction {
 }
 
 export const pushToast = createAction<{ message: string; type: string }>(
-  'PUSH_TOAST'
+  TOAST_ACTION_TYPES.PUSH_TOAST
 )
-export const removeToast = createAction<string>('REMOVE_TOAST')
+export const removeToast = createAction<string>(TOAST_ACTION_TYPES.REMOVE_TOAST)
 
-export const toastReducer = createReducer(initialState, {
+const reducer = createReducer(initialState, {
   [pushToast.type]: (state: State, action: ToastAction) => {
     if (!state.toasts.includes(action.payload)) {
       state.toasts = [...state.toasts, action.payload]
@@ -34,3 +34,5 @@ export const toastReducer = createReducer(initialState, {
     state.toasts = state.toasts.filter(err => err !== action.payload)
   }
 })
+
+export default reducer

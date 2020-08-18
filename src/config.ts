@@ -1,5 +1,5 @@
-import configLocal from '../config.local'
-import configKovan from '../config.kovan'
+import configLocal from '../config.local.json'
+import configKovan from '../config.kovan.json'
 
 const configs = {
   local: configLocal,

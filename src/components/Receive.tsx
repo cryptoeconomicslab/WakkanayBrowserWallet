@@ -94,6 +94,6 @@ const Receive = ({ address }) => {
 }
 
 const mapStateToProps = state => ({
-  address: state.address
+  address: state.address.item
 })
 export default connect(mapStateToProps)(Receive)

@@ -42,7 +42,7 @@ export const setDepositError = createAction<Error>(
   DEPOSIT_ACTION_TYPES.SET_DEPOSIT_ERROR
 )
 
-export const depositReducer = createReducer(initialState, {
+const reducer = createReducer(initialState, {
   [setDepositProgress.type]: (state: State, action: DepositAction) => {
     state.depositProgress = action.payload
   },
@@ -51,6 +51,8 @@ export const depositReducer = createReducer(initialState, {
     state.depositProgress = DEPOSIT_PROGRESS.ERROR
   }
 })
+
+export default reducer
 
 /**
  * deposit
@@ -67,7 +69,7 @@ export const deposit = (amount: string, addr: string) => {
       if (peth !== undefined && addr === peth.tokenContractAddress) {
         const contract = new PETHContract(
           peth.tokenContractAddress,
-          client.wallet.provider.getSigner()
+          clientWrapper.wallet.provider.getSigner()
         )
         await contract.wrap(amountWei)
         console.info(`wrapped PETH: ${amount}`)

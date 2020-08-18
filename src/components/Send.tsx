@@ -44,11 +44,7 @@ const Send = props => {
         unit={transferredTokenObj.unit}
         handleAmount={props.setTransferredAmount}
       />
-      <AddressInput
-        className="mbs"
-        type="text"
-        handleAddress={props.setRecepientAddress}
-      />
+      <AddressInput className="mbs" handleAddress={props.setRecepientAddress} />
       <Button
         full
         onClick={() => {
@@ -77,7 +73,7 @@ const Send = props => {
 }
 
 const mapStateToProps = state => ({
-  address: state.address,
+  address: state.address.item,
   l2Balance: state.l2Balance.balanceList,
   isAbleToTransfer: isAbleToTransfer(state),
   transferredToken: state.transferState.transferredToken,

@@ -141,7 +141,7 @@ const Confirmation = ({
 
 const mapStateToProps = state => ({
   ethUsdRate: state.ethUsdRate.rate,
-  address: state.address
+  address: state.address.item
 })
 
 export default connect(mapStateToProps)(Confirmation)

@@ -1,6 +1,5 @@
 import * as ethers from 'ethers'
 import LightClient from '@cryptoeconomicslab/plasma-light-client'
-import { EthWallet } from '@cryptoeconomicslab/eth-wallet'
 import { Address, Bytes } from '@cryptoeconomicslab/primitives'
 import { IndexedDbKeyValueStore } from '@cryptoeconomicslab/indexeddb-kvs'
 import {
@@ -16,9 +15,10 @@ import * as Sentry from '@sentry/browser'
 import { config } from './config'
 import {
   MetamaskService,
-  MetamaskSnapWallet,
   MagicLinkService,
   WalletConnectService,
+  Web3Wallet,
+  WalletParams,
   WALLET_KIND
 } from './wallet'
 import { sleep } from './utils'
@@ -29,15 +29,15 @@ if (process.env.SENTRY_ENDPOINT) {
   })
 }
 
-function getProvider(network) {
+function getProvider(network: string): ethers.providers.BaseProvider {
   if (network === 'local') {
     return new ethers.providers.JsonRpcProvider(process.env.MAIN_CHAIN_URL)
   } else if (network === 'kovan') {
-    return new ethers.getDefaultProvider('kovan')
+    return ethers.getDefaultProvider('kovan')
   }
 }
 
-async function registerPeth(client) {
+async function registerPeth(client: LightClient) {
   try {
     // FIXME: temporary measures
     await sleep(1000)
@@ -52,17 +52,14 @@ async function registerPeth(client) {
   }
 }
 
-async function instantiate(walletParams) {
+async function instantiate(
+  walletParams: WalletParams
+): Promise<{ client: LightClient; wallet: Web3Wallet }> {
   const networkName = process.env.ETH_NETWORK
   const kind = walletParams.kind
 
-  let wallet, signer
-  if (kind === WALLET_KIND.WALLET_PRIVATEKEY) {
-    wallet = new EthWallet(
-      new ethers.Wallet(walletParams.privateKey, getProvider(networkName))
-    )
-    signer = wallet.getEthersWallet()
-  } else if (kind === WALLET_KIND.WALLET_METAMASK) {
+  let wallet, signer: any
+  if (kind === WALLET_KIND.WALLET_METAMASK) {
     wallet = await MetamaskService.initialize(networkName)
     signer = wallet.provider.getSigner()
   } else if (kind === WALLET_KIND.WALLET_MAGIC_LINK) {
@@ -75,12 +72,6 @@ async function instantiate(walletParams) {
   } else if (kind === WALLET_KIND.WALLET_CONNECT) {
     wallet = await WalletConnectService.initilize(networkName)
     signer = wallet.provider.getSigner()
-  } else if (kind === WALLET_KIND.WALLET_METAMASK_SNAP) {
-    await window.ethereum.enable()
-    wallet = new MetamaskSnapWallet()
-    signer = new ethers.providers.Web3Provider(window.ethereum).getSigner()
-    wallet.getEthersWallet = () =>
-      new ethers.providers.Web3Provider(window.ethereum).getSigner()
   } else {
     throw new Error(`gazelle-wallet doesn't support ${kind}`)
   }
@@ -164,11 +155,13 @@ async function instantiate(walletParams) {
 
   await registerPeth(client)
 
-  return client
+  return { client, wallet: wallet as Web3Wallet }
 }
 
-export default async function initialize(walletParams) {
-  const lightClient = await instantiate(walletParams)
+export default async function initialize(
+  walletParams: WalletParams
+): Promise<{ client: LightClient; wallet: Web3Wallet }> {
+  const { client, wallet } = await instantiate(walletParams)
   localStorage.setItem('loggedInWith', walletParams.kind)
-  return lightClient
+  return { client, wallet }
 }

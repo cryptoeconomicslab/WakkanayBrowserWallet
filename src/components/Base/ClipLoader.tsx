@@ -3,20 +3,12 @@ import { css } from '@emotion/core'
 import ClipLoader from 'react-spinners/ClipLoader'
 import { Black } from '../../constants/colors'
 
-type Props = {
-  isLoading: boolean
-}
 const override = css`
   text-align: center;
 `
-export default ({ isLoading }: Props) => (
+export default () => (
   <div className="clipLoaderBox">
-    <ClipLoader
-      css={override}
-      size={48}
-      color={Black(0.8)}
-      loading={isLoading}
-    />
+    <ClipLoader css={override} size={48} color={Black(0.8)} />
     <style jsx>
       {`
         .clipLoaderBox {

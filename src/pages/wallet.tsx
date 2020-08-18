@@ -111,7 +111,7 @@ function Wallet({
 }
 
 const mapStateToProps = state => ({
-  address: state.address,
+  address: state.address.item,
   syncingStatus: state.appStatus.syncingStatus,
   l1Balance: state.l1Balance,
   l2Balance: state.l2Balance,

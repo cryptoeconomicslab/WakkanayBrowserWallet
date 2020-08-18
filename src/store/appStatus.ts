@@ -71,7 +71,7 @@ export const setSyncingStatus = createAction<string>(
   SYNCING_STATUS_ACTION_TYPES.SET_SYNCING_STATUS
 )
 
-export const appStatusReducer = createReducer(initialState, {
+const reducer = createReducer(initialState, {
   [setAppStatus.type]: (state: State, action: AppStatusAction) => {
     state.status = action.payload
   },
@@ -84,7 +84,9 @@ export const appStatusReducer = createReducer(initialState, {
   }
 })
 
-const initialGetters = (dispatch: Dispatch) => {
+export default reducer
+
+const initialGetters = dispatch => {
   dispatch(getL1Balance())
   dispatch(getL2Balance())
   dispatch(getAddress())
@@ -92,7 +94,7 @@ const initialGetters = (dispatch: Dispatch) => {
   dispatch(getTransactionHistories())
   dispatch(getPendingExitList())
 }
-const subscribedEventGetters = (dispatch: Dispatch) => {
+const subscribedEventGetters = dispatch => {
   dispatch(getL1Balance())
   dispatch(getL2Balance())
   dispatch(getTransactionHistories())
@@ -100,7 +102,7 @@ const subscribedEventGetters = (dispatch: Dispatch) => {
 }
 
 export const checkClientInitialized = () => {
-  return async (dispatch: Dispatch) => {
+  return async dispatch => {
     if (!process.browser) {
       dispatch(setAppStatus(APP_STATUS.UNLOADED))
       return
@@ -138,7 +140,7 @@ export const checkClientInitialized = () => {
 }
 
 export const initializeMetamaskWallet = () => {
-  return async (dispatch: Dispatch) => {
+  return async dispatch => {
     try {
       dispatch(setAppStatus(APP_STATUS.LOADING))
       await clientWrapper.initializeClient({
@@ -156,39 +158,8 @@ export const initializeMetamaskWallet = () => {
   }
 }
 
-export const initializeMetamaskSnapWallet = () => {
-  return async (dispatch: Dispatch) => {
-    try {
-      dispatch(setAppStatus(APP_STATUS.LOADING))
-      // identify the Snap by the location of its package.json file
-      const snapId = new URL('package.json', window.location.href).toString()
-      await clientWrapper.initializeClient({
-        kind: WALLET_KIND.WALLET_METAMASK_SNAP
-      })
-      dispatch(subscribeEvents())
-      clientWrapper.start()
-      initialGetters(dispatch)
-
-      // get permissions to interact with and install the plugin
-      await window.ethereum.send({
-        method: 'wallet_enable',
-        params: [
-          {
-            wallet_plugin: { [snapId]: {} }
-          }
-        ]
-      })
-      dispatch(setAppStatus(APP_STATUS.LOADED))
-    } catch (e) {
-      console.error(e)
-      dispatch(pushToast({ message: e.message, type: 'error' }))
-      dispatch(setAppError(e))
-    }
-  }
-}
-
 export const initializeWalletConnect = () => {
-  return async (dispatch: Dispatch) => {
+  return async dispatch => {
     try {
       dispatch(setAppStatus(APP_STATUS.LOADING))
       await clientWrapper.initializeClient({
@@ -206,8 +177,8 @@ export const initializeWalletConnect = () => {
   }
 }
 
-export const initializeMagicLinkWallet = email => {
-  return async (dispatch: Dispatch) => {
+export const initializeMagicLinkWallet = (email: string) => {
+  return async dispatch => {
     try {
       dispatch(setAppStatus(APP_STATUS.LOADING))
       await clientWrapper.initializeClient({
@@ -226,7 +197,7 @@ export const initializeMagicLinkWallet = email => {
   }
 }
 
-const subscribeCheckpointFinalizedEvent = client => {
+const subscribeCheckpointFinalizedEvent = (client: LightClient) => {
   return async (dispatch: Dispatch) => {
     client.subscribeCheckpointFinalized((checkpointId, checkpoint) => {
       console.info(
@@ -285,7 +256,7 @@ const subscribeExitFinalizedEvent = (client: LightClient) => {
 }
 
 export const subscribeEvents = () => {
-  return (dispatch: Dispatch) => {
+  return dispatch => {
     try {
       console.log('start subscribing events')
       const client = clientWrapper.getClient()

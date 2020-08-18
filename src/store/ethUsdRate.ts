@@ -1,9 +1,16 @@
+import { Dispatch } from 'redux'
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { pushToast } from './toast'
 
 const ETH_LATEST_PRICE_URL =
   'https://api.etherscan.io/api?module=stats&action=ethprice&apikey=ANJAFJARGHU6JKSBJ7G6YG4N3TSKUMV2PG'
+
+export enum ETH_USD_RATE_TYPES {
+  SET_ETH_USD_RATE = 'SET_ETH_USD_RATE',
+  SET_ETH_USD_RATE_STATUS = 'SET_ETH_USD_RATE_STATUS',
+  SET_ETH_USD_RATE_ERROR = 'SET_ETH_USD_RATE_ERROR'
+}
 
 export const ETH_USD_RATE_PROGRESS = {
   UNLOADED: 'UNLOADED',
@@ -12,33 +19,52 @@ export const ETH_USD_RATE_PROGRESS = {
   ERROR: 'ERROR'
 }
 
-export const setEthUsdRate = createAction('SET_ETH_USD_RATE')
-export const setEthUsdRateStatus = createAction('SET_ETH_USD_RATE_STATUS')
-export const setEthUsdRateError = createAction('SET_ETH_USD_RATE_ERROR')
+export interface State {
+  rate: number
+  status: string
+  error: Error | null
+}
 
-export const ethUsdRateReducer = createReducer(
-  {
-    rate: 0,
-    status: ETH_USD_RATE_PROGRESS.UNLOADED,
-    error: null
-  },
-  {
-    [setEthUsdRate]: (state, action) => {
-      state.rate = action.payload
-      state.status = ETH_USD_RATE_PROGRESS.LOADED
-    },
-    [setEthUsdRateStatus]: (state, action) => {
-      state.status = action.payload
-    },
-    [setEthUsdRateError]: (state, action) => {
-      state.error = action.payload
-      state.status = ETH_USD_RATE_PROGRESS.ERROR
-    }
-  }
+const initialState: State = {
+  rate: 0,
+  status: ETH_USD_RATE_PROGRESS.UNLOADED,
+  error: null
+}
+
+interface EthUsdRateAction {
+  type: ETH_USD_RATE_TYPES
+  payload?: any
+  error?: boolean
+}
+
+export const setEthUsdRate = createAction<number>(
+  ETH_USD_RATE_TYPES.SET_ETH_USD_RATE
+)
+export const setEthUsdRateStatus = createAction<string>(
+  ETH_USD_RATE_TYPES.SET_ETH_USD_RATE_STATUS
+)
+export const setEthUsdRateError = createAction<Error>(
+  ETH_USD_RATE_TYPES.SET_ETH_USD_RATE_ERROR
 )
 
+const reducer = createReducer(initialState, {
+  [setEthUsdRate.type]: (state: State, action: EthUsdRateAction) => {
+    state.rate = action.payload
+    state.status = ETH_USD_RATE_PROGRESS.LOADED
+  },
+  [setEthUsdRateStatus.type]: (state: State, action: EthUsdRateAction) => {
+    state.status = action.payload
+  },
+  [setEthUsdRateError.type]: (state: State, action: EthUsdRateAction) => {
+    state.error = action.payload
+    state.status = ETH_USD_RATE_PROGRESS.ERROR
+  }
+})
+
+export default reducer
+
 export const getEthUsdRate = () => {
-  return async dispatch => {
+  return async (dispatch: Dispatch) => {
     try {
       dispatch(setEthUsdRateStatus(ETH_USD_RATE_PROGRESS.LOADING))
       const res = await axios.get(ETH_LATEST_PRICE_URL)

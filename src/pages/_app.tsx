@@ -1,12 +1,13 @@
 import React from 'react'
+import { Store } from 'redux'
 import { Provider } from 'react-redux'
 import App from 'next/app'
 import withRedux from 'next-redux-wrapper'
 import { ToastProvider } from 'react-toast-notifications'
-import { initStore } from '../store'
+import { makeStore } from '../store'
 import Initial from '../components/Initial'
 
-class MyApp extends App {
+class MyApp extends App<{ store: Store }> {
   static async getInitialProps({ Component, ctx }) {
     const pageProps = Component.getInitialProps
       ? await Component.getInitialProps(ctx)
@@ -29,4 +30,4 @@ class MyApp extends App {
   }
 }
 
-export default withRedux(initStore)(MyApp)
+export default withRedux(makeStore)(MyApp)

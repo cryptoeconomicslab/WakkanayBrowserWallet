@@ -52,7 +52,6 @@ const Initial = ({
   removeToast,
   l1TotalBalance,
   l2TotalBalance,
-  syncProgress,
   children
 }) => {
   const router = useRouter()
@@ -265,7 +264,7 @@ const Initial = ({
 }
 
 const mapStateToProps = state => ({
-  address: state.address,
+  address: state.address.item,
   appStatus: state.appStatus,
   toasts: state.toastState.toasts,
   l1TotalBalance: getL1TotalBalance(state),

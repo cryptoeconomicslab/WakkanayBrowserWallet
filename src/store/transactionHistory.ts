@@ -1,8 +1,14 @@
-import { formatEther } from 'ethers/utils'
 import { createAction, createReducer } from '@reduxjs/toolkit'
+import { formatEther } from 'ethers/utils'
 import clientWrapper from '../client'
 import { getTokenByTokenContractAddress } from '../constants/tokens'
 import { pushToast } from './toast'
+
+export enum TRANSACTION_HISTORY_ACTION_TYPES {
+  SET_HISTORY_LIST = 'SET_HISTORY_LIST',
+  SET_HISTORY_LIST_STATUS = 'SET_HISTORY_LIST_STATUS',
+  SET_HISTORY_LIST_ERROR = 'SET_HISTORY_LIST_ERROR'
+}
 
 export const TRANSACTION_HISTORY_PROGRESS = {
   UNLOADED: 'UNLOADED',
@@ -11,36 +17,61 @@ export const TRANSACTION_HISTORY_PROGRESS = {
   ERROR: 'ERROR'
 }
 
-export const setHistoryList = createAction('SET_HISTORY_LIST')
-export const setHistoryListStatus = createAction('SET_HISTORY_LIST_STATUS')
-export const setHistoryListError = createAction('SET_HISTORY_LIST_ERROR')
+export interface State {
+  historyList: any[]
+  status: string
+  error: Error | null
+}
 
-export const historyReducer = createReducer(
-  {
-    historyList: [],
-    status: TRANSACTION_HISTORY_PROGRESS.UNLOADED,
-    error: null
-  },
-  {
-    [setHistoryList]: (state, action) => {
-      state.historyList = action.payload
-      state.status = TRANSACTION_HISTORY_PROGRESS.LOADED
-    },
-    [setHistoryListStatus]: (state, action) => {
-      state.status = action.payload
-    },
-    [setHistoryListError]: (state, action) => {
-      state.error = action.payload
-      state.status = TRANSACTION_HISTORY_PROGRESS.ERROR
-    }
-  }
+const initialState: State = {
+  historyList: [],
+  status: TRANSACTION_HISTORY_PROGRESS.UNLOADED,
+  error: null
+}
+
+interface TransactionHistoryAction {
+  type: TRANSACTION_HISTORY_ACTION_TYPES
+  payload?: any
+  error?: boolean
+}
+
+export const setHistoryList = createAction<any[]>(
+  TRANSACTION_HISTORY_ACTION_TYPES.SET_HISTORY_LIST
 )
+export const setHistoryListStatus = createAction<string>(
+  TRANSACTION_HISTORY_ACTION_TYPES.SET_HISTORY_LIST_STATUS
+)
+export const setHistoryListError = createAction<Error>(
+  TRANSACTION_HISTORY_ACTION_TYPES.SET_HISTORY_LIST_ERROR
+)
+
+const reducer = createReducer(initialState, {
+  [setHistoryList.type]: (state: State, action: TransactionHistoryAction) => {
+    state.historyList = action.payload
+    state.status = TRANSACTION_HISTORY_PROGRESS.LOADED
+  },
+  [setHistoryListStatus.type]: (
+    state: State,
+    action: TransactionHistoryAction
+  ) => {
+    state.status = action.payload
+  },
+  [setHistoryListError.type]: (
+    state: State,
+    action: TransactionHistoryAction
+  ) => {
+    state.error = action.payload
+    state.status = TRANSACTION_HISTORY_PROGRESS.ERROR
+  }
+})
+
+export default reducer
 
 export const getTransactionHistories = () => {
   return async dispatch => {
     try {
       dispatch(setHistoryListStatus(TRANSACTION_HISTORY_PROGRESS.LOADING))
-      const client = await clientWrapper.getClient()
+      const client = clientWrapper.getClient()
       if (!client) return
       const histories = (await client.getAllUserActions()).map(history => {
         const token = getTokenByTokenContractAddress(history.tokenAddress)

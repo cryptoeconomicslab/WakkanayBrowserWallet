@@ -33,7 +33,7 @@ export class Web3Wallet {
     return Address.from(this.address)
   }
 
-  async getL1Balance(tokenAddress: Address) {
+  async getL1Balance(tokenAddress?: Address) {
     let value: BigNumber, decimals: number, symbol: string
     if (tokenAddress) {
       const contract = new ethers.Contract(
