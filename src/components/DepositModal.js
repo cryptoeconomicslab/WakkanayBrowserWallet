@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import DepositWithdrawModal from './Base/DepositWithdrawModal'
 import { deposit, setDepositProgress } from '../store/deposit'
 
-const DepositModal = ({ deposit, progress, setProgress, balanceList }) => {
+const DepositModal = ({ balanceList, progress, deposit, setProgress }) => {
   return (
     <DepositWithdrawModal
       type={'deposit'}
