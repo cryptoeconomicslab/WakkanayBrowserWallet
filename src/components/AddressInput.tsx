@@ -40,6 +40,7 @@ const AddressInput = ({
             handleAddress(e.target.value)
           }}
         />
+        <img src="/icon-user.svg" width={32} className="input__img" />
       </div>
       <style jsx>{`
         .inputWrap {
@@ -48,6 +49,12 @@ const AddressInput = ({
           border-radius: 1.875rem;
           padding-left: 1.75rem;
           border 1px solid ${focused ? MAIN : 'transparent'}
+        }
+        .input__img {
+          position: absolute;
+          top: 0.5rem;
+          left: 0.5rem;
+          border-radius: 50%;
         }
       `}</style>
     </>
