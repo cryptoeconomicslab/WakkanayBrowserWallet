@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import Router, { useRouter } from 'next/router'
 import Head from 'next/head'
 import Box from './Base/Box'
-import CircleProgress from './Base/CircleProgress'
+import ClipLoader from './Base/ClipLoader'
 import { config } from '../config'
 import Alert from './Base/Alert'
 import Header from './Header'
@@ -29,7 +29,6 @@ import {
   FW_BLACK
 } from '../constants/fonts'
 import { WALLET, HISTORY, openModal } from '../routes'
-import { getSyncProgress } from '../selectors/syncProgressSelectors'
 import {
   getL1TotalBalance,
   getL2TotalBalance
@@ -147,9 +146,7 @@ const Initial = ({
             </a>
           </div>
         )}
-        {appStatus.syncingStatus === SYNCING_STATUS.LOADING && (
-          <CircleProgress percent={syncProgress} />
-        )}
+        {appStatus.syncingStatus === SYNCING_STATUS.LOADING && <ClipLoader />}
       </div>
       <style>{`
         *,
@@ -272,8 +269,7 @@ const mapStateToProps = state => ({
   appStatus: state.appStatus,
   toasts: state.toastState.toasts,
   l1TotalBalance: getL1TotalBalance(state),
-  l2TotalBalance: getL2TotalBalance(state),
-  syncProgress: getSyncProgress(state)
+  l2TotalBalance: getL2TotalBalance(state)
 })
 
 const mapDispatchToProps = {

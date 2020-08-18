@@ -3,9 +3,8 @@ import { createAction, createReducer } from '@reduxjs/toolkit'
 import { EthCoder } from '@cryptoeconomicslab/eth-coder'
 import { setupContext } from '@cryptoeconomicslab/context'
 import LightClient from '@cryptoeconomicslab/plasma-light-client'
+import { BigNumber } from '@cryptoeconomicslab/primitives'
 import clientWrapper from '../client'
-import { config } from '../config'
-import { CommitmentContract } from '../contracts'
 import { WALLET_KIND } from '../wallet'
 import { getAddress } from './address'
 import { getEthUsdRate } from './ethUsdRate'
@@ -13,10 +12,6 @@ import { getPendingExitList } from './pendingExitList'
 import { pushToast } from './toast'
 import { getL1Balance } from './l1Balance'
 import { getL2Balance } from './l2Balance'
-import {
-  getCurrentBlockNumber,
-  setCurrentBlockNumber
-} from './plasmaBlockNumber'
 import { getTransactionHistories } from './transactionHistory'
 
 export enum APP_STATUS_ACTION_TYPES {
@@ -25,8 +20,7 @@ export enum APP_STATUS_ACTION_TYPES {
 }
 
 export enum SYNCING_STATUS_ACTION_TYPES {
-  SET_SYNCING_STATUS = 'SET_SYNCING_STATUS',
-  SET_SYNCING_BLOCK_NUMBER = 'SET_SYNCING_BLOCK_NUMBER'
+  SET_SYNCING_STATUS = 'SET_SYNCING_STATUS'
 }
 
 export const APP_STATUS = {
@@ -47,14 +41,12 @@ export interface State {
   status: string
   error: Error | null
   syncingStatus: string
-  syncingBlockNumber: number
 }
 
 const initialState: State = {
   status: APP_STATUS.UNLOADED,
   error: null,
-  syncingStatus: SYNCING_STATUS.LOADED,
-  syncingBlockNumber: 0
+  syncingStatus: SYNCING_STATUS.LOADED
 }
 
 interface AppStatusAction {
@@ -78,9 +70,6 @@ export const setAppError = createAction<Error>(
 export const setSyncingStatus = createAction<string>(
   SYNCING_STATUS_ACTION_TYPES.SET_SYNCING_STATUS
 )
-export const setSyncingBlockNumber = createAction<number>(
-  SYNCING_STATUS_ACTION_TYPES.SET_SYNCING_BLOCK_NUMBER
-)
 
 export const appStatusReducer = createReducer(initialState, {
   [setAppStatus.type]: (state: State, action: AppStatusAction) => {
@@ -92,9 +81,6 @@ export const appStatusReducer = createReducer(initialState, {
   },
   [setSyncingStatus.type]: (state: State, action: SyncingStatusAction) => {
     state.syncingStatus = action.payload
-  },
-  [setSyncingBlockNumber.type]: (state: State, action: SyncingStatusAction) => {
-    state.syncingBlockNumber = action.payload
   }
 })
 
@@ -105,7 +91,6 @@ const initialGetters = (dispatch: Dispatch) => {
   dispatch(getEthUsdRate()) // get the latest ETH price, returned value's unit is USD/ETH
   dispatch(getTransactionHistories())
   dispatch(getPendingExitList())
-  dispatch(getCurrentBlockNumber())
 }
 const subscribedEventGetters = (dispatch: Dispatch) => {
   dispatch(getL1Balance())
@@ -255,39 +240,27 @@ const subscribeCheckpointFinalizedEvent = client => {
   }
 }
 
-const subscribeSyncStartedEvent = client => {
-  return async (dispatch: Dispatch) => {
-    client.subscribeSyncStarted(blockNumber => {
+const subscribeSyncStartedEvent = (client: LightClient) => {
+  return (dispatch: Dispatch) => {
+    client.subscribeSyncStarted((blockNumber: BigNumber) => {
       console.info(`syncing... ${blockNumber.data}`)
       dispatch(setSyncingStatus(SYNCING_STATUS.LOADING))
     })
   }
 }
 
-const subscribeSyncFinishedEvent = client => {
-  return async (dispatch: Dispatch) => {
-    // TODO: it has a problem of performance
-    const commitmentContract = new CommitmentContract(
-      config.commitment,
-      client.wallet.provider.getSigner()
-    )
-    client.subscribeSyncFinished(async blockNumber => {
+const subscribeSyncFinishedEvent = (client: LightClient) => {
+  return (dispatch: Dispatch) => {
+    client.subscribeSyncFinished((blockNumber: BigNumber) => {
       console.info(`sync new state: ${blockNumber.data}`)
-      const currentBlockNumber = Number(
-        await commitmentContract.getCurrentBlockNumber()
-      )
-      dispatch(setCurrentBlockNumber(currentBlockNumber))
-      dispatch(setSyncingBlockNumber(blockNumber.raw))
-      if (currentBlockNumber === blockNumber.raw) {
-        subscribedEventGetters(dispatch)
-        dispatch(setSyncingStatus(SYNCING_STATUS.LOADED))
-      }
+      subscribedEventGetters(dispatch)
+      dispatch(setSyncingStatus(SYNCING_STATUS.LOADED))
     })
   }
 }
 
 const subscribeTransferCompleteEvent = (client: LightClient) => {
-  return async (dispatch: Dispatch) => {
+  return (dispatch: Dispatch) => {
     client.subscribeTransferComplete(stateUpdate => {
       console.info(
         `%c transfer complete for range: %c (${stateUpdate.range.start.data}, ${stateUpdate.range.end.data})`,
@@ -300,7 +273,7 @@ const subscribeTransferCompleteEvent = (client: LightClient) => {
 }
 
 const subscribeExitFinalizedEvent = (client: LightClient) => {
-  return async (dispatch: Dispatch) => {
+  return (dispatch: Dispatch) => {
     client.subscribeExitFinalized(async stateUpdate => {
       console.info(`completed withdrawal: ${stateUpdate}`)
       subscribedEventGetters(dispatch)
@@ -312,7 +285,7 @@ const subscribeExitFinalizedEvent = (client: LightClient) => {
 }
 
 export const subscribeEvents = () => {
-  return async (dispatch: Dispatch) => {
+  return (dispatch: Dispatch) => {
     try {
       console.log('start subscribing events')
       const client = clientWrapper.getClient()
