@@ -65,8 +65,12 @@ const reducer = createReducer(initialState, {
 export default reducer
 
 export const getL2Balance = () => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState) => {
     try {
+      if (getState().l2Balance.status === L2_BALANCE_PROGRESS.LOADING) {
+        return
+      }
+
       dispatch(setL2BalanceStatus(L2_BALANCE_PROGRESS.LOADING))
       const client = clientWrapper.getClient()
       if (!client) return

@@ -3,8 +3,10 @@ import { connect } from 'react-redux'
 import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
 import TransactionHistoryIcon from './TransactionHistoryIcon'
 import TransactionHistoryMessage from './TransactionHistoryMessage'
+import clientWrapper from '../client'
 import { TEXT, SUBTEXT } from '../constants/colors'
 import { FZ_SMALL, FW_BOLD, FZ_MEDIUM } from '../constants/fonts'
+import { SYNCING_STATUS } from '../store/appStatus'
 import { getTransactionHistories } from '../store/transactionHistory'
 
 const BlockExplorerLinkWrapper = ({ history, children }) => {
@@ -42,9 +44,15 @@ const BlockExplorerLinkWrapper = ({ history, children }) => {
   )
 }
 
-const TransactionHistory = ({ historyList, getTransactionHistories }) => {
+const TransactionHistory = ({
+  historyList,
+  syncingStatus,
+  getTransactionHistories
+}) => {
   useEffect(() => {
-    getTransactionHistories()
+    if (syncingStatus === SYNCING_STATUS.LOADED) {
+      getTransactionHistories()
+    }
   }, [])
 
   return (
@@ -112,7 +120,8 @@ const TransactionHistory = ({ historyList, getTransactionHistories }) => {
   )
 }
 
-const mapStateToProps = ({ history }) => ({
+const mapStateToProps = ({ appStatus, history }) => ({
+  syncingStatus: appStatus.syncingStatus,
   historyList: history.historyList
 })
 const mapDispatchToProps = {

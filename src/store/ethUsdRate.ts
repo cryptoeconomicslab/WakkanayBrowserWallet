@@ -64,8 +64,12 @@ const reducer = createReducer(initialState, {
 export default reducer
 
 export const getEthUsdRate = () => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState) => {
     try {
+      if (getState().ethUsdRate.status === ETH_USD_RATE_PROGRESS.LOADING) {
+        return
+      }
+
       dispatch(setEthUsdRateStatus(ETH_USD_RATE_PROGRESS.LOADING))
       const res = await axios.get(ETH_LATEST_PRICE_URL)
       if (res.data && res.data.result && res.data.result.ethusd) {

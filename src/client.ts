@@ -32,9 +32,9 @@ class ClientWrapper {
     }
   }
 
-  start() {
+  async start() {
     if (!this.instance) return
-    this.instance.start()
+    await this.instance.start()
   }
 
   get wallet(): Web3Wallet | null {

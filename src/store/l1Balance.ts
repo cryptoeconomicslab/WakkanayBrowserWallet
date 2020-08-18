@@ -68,8 +68,12 @@ const reducer = createReducer(initialState, {
 export default reducer
 
 export const getL1Balance = (): ThunkAction<void, AppState, void, any> => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState) => {
     try {
+      if (getState().l1Balance.status === L1_BALANCE_PROGRESS.LOADING) {
+        return
+      }
+
       dispatch(setL1BalanceStatus(L1_BALANCE_PROGRESS.LOADING))
       const client = clientWrapper.getClient()
       if (!client) return
