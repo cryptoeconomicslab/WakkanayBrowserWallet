@@ -39,8 +39,12 @@ export const l1BalanceReducer = createReducer(
 )
 
 export const getL1Balance = () => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     try {
+      if (getState().l1Balance.status === L1_BALANCE_PROGRESS.LOADING) {
+        return
+      }
+
       dispatch(setL1BalanceStatus(L1_BALANCE_PROGRESS.LOADING))
       const client = await clientWrapper.getClient()
       if (!client) return

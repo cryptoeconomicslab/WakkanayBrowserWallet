@@ -37,8 +37,12 @@ export const historyReducer = createReducer(
 )
 
 export const getTransactionHistories = () => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     try {
+      if (getState().history.status === TRANSACTION_HISTORY_PROGRESS.LOADING) {
+        return
+      }
+
       dispatch(setHistoryListStatus(TRANSACTION_HISTORY_PROGRESS.LOADING))
       const client = await clientWrapper.getClient()
       if (!client) return
