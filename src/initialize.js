@@ -13,6 +13,7 @@ import {
   OwnershipPayoutContract
 } from '@cryptoeconomicslab/eth-contract'
 import * as Sentry from '@sentry/browser'
+import { config } from './config'
 import {
   MetamaskService,
   MetamaskSnapWallet,
@@ -20,6 +21,7 @@ import {
   WalletConnectService,
   WALLET_KIND
 } from './wallet'
+import { sleep } from './utils'
 
 if (process.env.SENTRY_ENDPOINT) {
   Sentry.init({
@@ -32,6 +34,21 @@ function getProvider(network) {
     return new ethers.providers.JsonRpcProvider(process.env.MAIN_CHAIN_URL)
   } else if (network === 'kovan') {
     return new ethers.getDefaultProvider('kovan')
+  }
+}
+
+async function registerPeth(client) {
+  try {
+    // FIXME: temporary measures
+    await sleep(1000)
+    await client.registerToken(
+      config.PlasmaETH,
+      config.payoutContracts.DepositContract
+    )
+  } catch (e) {
+    console.error(e)
+    console.log('retry register PETH')
+    await registerPeth(client)
   }
 }
 
@@ -68,8 +85,6 @@ async function instantiate(walletParams) {
     throw new Error(`gazelle-wallet doesn't support ${kind}`)
   }
 
-  const ethNetwork = process.env.ETH_NETWORK || 'local'
-  const config = await import(`../config.${ethNetwork}`)
   const address = wallet.getAddress()
   const kvs = new IndexedDbKeyValueStore(
     Bytes.fromString('wallet_' + address.data)
@@ -147,11 +162,7 @@ async function instantiate(walletParams) {
     aggregatorEndpoint: process.env.AGGREGATOR_URL
   })
 
-  // register Peth
-  await client.registerToken(
-    config.PlasmaETH,
-    config.payoutContracts.DepositContract
-  )
+  await registerPeth(client)
 
   return client
 }

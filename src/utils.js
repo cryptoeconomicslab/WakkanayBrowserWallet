@@ -19,3 +19,7 @@ export const isAddress = address => {
 export const roundBalance = (value, base = 100) => {
   return Math.round(value * base) / base
 }
+
+export const sleep = async (time = 1000) => {
+  return new Promise(resolve => setTimeout(resolve, time))
+}
