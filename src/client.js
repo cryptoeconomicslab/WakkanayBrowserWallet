@@ -1,9 +1,4 @@
 import initialize from './initialize'
-import {
-  initialGetters,
-  setSyncingStatus,
-  SYNCING_STATUS
-} from './store/appStatus'
 
 class ClientWrapper {
   constructor() {
