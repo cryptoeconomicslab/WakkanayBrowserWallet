@@ -10,6 +10,7 @@ import { getL1Balance } from './l1Balance'
 import { getL2Balance } from './l2Balance'
 import { getTransactionHistories } from './transactionHistory'
 import { WALLET_KIND } from '../wallet'
+import { sleep } from '../utils'
 
 export const APP_STATUS = {
   UNLOADED: 'UNLOADED',
@@ -193,13 +194,14 @@ export const initializeMagicLinkWallet = email => {
 
 const subscribeCheckpointFinalizedEvent = client => {
   return (dispatch, getState) => {
-    client.subscribeCheckpointFinalized((checkpointId, checkpoint) => {
+    client.subscribeCheckpointFinalized(async (checkpointId, checkpoint) => {
       console.info(
         `new %ccheckpoint %cdetected: %c{ id: ${checkpointId.toHexString()}, checkpoint: (${checkpoint}) }`,
         'color: pink; font-weight: bold;',
         '',
         'font-weight: bold;'
       )
+      await sleep(500)
       subscribedEventGetters(dispatch, getState)
     })
   }
@@ -207,8 +209,13 @@ const subscribeCheckpointFinalizedEvent = client => {
 
 const subscribeSyncStartedEvent = client => {
   return dispatch => {
-    client.subscribeSyncStarted(blockNumber => {
+    client.subscribeSyncBlockStarted(blockNumber => {
       console.info(`syncing... ${blockNumber.data}`)
+      dispatch(setSyncingStatus(SYNCING_STATUS.LOADING))
+    })
+
+    client.subscribeSyncBlocksStarted(({ from, to }) => {
+      console.info(`syncing... from ${from.data} to ${to.data}`)
       dispatch(setSyncingStatus(SYNCING_STATUS.LOADING))
     })
   }
@@ -216,8 +223,14 @@ const subscribeSyncStartedEvent = client => {
 
 const subscribeSyncFinishedEvent = client => {
   return (dispatch, getState) => {
-    client.subscribeSyncFinished(async blockNumber => {
+    client.subscribeSyncBlockFinished(async blockNumber => {
       console.info(`sync new state: ${blockNumber.data}`)
+      dispatch(setSyncingStatus(SYNCING_STATUS.LOADED))
+      subscribedEventGetters(dispatch, getState)
+    })
+
+    client.subscribeSyncBlocksFinished(({ from, to }) => {
+      console.info(`sync new state: from ${from.data} to ${to.data}`)
       dispatch(setSyncingStatus(SYNCING_STATUS.LOADED))
       subscribedEventGetters(dispatch, getState)
     })
