@@ -6,7 +6,7 @@ type Props = {
   color?: string
 }
 
-export default ({ children, color }: Props) => (
+const Message = ({ children, color }: Props) => (
   <p>
     {children}
     <style jsx>{`
@@ -17,3 +17,5 @@ export default ({ children, color }: Props) => (
     `}</style>
   </p>
 )
+
+export default Message

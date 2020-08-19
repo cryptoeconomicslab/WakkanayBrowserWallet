@@ -22,7 +22,7 @@ export class MagicLinkService {
     network: string
   ): Promise<Web3Wallet | undefined> {
     if (!process.browser) return
-    const publishableKey = process.env.MAGIC_LOGIN_PUBLISHABLE_KEY
+    const publishableKey = process.env.MAGIC_LOGIN_PUBLISHABLE_KEY || ''
     const magic = new Magic(publishableKey, {
       network: getNetworkObject(network)
     })

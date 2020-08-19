@@ -11,7 +11,10 @@ import {
   transfer
 } from '../store/transfer'
 import { SECTION_BACKGROUND } from '../constants/colors'
-import { getTokenByTokenContractAddress, TOKEN_LIST } from '../constants/tokens'
+import TOKEN_LIST, {
+  getTokenByTokenContractAddress,
+  Token
+} from '../constants/tokens'
 import TokenSelector from './TokenSelector'
 import AddressInput from './AddressInput'
 import Button from './Base/Button'
@@ -19,9 +22,10 @@ import SectionTitle from './SectionTitle'
 import TokenInput from './TokenInput'
 
 const Send = props => {
-  const transferredTokenObj = getTokenByTokenContractAddress(
-    props.transferredToken
-  )
+  const transferredTokenObj: Token =
+    getTokenByTokenContractAddress(props.transferredToken) === undefined
+      ? TOKEN_LIST[0]
+      : (getTokenByTokenContractAddress(props.transferredToken) as Token)
   const tokensWithCurrentAmount = TOKEN_LIST.map(token => ({
     ...token,
     amount: props.l2Balance[token.unit]

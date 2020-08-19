@@ -6,7 +6,7 @@ type Props = {
   children: ReactNode
 }
 
-export default ({ children }: Props) => (
+const Alert = ({ children }: Props) => (
   <>
     <div className="attention">
       <img src="/icon-info.svg" className="attention__icon" />
@@ -34,3 +34,5 @@ export default ({ children }: Props) => (
     `}</style>
   </>
 )
+
+export default Alert

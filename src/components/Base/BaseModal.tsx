@@ -13,7 +13,7 @@ type Props = {
   onClose: any
 }
 
-export default ({ title, render, onClose }: Props) => {
+const BaseModal = ({ title, render, onClose }: Props) => {
   const close = () => {
     Router.push(Router.route)
     if (onClose) onClose()
@@ -61,3 +61,5 @@ export default ({ title, render, onClose }: Props) => {
     </div>
   )
 }
+
+export default BaseModal

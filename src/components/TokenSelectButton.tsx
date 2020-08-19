@@ -1,6 +1,7 @@
+import React from 'react'
 import SelectItem from './SelectItem'
 
-export default props => {
+const TokenSelectButton = props => {
   return props.item ? (
     <SelectItem
       img={props.item.imgSrc}
@@ -14,3 +15,5 @@ export default props => {
     />
   ) : null
 }
+
+export default TokenSelectButton

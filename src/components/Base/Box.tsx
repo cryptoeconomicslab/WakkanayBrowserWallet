@@ -5,7 +5,7 @@ type Props = {
   children: ReactNode
 }
 
-export default ({ children }: Props) => (
+const Box = ({ children }: Props) => (
   <div className="box">
     {children}
     <style jsx>{`
@@ -22,3 +22,5 @@ export default ({ children }: Props) => (
     `}</style>
   </div>
 )
+
+export default Box

@@ -3,7 +3,7 @@ import classnames from 'classnames'
 import { BACKGROUND, Black } from '../../constants/colors'
 import { FZ_MEDIUM, FW_BOLD } from '../../constants/fonts'
 
-export default props => {
+const Input = props => {
   const { full, className } = props
   return (
     <>
@@ -33,3 +33,5 @@ export default props => {
     </>
   )
 }
+
+export default Input

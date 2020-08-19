@@ -63,13 +63,14 @@ export const deposit = (amount: string, addr: string) => {
   return async (dispatch: Dispatch) => {
     try {
       const amountWei = JSBI.BigInt(utils.parseEther(amount).toString())
-      const client = clientWrapper.getClient()
-      if (!client) return
+      const client = clientWrapper.client
+      const wallet = clientWrapper.wallet
+      if (!client || !wallet) return
       const peth = getTokenByUnit('ETH')
       if (peth !== undefined && addr === peth.tokenContractAddress) {
         const contract = new PETHContract(
           peth.tokenContractAddress,
-          clientWrapper.wallet.provider.getSigner()
+          wallet.provider.getSigner()
         )
         await contract.wrap(amountWei)
         console.info(`wrapped PETH: ${amount}`)

@@ -13,7 +13,7 @@ type Props = {
   disabled?: boolean
 }
 
-export default (props: Props) => {
+const Button = (props: Props) => {
   const { full, size, className, border, children } = props
   return (
     <button
@@ -75,3 +75,5 @@ export default (props: Props) => {
     </button>
   )
 }
+
+export default Button

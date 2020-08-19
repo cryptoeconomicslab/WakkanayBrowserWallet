@@ -1,7 +1,8 @@
+import React from 'react'
 import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
 import { shortenAddress } from '../utils'
 
-export default ({ history }) => {
+const TransactionHistoryMessage = ({ history }) => {
   if (history.message === ActionType.Send) {
     return (
       <>{`${history.message} to ${shortenAddress(history.counterParty)}`}</>
@@ -14,3 +15,5 @@ export default ({ history }) => {
     return <>{history.message}</>
   }
 }
+
+export default TransactionHistoryMessage

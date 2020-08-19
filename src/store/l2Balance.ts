@@ -4,7 +4,7 @@ import { formatUnits } from 'ethers/utils'
 import clientWrapper from '../client'
 import { getTokenByTokenContractAddress } from '../constants/tokens'
 import { pushToast } from './toast'
-import { BalanceList } from './../types/Balance'
+import { Balance, BalanceList } from './../types/Balance'
 import { roundBalance } from '../utils'
 
 export enum L2_BALANCE_ACTION_TYPES {
@@ -72,7 +72,7 @@ export const getL2Balance = () => {
       }
 
       dispatch(setL2BalanceStatus(L2_BALANCE_PROGRESS.LOADING))
-      const client = clientWrapper.getClient()
+      const client = clientWrapper.client
       if (!client) return
       const balanceList = await client.getBalance()
       const formatedBalanceList: BalanceList = balanceList.reduce(
@@ -80,11 +80,13 @@ export const getL2Balance = () => {
           const token = getTokenByTokenContractAddress(
             balance.tokenContractAddress
           )
-          map[token.unit] = {
-            amount: roundBalance(
-              Number(formatUnits(balance.amount.toString(), balance.decimals))
-            ),
-            decimals: balance.decimals
+          if (token) {
+            map[token.unit] = {
+              amount: roundBalance(
+                Number(formatUnits(balance.amount.toString(), balance.decimals))
+              ),
+              decimals: balance.decimals
+            } as Balance
           }
           return map
         },

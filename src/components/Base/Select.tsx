@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { BACKGROUND } from '../../constants/colors'
 import { FW_BOLD, FZ_DEFAULT } from '../../constants/fonts'
 
-export default props => {
+const Select = props => {
   const { options } = props
   return (
     <>
@@ -15,7 +15,11 @@ export default props => {
           })}
         >
           {options.map(({ label, value }) => (
-            <option value={value} className="select__option">
+            <option
+              value={value}
+              key={`${label}-${value}`}
+              className="select__option"
+            >
               {label}
             </option>
           ))}
@@ -54,3 +58,5 @@ export default props => {
     </>
   )
 }
+
+export default Select

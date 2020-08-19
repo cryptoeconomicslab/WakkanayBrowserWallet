@@ -11,7 +11,7 @@ import {
   FW_BLACK,
   FZ_LARGE
 } from '../constants/fonts'
-import { TOKEN_LIST } from '../constants/tokens'
+import TOKEN_LIST from '../constants/tokens'
 import { PAYMENT } from '../routes'
 import {
   getL1TotalBalance,
@@ -48,6 +48,7 @@ function Wallet({
         <div className="mtl">
           {TOKEN_LIST.map(({ unit, tokenContractAddress }) => (
             <WalletTokenItem
+              key={`wallet-token-item-${tokenContractAddress}`}
               l1Balance={l1BalanceList[unit] ? l1BalanceList[unit].amount : 0}
               l2Balance={l2BalanceList[unit] ? l2BalanceList[unit].amount : 0}
               unit={unit}

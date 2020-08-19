@@ -15,7 +15,9 @@ export default async function validateTransfer(
       balance.tokenContractAddress.toLowerCase() ===
       tokenContractAddress.toLowerCase()
   )
-  if (JSBI.greaterThan(amountWei, balance.amount)) {
+  if (!balance) {
+    errors.push('Token not found.')
+  } else if (JSBI.greaterThan(amountWei, balance.amount)) {
     errors.push('Insufficient funds.')
   }
   if (!isAddress(recipientAddress)) {

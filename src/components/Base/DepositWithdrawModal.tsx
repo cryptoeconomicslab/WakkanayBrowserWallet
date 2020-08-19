@@ -3,14 +3,17 @@ import { useRouter } from 'next/router'
 import BaseModal from './BaseModal'
 import Message from './Message'
 import Button from './Button'
-import { TokenSelector } from '../TokenSelector'
+import TokenSelector from '../TokenSelector'
 import Confirmation from '../Confirmation'
 import TokenInput from '../TokenInput'
 import config from '../../config'
 import { DEPOSIT_PROGRESS } from '../../store/deposit'
 import { SUBTEXT, ERROR } from '../../constants/colors'
 import { FZ_MEDIUM, FW_BLACK } from '../../constants/fonts'
-import { getTokenByTokenContractAddress } from '../../constants/tokens'
+import TOKEN_LIST, {
+  getTokenByTokenContractAddress,
+  Token
+} from '../../constants/tokens'
 
 const modalTexts = {
   deposit: {
@@ -46,18 +49,24 @@ const DepositWithdrawModal = ({
 }: Props) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
-  const [tokenAmount, setTokenAmount] = useState(undefined)
-  const [token, setToken] = useState(router.query.token || config.PlasmaETH)
-  const updateToken = selectedTokenContractAddress => {
+  const [tokenAmount, setTokenAmount] = useState<number>(0)
+  const [token, setToken] = useState<string>(
+    router.query.token || config.PlasmaETH
+  )
+  const updateToken = (selectedTokenContractAddress: string) => {
     setToken(selectedTokenContractAddress)
   }
-  const updateProgress = _progress => () => {
+  const updateProgress = (_progress: string) => () => {
     setProgress(_progress)
   }
-  const selectedTokenObj = getTokenByTokenContractAddress(token)
-  const selectedTokenBalance = balance[selectedTokenObj.unit]
-    ? balance[selectedTokenObj.unit].amount
-    : 0
+  const selectedTokenObj: Token =
+    getTokenByTokenContractAddress(token) === undefined
+      ? TOKEN_LIST[0]
+      : (getTokenByTokenContractAddress(token) as Token)
+  const selectedTokenBalance: number =
+    selectedTokenObj !== undefined && balance[selectedTokenObj.unit]
+      ? balance[selectedTokenObj.unit].amount
+      : 0
   const isInsufficientFunds = () => {
     return tokenAmount > selectedTokenBalance
   }

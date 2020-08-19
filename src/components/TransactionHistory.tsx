@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
 import TransactionHistoryIcon from './TransactionHistoryIcon'
@@ -17,7 +17,7 @@ const BlockExplorerLinkWrapper = ({ history, children }) => {
           href={`${process.env.BLOCK_EXPLORER_URL}/transaction?blockNumber=${history.blockNumber}&depositContractAddress=${history.depositContractAddress}&start=${history.range.start}&end=${history.range.end}`}
           className="transaction__link"
           target="_blank"
-          rel="noopener"
+          rel="noreferrer"
         >
           {children}
         </a>

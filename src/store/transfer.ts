@@ -116,7 +116,7 @@ export const transfer = (
   return async (dispatch: Dispatch) => {
     try {
       dispatch(setTransferStatus(TRANSFER_PROGRESS.SENDING))
-      const client = clientWrapper.getClient()
+      const client = clientWrapper.client
       if (!client) {
         throw Error('Client is not ready.')
       }

@@ -1,7 +1,8 @@
+import React from 'react'
 import { FZ_DEFAULT, FW_BOLD } from '../constants/fonts'
 import { TEXT, PLACEHOLDER } from '../constants/colors'
 
-export default ({ img, name, supplement, padding }) => {
+const SectionItem = ({ img, name, supplement, padding }) => {
   return (
     <div className="item">
       <div className="item__label">
@@ -52,3 +53,5 @@ export default ({ img, name, supplement, padding }) => {
     </div>
   )
 }
+
+export default SectionItem

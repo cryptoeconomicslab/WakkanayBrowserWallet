@@ -1,6 +1,6 @@
 import config from '../config'
 
-type Token = {
+export type Token = {
   name: string
   unit: string
   tokenContractAddress: string
@@ -10,7 +10,7 @@ type Token = {
   hidden: boolean
 }
 
-export const TOKEN_LIST: Token[] = [
+const TOKEN_LIST: Token[] = [
   {
     name: 'Ethereum',
     unit: 'ETH',
@@ -34,13 +34,17 @@ export const TOKEN_LIST: Token[] = [
   return !token.hidden
 })
 
-export function getTokenByTokenContractAddress(address: string) {
+export default TOKEN_LIST
+
+export function getTokenByTokenContractAddress(
+  address: string
+): Token | undefined {
   return TOKEN_LIST.find(
     ({ tokenContractAddress }) =>
       tokenContractAddress.toLowerCase() === address.toLowerCase()
   )
 }
 
-export function getTokenByUnit(targetUnit: string) {
+export function getTokenByUnit(targetUnit: string): Token | undefined {
   return TOKEN_LIST.find(({ unit }) => unit === targetUnit)
 }

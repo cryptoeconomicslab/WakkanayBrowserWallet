@@ -138,7 +138,7 @@ export const checkClientInitialized = () => {
     try {
       dispatch(setAppStatus(APP_STATUS.LOADING))
       setupContext({ coder: EthCoder })
-      const client = clientWrapper.getClient()
+      const client = clientWrapper.client
       if (client) {
         dispatch(subscribeEvents())
         initialGetters(dispatch, getState)
@@ -283,7 +283,7 @@ export const subscribeEvents = () => {
   return dispatch => {
     try {
       console.log('start subscribing events')
-      const client = clientWrapper.getClient()
+      const client = clientWrapper.client
       if (!client) {
         throw new Error('client is not initialized yet.')
       }

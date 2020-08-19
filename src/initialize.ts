@@ -13,6 +13,7 @@ import {
 } from '@cryptoeconomicslab/eth-contract'
 import * as Sentry from '@sentry/browser'
 import config from './config'
+import EthNetworkName from './types/EthNetworkName'
 import {
   MetamaskService,
   MagicLinkService,
@@ -29,11 +30,11 @@ if (process.env.SENTRY_ENDPOINT) {
   })
 }
 
-function getProvider(network: string): ethers.providers.BaseProvider {
+function getProvider(network: EthNetworkName): ethers.providers.BaseProvider {
   if (network === 'local') {
     return new ethers.providers.JsonRpcProvider(process.env.MAIN_CHAIN_URL)
-  } else if (network === 'kovan') {
-    return ethers.getDefaultProvider('kovan')
+  } else {
+    return ethers.getDefaultProvider(network)
   }
 }
 
@@ -54,30 +55,33 @@ async function registerPeth(client: LightClient) {
 
 async function instantiate(
   walletParams: WalletParams
-): Promise<{ client: LightClient; wallet: Web3Wallet }> {
-  const networkName = process.env.ETH_NETWORK
+): Promise<{
+  client: LightClient | null
+  wallet: Web3Wallet | null
+}> {
+  const networkName = process.env.ETH_NETWORK as EthNetworkName
   const kind = walletParams.kind
 
-  let wallet: Web3Wallet
-  let signer: ethers.Signer
+  let wallet: Web3Wallet | undefined
   if (kind === WALLET_KIND.WALLET_METAMASK) {
     wallet = await MetamaskService.initialize(networkName)
-    signer = wallet.provider.getSigner()
   } else if (kind === WALLET_KIND.WALLET_MAGIC_LINK) {
+    if (!walletParams.email) throw new Error(`${kind} needs email parameter.`)
     wallet = await MagicLinkService.initialize(walletParams.email, networkName)
-    if (!wallet) {
-      location.reload()
-      return
-    }
-    signer = wallet.provider.getSigner()
   } else if (kind === WALLET_KIND.WALLET_CONNECT) {
     wallet = await WalletConnectService.initilize(networkName)
-    signer = wallet.provider.getSigner()
   } else {
-    throw new Error(`gazelle-wallet doesn't support ${kind}`)
+    throw new Error(`gazelle-wallet doesn't support ${kind}.`)
+  }
+
+  // for magic link
+  if (!wallet) {
+    location.reload()
+    return { client: null, wallet: null }
   }
 
   const address = wallet.getAddress()
+  const signer = wallet.provider.getSigner()
   const kvs = new IndexedDbKeyValueStore(
     Bytes.fromString('wallet_' + address.data)
   )
@@ -161,7 +165,7 @@ async function instantiate(
 
 export default async function initialize(
   walletParams: WalletParams
-): Promise<{ client: LightClient; wallet: Web3Wallet }> {
+): Promise<{ client: LightClient | null; wallet: Web3Wallet | null }> {
   const { client, wallet } = await instantiate(walletParams)
   localStorage.setItem('loggedInWith', walletParams.kind)
   return { client, wallet }

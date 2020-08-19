@@ -2,9 +2,9 @@ import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import Router, { useRouter } from 'next/router'
 import Head from 'next/head'
-import Box from './Base/Box'
-import ClipLoader from './Base/ClipLoader'
 import Alert from './Base/Alert'
+import Box from './Base/Box'
+import SyncingLoader from './Base/SyncingLoader'
 import Header from './Header'
 import StartupModal from './StartupModal'
 import Wallet from './Wallet'
@@ -93,7 +93,7 @@ const Initial = ({
             href="https://faucet.kovan.network/"
             className="alert__link"
             target="_blank"
-            rel="noopener"
+            rel="noreferrer"
           >
             here
           </a>
@@ -127,7 +127,9 @@ const Initial = ({
             </a>
           </div>
         )}
-        {appStatus.syncingStatus === SYNCING_STATUS.LOADING && <ClipLoader />}
+        {appStatus.syncingStatus === SYNCING_STATUS.LOADING && (
+          <SyncingLoader />
+        )}
       </div>
       <style>{`
         *,

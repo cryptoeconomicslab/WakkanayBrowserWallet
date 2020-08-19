@@ -75,7 +75,7 @@ export const getPendingExitList = () => {
       }
 
       dispatch(setPendingExitListStatus(PENDING_EXIT_LIST_PROGRESS.LOADING))
-      const client = clientWrapper.getClient()
+      const client = clientWrapper.client
       if (!client) return
       const pendingExitList = await client.getPendingWithdrawals()
       dispatch(setPendingExitList(pendingExitList))

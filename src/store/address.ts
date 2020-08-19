@@ -34,7 +34,7 @@ export default reducer
 
 export const getAddress = () => {
   return (dispatch: Dispatch) => {
-    const client = clientWrapper.getClient()
+    const client = clientWrapper.client
     if (!client) return
     const address = client.address
     dispatch(setUserAddress(address))

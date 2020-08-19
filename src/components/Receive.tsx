@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import classnames from 'classnames'
-import { SectionTitle } from '../components/SectionTitle'
+import SectionTitle from '../components/SectionTitle'
 import {
   SUBTEXT,
   BACKGROUND,

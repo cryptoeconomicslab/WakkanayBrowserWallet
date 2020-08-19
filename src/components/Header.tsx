@@ -1,3 +1,4 @@
+import React from 'react'
 import Link from 'next/link'
 import { MAIN, Main, MAIN_DARK, White } from '../constants/colors'
 import { FW_NORMAL, FZ_MEDIUM } from '../constants/fonts'

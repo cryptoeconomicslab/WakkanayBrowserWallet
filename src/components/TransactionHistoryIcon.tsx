@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import ReactTooltip from 'react-tooltip'
+import { Exit } from '@cryptoeconomicslab/plasma'
 import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
 import clientWrapper from '../client'
 import { MAIN, MAIN_DARK } from '../constants/colors'
@@ -37,7 +38,7 @@ const TransactionHistoryIcon = ({
     return iconEl
   }
 
-  const [exit, setExit] = useState(null)
+  const [exit, setExit] = useState<Exit | null>(null)
   const [isWithdrawalCompletable, setIsWithdrawalCompletable] = useState(false)
   useEffect(() => {
     const foundExit = findExit(
@@ -45,10 +46,10 @@ const TransactionHistoryIcon = ({
       history.range,
       history.depositContractAddress
     )
-    if (!foundExit) return
+    if (foundExit === null) return
     setExit(foundExit)
     const getIsWithdrawalComplete = async () => {
-      const client = clientWrapper.getClient()
+      const client = clientWrapper.client
       if (client) {
         setIsWithdrawalCompletable(
           await client.isWithdrawalCompletable(foundExit)

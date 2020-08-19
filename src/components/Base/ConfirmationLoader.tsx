@@ -9,7 +9,7 @@ type Props = {
 const override = css`
   text-align: center;
 `
-export default ({ isLoading }: Props) => (
+const ConfirmationLoader = ({ isLoading }: Props) => (
   <div>
     <BeatLoader
       css={override}
@@ -19,3 +19,5 @@ export default ({ isLoading }: Props) => (
     />
   </div>
 )
+
+export default ConfirmationLoader

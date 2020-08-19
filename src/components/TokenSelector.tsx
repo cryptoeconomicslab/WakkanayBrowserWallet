@@ -1,13 +1,14 @@
+import React from 'react'
 import { SMALL, MEDIUM } from '../constants/fonts'
-import { TokenSelectButton } from './TokenSelectButton'
-import { TOKEN_LIST } from '../constants/tokens'
+import TokenSelectButton from './TokenSelectButton'
+import TOKEN_LIST from '../constants/tokens'
 import Dropdown from './Dropdown'
 
 /**
  * Token selector form item
  * @param {*} props
  */
-export default props => {
+const TokenSelector = props => {
   return (
     <div className="tokenSelector">
       <Dropdown
@@ -40,3 +41,5 @@ export default props => {
     </div>
   )
 }
+
+export default TokenSelector

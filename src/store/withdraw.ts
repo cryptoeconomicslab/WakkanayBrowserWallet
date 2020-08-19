@@ -9,7 +9,7 @@ import { pushToast } from './toast'
 import { getTransactionHistories } from './transactionHistory'
 import clientWrapper from '../client'
 import { PETHContract } from '../contracts/'
-import { getTokenByUnit } from '../constants/tokens'
+import { getTokenByUnit, Token } from '../constants/tokens'
 
 export enum WITHDRAW_ACTION_TYPES {
   SET_WITHDRAW_PROGRESS = 'SET_WITHDRAW_PROGRESS',
@@ -67,7 +67,7 @@ export const withdraw = (amount: string, tokenContractAddress: string) => {
   return async dispatch => {
     try {
       const amountWei = JSBI.BigInt(utils.parseEther(amount).toString())
-      const client = clientWrapper.getClient()
+      const client = clientWrapper.client
       if (!client) return
       await client.startWithdrawal(amountWei, tokenContractAddress)
       dispatch(setWithdrawProgress(WITHDRAW_PROGRESS.COMPLETE))
@@ -84,19 +84,20 @@ export const withdraw = (amount: string, tokenContractAddress: string) => {
 
 export const completeWithdrawal = (exit: Exit) => {
   return async dispatch => {
-    const client = clientWrapper.getClient()
-    if (!client) return
+    const client = clientWrapper.client
+    const wallet = clientWrapper.wallet
+    if (!client || !wallet) return
     try {
       await client.completeWithdrawal(exit)
       // TODO: must wait until that tx is included
-      const peth = getTokenByUnit('ETH')
+      const peth = getTokenByUnit('ETH') as Token
       if (
         peth.depositContractAddress.toLowerCase() ===
         exit.stateUpdate.depositContractAddress.data
       ) {
         const contract = new PETHContract(
           peth.tokenContractAddress,
-          clientWrapper.wallet.provider.getSigner()
+          wallet.provider.getSigner()
         )
         await contract.unwrap(exit.stateUpdate.amount)
       }

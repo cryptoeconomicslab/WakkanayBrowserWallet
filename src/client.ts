@@ -3,18 +3,12 @@ import initialize from './initialize'
 import { Web3Wallet, WALLET_KIND } from './wallet'
 
 class ClientWrapper {
-  private instance: LightClient
-  private _wallet: Web3Wallet
+  private instance: LightClient | null
+  private _wallet: Web3Wallet | null
 
-  /**
-   * Returns client singleton. Lazily initialized on client side.
-   * Returns null on server side.
-   * @returns {?Client}
-   */
-  getClient(): LightClient | null {
-    if (this.instance) return this.instance
-
-    return null
+  constructor() {
+    this.instance = null
+    this._wallet = null
   }
 
   /**
@@ -32,14 +26,28 @@ class ClientWrapper {
     }
   }
 
+  /**
+   * Start plasma light client
+   */
   async start() {
     if (!this.instance) return
     await this.instance.start()
   }
 
+  /**
+   * Returns client singleton. Lazily initialized on client side.
+   * Returns null on server side.
+   * @returns {?Client}
+   */
+  get client(): LightClient | null {
+    return this.instance
+  }
+
+  /**
+   * Returns Web3Wallet.
+   */
   get wallet(): Web3Wallet | null {
-    if (this._wallet) return this._wallet
-    return null
+    return this._wallet
   }
 }
 

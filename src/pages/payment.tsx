@@ -1,8 +1,9 @@
+import React from 'react'
 import Layout from '../components/Layout'
 import Send from '../components/Send'
 import Receive from '../components/Receive'
 
-export default () => {
+const Payment = () => {
   return (
     <Layout>
       <Send />
@@ -10,3 +11,5 @@ export default () => {
     </Layout>
   )
 }
+
+export default Payment

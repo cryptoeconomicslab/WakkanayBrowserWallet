@@ -6,7 +6,7 @@ import { Black } from '../../constants/colors'
 const override = css`
   text-align: center;
 `
-export default () => (
+const SyncingLoader = () => (
   <div className="clipLoaderBox">
     <ClipLoader css={override} size={48} color={Black(0.8)} />
     <style jsx>
@@ -19,3 +19,5 @@ export default () => (
     </style>
   </div>
 )
+
+export default SyncingLoader

@@ -1,7 +1,8 @@
+import React from 'react'
 import { FW_BLACK, FZ_MEDIUM } from '../constants/fonts'
 import { SUBTEXT } from '../constants/colors'
 
-export default props => {
+const SectionTitle = props => {
   return (
     <div className="section-title">
       {props.children}
@@ -14,3 +15,5 @@ export default props => {
     </div>
   )
 }
+
+export default SectionTitle

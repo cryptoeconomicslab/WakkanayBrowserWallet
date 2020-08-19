@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import classnames from 'classnames'
 import { BACKGROUND, MAIN } from '../constants/colors'
+import Input from './Base/Input'
 
 type Props = {
   className: string

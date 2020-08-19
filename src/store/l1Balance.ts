@@ -4,8 +4,8 @@ import { createAction, createReducer } from '@reduxjs/toolkit'
 import { formatUnits } from 'ethers/utils'
 import { Address } from '@cryptoeconomicslab/primitives'
 import clientWrapper from '../client'
-import { TOKEN_LIST } from '../constants/tokens'
-import { BalanceList } from './../types/Balance'
+import TOKEN_LIST from '../constants/tokens'
+import { Balance, BalanceList } from './../types/Balance'
 import { roundBalance } from '../utils'
 import { AppState } from './'
 import { pushToast } from './toast'
@@ -75,24 +75,27 @@ export const getL1Balance = (): ThunkAction<void, AppState, void, any> => {
       }
 
       dispatch(setL1BalanceStatus(L1_BALANCE_PROGRESS.LOADING))
-      const client = clientWrapper.getClient()
-      if (!client) return
+      const client = clientWrapper.client
+      const wallet = clientWrapper.wallet
+      if (!client || !wallet) return
       const balanceList: BalanceList = await TOKEN_LIST.reduce(
         async (map, token) => {
           let balance
           if (token.unit === 'ETH') {
-            balance = await clientWrapper.wallet.getL1Balance()
+            balance = await wallet.getL1Balance()
           } else {
-            balance = await clientWrapper.wallet.getL1Balance(
+            balance = await wallet.getL1Balance(
               // TODO: don't use gazelle primitives
               Address.from(token.tokenContractAddress)
             )
           }
-          map[token.unit] = {
-            amount: roundBalance(
-              Number(formatUnits(balance.value.raw, balance.decimals))
-            ),
-            decimals: balance.decimals
+          if (token) {
+            map[token.unit] = {
+              amount: roundBalance(
+                Number(formatUnits(balance.value.raw, balance.decimals))
+              ),
+              decimals: balance.decimals
+            } as Balance
           }
           return map
         },

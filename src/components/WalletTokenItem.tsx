@@ -12,7 +12,7 @@ import {
   FW_BOLD,
   FW_NORMAL
 } from '../constants/fonts'
-import { TOKEN_LIST } from '../constants/tokens'
+import TOKEN_LIST from '../constants/tokens'
 import { openModal, PAYMENT } from '../routes'
 import { SYNCING_STATUS } from '../store/appStatus'
 

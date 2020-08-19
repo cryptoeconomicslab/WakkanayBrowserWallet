@@ -75,18 +75,20 @@ export const getTransactionHistories = () => {
       }
 
       dispatch(setHistoryListStatus(TRANSACTION_HISTORY_PROGRESS.LOADING))
-      const client = clientWrapper.getClient()
+      const client = clientWrapper.client
       if (!client) return
       const histories = (await client.getAllUserActions()).map(history => {
         const token = getTokenByTokenContractAddress(history.tokenAddress)
-        return {
-          message: history.type,
-          amount: formatEther(history.amount.toString()),
-          unit: token.unit,
-          blockNumber: history.blockNumber.toString(),
-          counterParty: history.counterParty,
-          depositContractAddress: token.depositContractAddress,
-          range: { start: history.range.start, end: history.range.end }
+        if (token) {
+          return {
+            message: history.type,
+            amount: formatEther(history.amount.toString()),
+            unit: token.unit,
+            blockNumber: history.blockNumber.toString(),
+            counterParty: history.counterParty,
+            depositContractAddress: token.depositContractAddress,
+            range: { start: history.range.start, end: history.range.end }
+          }
         }
       })
       dispatch(setHistoryList(histories))
