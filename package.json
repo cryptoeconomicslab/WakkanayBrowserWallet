@@ -23,6 +23,7 @@
     "@fortawesome/react-fontawesome": "^0.1.11",
     "@reduxjs/toolkit": "^1.4.0",
     "@sentry/browser": "^5.20.1",
+    "@sentry/integrations": "^5.21.1",
     "@walletconnect/qrcode-modal": "^1.1.0",
     "@walletconnect/web3-provider": "^1.1.0",
     "axios": "^0.19.2",
