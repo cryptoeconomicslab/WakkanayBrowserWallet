@@ -12,6 +12,7 @@ import {
   OwnershipPayoutContract
 } from '@cryptoeconomicslab/eth-contract'
 import * as Sentry from '@sentry/browser'
+import { CaptureConsole } from '@sentry/integrations'
 import config from './config'
 import EthNetworkName from './types/EthNetworkName'
 import {
@@ -26,7 +27,12 @@ import { sleep } from './utils'
 
 if (process.env.SENTRY_ENDPOINT) {
   Sentry.init({
-    dsn: process.env.SENTRY_ENDPOINT
+    dsn: process.env.SENTRY_ENDPOINT,
+    integrations: [
+      new CaptureConsole({
+        levels: ['error']
+      })
+    ]
   })
 }
 
