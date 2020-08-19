@@ -7,7 +7,7 @@ type ToastStack = {
   toastStack: any
 }
 
-export function usePrevious(value: ToastStack) {
+export function usePrevious(value: ToastStack): ToastStack {
   const ref = useRef<ToastStack>()
   useEffect(() => {
     ref.current = value
@@ -15,7 +15,7 @@ export function usePrevious(value: ToastStack) {
   return ref.current
 }
 
-export function useReactToast({ toasts, onDisappearToast }) {
+export function useReactToast({ toasts, onDisappearToast }): void {
   const { addToast, toastStack } = useToasts()
   const prev = usePrevious({ toasts, toastStack })
 

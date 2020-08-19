@@ -1,7 +1,13 @@
+import { Exit } from '@cryptoeconomicslab/plasma'
+
 /**
  * find exit data that fits the conditional
  */
-export function findExit(exitList, range, depositContractAddress) {
+export function findExit(
+  exitList: Exit[],
+  range: { start: string; end: string },
+  depositContractAddress: string
+): Exit | null {
   const queriedExit = exitList
     .filter(
       exit =>

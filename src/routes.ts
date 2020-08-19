@@ -15,7 +15,7 @@ export const NFT_COLLECTIBLES = '/nft_collectibles'
  * @param args.modal The name of the modal "deposit" or "withdraw"
  * @param args.token The token address of the selected modal
  */
-export function openModal(args) {
+export function openModal(args: { modal: string; token?: string }): void {
   Router.push(
     {
       pathname: Router.pathname,

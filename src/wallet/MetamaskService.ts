@@ -7,7 +7,7 @@ import { validateNetwork } from './WalletUtils'
  * MetamaskWallet is wallet implementation for Metamask
  */
 export class MetamaskService {
-  static async initialize(networkName) {
+  static async initialize(networkName: string): Promise<Web3Wallet> {
     if (typeof window.ethereum === undefined) {
       throw new Error('cannot find ethereum object.')
     }

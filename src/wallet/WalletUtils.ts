@@ -1,4 +1,7 @@
-export const validateNetwork = (specifiedNetworkName, currentNetworkName) => {
+export const validateNetwork = (
+  specifiedNetworkName: string,
+  currentNetworkName: string
+): void => {
   if (
     specifiedNetworkName !== 'local' &&
     currentNetworkName !== specifiedNetworkName

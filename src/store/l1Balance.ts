@@ -90,7 +90,7 @@ export const getL1Balance = (): ThunkAction<void, AppState, void, any> => {
           }
           map[token.unit] = {
             amount: roundBalance(
-              formatUnits(balance.value.raw, balance.decimals)
+              Number(formatUnits(balance.value.raw, balance.decimals))
             ),
             decimals: balance.decimals
           }

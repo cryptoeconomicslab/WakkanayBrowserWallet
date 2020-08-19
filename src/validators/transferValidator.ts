@@ -1,13 +1,14 @@
 import JSBI from 'jsbi'
+import LightClient from '@cryptoeconomicslab/plasma-light-client'
 import { isAddress } from '../utils'
 
 export default async function validateTransfer(
-  client,
-  amountWei,
-  tokenContractAddress,
-  recipientAddress
-) {
-  const errors = []
+  client: LightClient,
+  amountWei: JSBI,
+  tokenContractAddress: string,
+  recipientAddress: string
+): Promise<string[]> {
+  const errors: string[] = []
   const balanceList = await client.getBalance()
   const balance = balanceList.find(
     balance =>

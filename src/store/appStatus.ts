@@ -2,8 +2,14 @@ import { Dispatch } from 'redux'
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import { EthCoder } from '@cryptoeconomicslab/eth-coder'
 import { setupContext } from '@cryptoeconomicslab/context'
+import { Exit, StateUpdate } from '@cryptoeconomicslab/plasma'
 import LightClient from '@cryptoeconomicslab/plasma-light-client'
-import { BigNumber } from '@cryptoeconomicslab/primitives'
+import {
+  BigNumber,
+  Bytes,
+  Range,
+  Property
+} from '@cryptoeconomicslab/primitives'
 import clientWrapper from '../client'
 import { WALLET_KIND } from '../wallet'
 import { getAddress } from './address'
@@ -104,7 +110,12 @@ const subscribedEventGetters = (dispatch, getState) => {
     dispatch(getPendingExitList())
   }
 }
-const initializeClientWrapper = async (dispatch, getState, kind, email?) => {
+const initializeClientWrapper = async (
+  dispatch,
+  getState,
+  kind: WALLET_KIND,
+  email?: string
+) => {
   await clientWrapper.initializeClient({
     kind,
     email
@@ -137,7 +148,7 @@ export const checkClientInitialized = () => {
 
       const loggedInWith = localStorage.getItem('loggedInWith')
       if (loggedInWith) {
-        initializeClientWrapper(dispatch, getState, loggedInWith)
+        initializeClientWrapper(dispatch, getState, loggedInWith as WALLET_KIND)
         dispatch(setAppStatus(APP_STATUS.LOADED))
       } else {
         dispatch(setAppStatus(APP_STATUS.UNLOADED))
@@ -178,7 +189,7 @@ export const initializeWalletConnect = () => {
   }
 }
 
-export const initializeMagicLinkWallet = email => {
+export const initializeMagicLinkWallet = (email: string) => {
   return async (dispatch, getState) => {
     try {
       dispatch(setAppStatus(APP_STATUS.LOADING))
@@ -197,17 +208,19 @@ export const initializeMagicLinkWallet = email => {
   }
 }
 
-const subscribeCheckpointFinalizedEvent = client => {
+const subscribeCheckpointFinalizedEvent = (client: LightClient) => {
   return (dispatch, getState) => {
-    client.subscribeCheckpointFinalized((checkpointId, checkpoint) => {
-      console.info(
-        `new %ccheckpoint %cdetected: %c{ id: ${checkpointId.toHexString()}, checkpoint: (${checkpoint}) }`,
-        'color: pink; font-weight: bold;',
-        '',
-        'font-weight: bold;'
-      )
-      subscribedEventGetters(dispatch, getState)
-    })
+    client.subscribeCheckpointFinalized(
+      (checkpointId: Bytes, checkpoint: [Range, Property]) => {
+        console.info(
+          `new %ccheckpoint %cdetected: %c{ id: ${checkpointId.toHexString()}, checkpoint: (${checkpoint}) }`,
+          'color: pink; font-weight: bold;',
+          '',
+          'font-weight: bold;'
+        )
+        subscribedEventGetters(dispatch, getState)
+      }
+    )
   }
 }
 
@@ -243,7 +256,7 @@ const subscribeSyncFinishedEvent = (client: LightClient) => {
 
 const subscribeTransferCompleteEvent = (client: LightClient) => {
   return (dispatch: Dispatch, getState) => {
-    client.subscribeTransferComplete(stateUpdate => {
+    client.subscribeTransferComplete((stateUpdate: StateUpdate) => {
       console.info(
         `%c transfer complete for range: %c (${stateUpdate.range.start.data}, ${stateUpdate.range.end.data})`,
         'color: brown; font-weight: bold;',
@@ -256,8 +269,8 @@ const subscribeTransferCompleteEvent = (client: LightClient) => {
 
 const subscribeExitFinalizedEvent = (client: LightClient) => {
   return (dispatch: Dispatch, getState) => {
-    client.subscribeExitFinalized(async stateUpdate => {
-      console.info(`completed withdrawal: ${stateUpdate}`)
+    client.subscribeExitFinalized(async (exit: Exit) => {
+      console.info(`completed withdrawal: ${exit}`)
       subscribedEventGetters(dispatch, getState)
       dispatch(
         pushToast({ message: 'Complete withdrawal success.', type: 'info' })

@@ -82,7 +82,7 @@ export const getL2Balance = () => {
           )
           map[token.unit] = {
             amount: roundBalance(
-              formatUnits(balance.amount.toString(), balance.decimals)
+              Number(formatUnits(balance.amount.toString(), balance.decimals))
             ),
             decimals: balance.decimals
           }

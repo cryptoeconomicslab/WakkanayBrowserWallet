@@ -58,7 +58,8 @@ async function instantiate(
   const networkName = process.env.ETH_NETWORK
   const kind = walletParams.kind
 
-  let wallet, signer: any
+  let wallet: Web3Wallet
+  let signer: ethers.Signer
   if (kind === WALLET_KIND.WALLET_METAMASK) {
     wallet = await MetamaskService.initialize(networkName)
     signer = wallet.provider.getSigner()
@@ -101,7 +102,7 @@ async function instantiate(
     signer
   )
 
-  function depositContractFactory(address) {
+  function depositContractFactory(address: Address) {
     return new DepositContract(
       address,
       eventDb,
@@ -111,7 +112,7 @@ async function instantiate(
     )
   }
 
-  function tokenContractFactory(address) {
+  function tokenContractFactory(address: Address) {
     return new ERC20Contract(address, signer)
   }
 
@@ -155,7 +156,7 @@ async function instantiate(
 
   await registerPeth(client)
 
-  return { client, wallet: wallet as Web3Wallet }
+  return { client, wallet }
 }
 
 export default async function initialize(

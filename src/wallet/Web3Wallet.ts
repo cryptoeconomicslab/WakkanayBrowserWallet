@@ -1,10 +1,8 @@
+import { ethers } from 'ethers'
 import { Address, BigNumber, Bytes } from '@cryptoeconomicslab/primitives'
-import { Balance } from '@cryptoeconomicslab/wallet'
+import { Balance, Wallet } from '@cryptoeconomicslab/wallet'
 import { createTypedParams } from '@cryptoeconomicslab/ovm'
 import { config } from '../config'
-import { ethers } from 'ethers'
-import { arrayify, AbiCoder } from 'ethers/utils'
-const abi = new AbiCoder()
 
 const ERC20abi = [
   'function balanceOf(address tokenOwner) view returns (uint)',
@@ -15,7 +13,7 @@ const ERC20abi = [
 /**
  * Web3Wallet is wallet implementation for Web3Provider
  */
-export class Web3Wallet {
+export class Web3Wallet implements Wallet {
   private address: string
   public provider: ethers.providers.Web3Provider
 
@@ -29,11 +27,11 @@ export class Web3Wallet {
     this.provider = provider
   }
 
-  getAddress() {
+  public getAddress(): Address {
     return Address.from(this.address)
   }
 
-  async getL1Balance(tokenAddress?: Address) {
+  public async getL1Balance(tokenAddress?: Address): Promise<Balance> {
     let value: BigNumber, decimals: number, symbol: string
     if (tokenAddress) {
       const contract = new ethers.Contract(
@@ -55,11 +53,18 @@ export class Web3Wallet {
     return new Balance(value, decimals, symbol)
   }
 
-  async signMessage(message) {
+  public async signMessage(message: Bytes): Promise<Bytes> {
     const signature = await this.provider.send('eth_signTypedData', [
       createTypedParams(config, message),
       this.address
     ])
     return Bytes.fromHexString(signature)
+  }
+
+  public async verifyMySignature(
+    message: Bytes,
+    signature: Bytes
+  ): Promise<boolean> {
+    throw Error('not implemented yet')
   }
 }

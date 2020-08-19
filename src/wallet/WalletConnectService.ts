@@ -17,7 +17,7 @@ export class WalletConnectService {
   /**
    * initilize WalletConnect service
    */
-  static async initilize(networkName) {
+  static async initilize(networkName: string): Promise<Web3Wallet> {
     const walletConnectProvider = new WalletConnectProvider({
       infuraId: 'b4c8518704574fe3992f9a479de0c004'
     })
@@ -37,10 +37,11 @@ export class WalletConnectService {
       connecting = false
       await walletConnectProvider.close()
     }
-    const web3 = new Web3(walletConnectProvider)
     // TODO: test operation on browser
-    // const provider = new ethers.providers.Web3Provider(web3.currentProvider)
-    const provider = new ethers.providers.Web3Provider(walletConnectProvider)
+    const web3 = new Web3(walletConnectProvider as any)
+    const provider = new ethers.providers.Web3Provider(
+      web3.currentProvider as any
+    )
     const address = await provider.getSigner().getAddress()
     const network = await provider.getNetwork()
     validateNetwork(networkName, network.name)
