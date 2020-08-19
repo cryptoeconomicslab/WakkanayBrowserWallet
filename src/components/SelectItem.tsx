@@ -1,7 +1,7 @@
 import { FZ_DEFAULT, FW_BOLD } from '../constants/fonts'
 import { TEXT, PLACEHOLDER } from '../constants/colors'
 
-export const SelectItem = ({ img, name, supplement, padding }) => {
+export default ({ img, name, supplement, padding }) => {
   return (
     <div className="item">
       <div className="item__label">

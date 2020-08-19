@@ -1,6 +1,6 @@
-import { SelectItem } from './SelectItem'
+import SelectItem from './SelectItem'
 
-export const TokenSelectButton = props => {
+export default props => {
   return props.item ? (
     <SelectItem
       img={props.item.imgSrc}

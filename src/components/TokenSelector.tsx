@@ -7,7 +7,7 @@ import Dropdown from './Dropdown'
  * Token selector form item
  * @param {*} props
  */
-export const TokenSelector = props => {
+export default props => {
   return (
     <div className="tokenSelector">
       <Dropdown

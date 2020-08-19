@@ -1,7 +1,7 @@
 import Layout from '../components/Layout'
 import TransactionHistory from '../components/TransactionHistory'
 
-export default function History() {
+export default () => {
   return (
     <Layout>
       <TransactionHistory />

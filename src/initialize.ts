@@ -12,7 +12,7 @@ import {
   OwnershipPayoutContract
 } from '@cryptoeconomicslab/eth-contract'
 import * as Sentry from '@sentry/browser'
-import { config } from './config'
+import config from './config'
 import {
   MetamaskService,
   MagicLinkService,

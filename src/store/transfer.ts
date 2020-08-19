@@ -5,7 +5,7 @@ import JSBI from 'jsbi'
 import { pushToast } from './toast'
 import { TRANSACTION_HISTORY_PROGRESS } from './transactionHistory'
 import clientWrapper from '../client'
-import { config } from '../config'
+import config from '../config'
 import validateTransfer from '../validators/transferValidator'
 
 export enum TRANSFER_ACTION_TYPES {

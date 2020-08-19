@@ -12,10 +12,10 @@ import {
 } from '../store/transfer'
 import { SECTION_BACKGROUND } from '../constants/colors'
 import { getTokenByTokenContractAddress, TOKEN_LIST } from '../constants/tokens'
-import { TokenSelector } from './TokenSelector'
+import TokenSelector from './TokenSelector'
 import AddressInput from './AddressInput'
 import Button from './Base/Button'
-import { SectionTitle } from './SectionTitle'
+import SectionTitle from './SectionTitle'
 import TokenInput from './TokenInput'
 
 const Send = props => {

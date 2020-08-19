@@ -2,7 +2,7 @@ import { ethers } from 'ethers'
 import { Address, BigNumber, Bytes } from '@cryptoeconomicslab/primitives'
 import { Balance, Wallet } from '@cryptoeconomicslab/wallet'
 import { createTypedParams } from '@cryptoeconomicslab/ovm'
-import { config } from '../config'
+import config from '../config'
 
 const ERC20abi = [
   'function balanceOf(address tokenOwner) view returns (uint)',

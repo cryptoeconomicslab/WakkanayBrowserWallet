@@ -121,4 +121,4 @@ const mapStateToProps = state => ({
   appStatus: state.appStatus
 })
 
-export default connect(mapStateToProps, undefined)(Header)
+export default connect(mapStateToProps)(Header)
