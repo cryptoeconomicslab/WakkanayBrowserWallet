@@ -191,14 +191,11 @@ export const initializeMagicLinkWallet = email => {
   }
 }
 
-const subscribeCheckpointFinalizedEvent = client => {
+const subscribeDepositEvent = client => {
   return (dispatch, getState) => {
-    client.subscribeCheckpointFinalized((checkpointId, checkpoint) => {
+    client.subscribeDepositEvent(userAction => {
       console.info(
-        `new %ccheckpoint %cdetected: %c{ id: ${checkpointId.toHexString()}, checkpoint: (${checkpoint}) }`,
-        'color: pink; font-weight: bold;',
-        '',
-        'font-weight: bold;'
+        `subscribe deposit event { userAction: ${JSON.stringify(userAction)}) }`
       )
       subscribedEventGetters(dispatch, getState)
     })
@@ -270,7 +267,7 @@ export const subscribeEvents = () => {
       }
       dispatch(subscribeSyncStartedEvent(client))
       dispatch(subscribeSyncFinishedEvent(client))
-      dispatch(subscribeCheckpointFinalizedEvent(client))
+      dispatch(subscribeDepositEvent(client))
       dispatch(subscribeTransferCompleteEvent(client))
       dispatch(subscribeExitFinalizedEvent(client))
     } catch (e) {
