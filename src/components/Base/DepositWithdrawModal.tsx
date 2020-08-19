@@ -49,7 +49,7 @@ const DepositWithdrawModal = ({
 }: Props) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
-  const [tokenAmount, setTokenAmount] = useState<number>(0)
+  const [tokenAmount, setTokenAmount] = useState<number | undefined>(undefined)
   const [token, setToken] = useState<string>(
     router.query.token || config.PlasmaETH
   )
@@ -68,6 +68,7 @@ const DepositWithdrawModal = ({
       ? balance[selectedTokenObj.unit].amount
       : 0
   const isInsufficientFunds = () => {
+    if (!tokenAmount) return false
     return tokenAmount > selectedTokenBalance
   }
   return (

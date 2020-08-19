@@ -249,7 +249,7 @@ const Initial = ({
 
 const mapStateToProps = state => ({
   appStatus: state.appStatus,
-  toasts: state.toastState.toasts
+  toasts: state.toast.toasts
 })
 
 const mapDispatchToProps = {
