@@ -179,7 +179,7 @@ export const initializeMagicLinkWallet = email => {
       initializeClientWrapper(
         dispatch,
         getState,
-        WALLET_KIND.WALLET_CONNECT,
+        WALLET_KIND.WALLET_MAGIC_LINK,
         email
       )
       dispatch(setAppStatus(APP_STATUS.LOADED))
