@@ -28,6 +28,8 @@ import {
   FW_NORMAL,
   FW_BLACK
 } from '../constants/fonts'
+import { logout } from '../helper/logoutHelper'
+import { useReactToast } from '../hooks'
 import {
   WALLET,
   HISTORY
@@ -42,7 +44,6 @@ import {
   checkClientInitialized
 } from '../store/appStatus'
 import { removeToast } from '../store/toast'
-import { useReactToast } from '../hooks'
 
 const Initial = ({
   checkClientInitialized,
@@ -133,8 +134,8 @@ const Initial = ({
           <div className="logoutButtonWrap">
             <a
               className="logoutButton"
-              onClick={() => {
-                localStorage.removeItem('loggedInWith')
+              onClick={async () => {
+                await logout(localStorage)
                 location.reload()
               }}
             >
