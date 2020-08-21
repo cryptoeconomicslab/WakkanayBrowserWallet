@@ -56,27 +56,35 @@ const TransactionHistory = ({
 
   return (
     <ul>
-      {historyList.map((history, i) => (
-        <li
-          className="transaction"
-          key={`${i}-${history.message}-${history.amount}-${history.unit}-${history.blockNumber}-${history.counterParty}`}
-        >
-          <div className="transaction__item transaction__item--icon">
-            <TransactionHistoryIcon history={history} />
-          </div>
-          <BlockExplorerLinkWrapper history={history}>
-            <div className="transaction__item transaction__item--amount">
-              {history.amount} {history.unit}
-            </div>
-            <div className="transaction__item transaction__item--message">
-              <TransactionHistoryMessage history={history} />
-            </div>
-            <div className="transaction__item transaction__item--time">
-              at {history.blockNumber} block
-            </div>
-          </BlockExplorerLinkWrapper>
+      {historyList.length > 0 ? (
+        <>
+          {historyList.map((history, i) => (
+            <li
+              className="transaction"
+              key={`${i}-${history.message}-${history.amount}-${history.unit}-${history.blockNumber}-${history.counterParty}`}
+            >
+              <div className="transaction__item transaction__item--icon">
+                <TransactionHistoryIcon history={history} />
+              </div>
+              <BlockExplorerLinkWrapper history={history}>
+                <div className="transaction__item transaction__item--amount">
+                  {history.amount} {history.unit}
+                </div>
+                <div className="transaction__item transaction__item--message">
+                  <TransactionHistoryMessage history={history} />
+                </div>
+                <div className="transaction__item transaction__item--time">
+                  at {history.blockNumber} block
+                </div>
+              </BlockExplorerLinkWrapper>
+            </li>
+          ))}
+        </>
+      ) : (
+        <li className="transaction">
+          Your transaction history does not exist.
         </li>
-      ))}
+      )}
       <style jsx>{`
         .transaction {
           list-style-type: none;
