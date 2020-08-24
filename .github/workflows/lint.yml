@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   lint:
-    name: Lint Code
+    name: Lint and tsc
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -18,6 +18,6 @@ jobs:
       - name: Install dependencies
         run: npm i --frozen-lockfile
       - name: lint
-        run: |
-          npm run lint
-          npm run tsc
+        run: npm run lint
+      - name: tsc
+        run: npm run tsc
