@@ -3,13 +3,10 @@ import { createAction, createReducer } from '@reduxjs/toolkit'
 import { EthCoder } from '@cryptoeconomicslab/eth-coder'
 import { setupContext } from '@cryptoeconomicslab/context'
 import { Exit, StateUpdate } from '@cryptoeconomicslab/plasma'
-import LightClient from '@cryptoeconomicslab/plasma-light-client'
-import {
-  BigNumber,
-  Bytes,
-  Range,
-  Property
-} from '@cryptoeconomicslab/primitives'
+import LightClient, {
+  UserAction
+} from '@cryptoeconomicslab/plasma-light-client'
+import { BigNumber } from '@cryptoeconomicslab/primitives'
 import clientWrapper from '../client'
 import { WALLET_KIND } from '../wallet'
 import { getAddress } from './address'
@@ -208,19 +205,14 @@ export const initializeMagicLinkWallet = (email: string) => {
   }
 }
 
-const subscribeCheckpointFinalizedEvent = (client: LightClient) => {
+const subscribeDepositEvent = (client: LightClient) => {
   return (dispatch, getState) => {
-    client.subscribeCheckpointFinalized(
-      (checkpointId: Bytes, checkpoint: [Range, Property]) => {
-        console.info(
-          `new %ccheckpoint %cdetected: %c{ id: ${checkpointId.toHexString()}, checkpoint: (${checkpoint}) }`,
-          'color: pink; font-weight: bold;',
-          '',
-          'font-weight: bold;'
-        )
-        subscribedEventGetters(dispatch, getState)
-      }
-    )
+    client.subscribeDepositEvent((userAction: UserAction) => {
+      console.info(
+        `subscribe deposit event { userAction: ${JSON.stringify(userAction)}) }`
+      )
+      subscribedEventGetters(dispatch, getState)
+    })
   }
 }
 
@@ -289,7 +281,7 @@ export const subscribeEvents = () => {
       }
       dispatch(subscribeSyncStartedEvent(client))
       dispatch(subscribeSyncFinishedEvent(client))
-      dispatch(subscribeCheckpointFinalizedEvent(client))
+      dispatch(subscribeDepositEvent(client))
       dispatch(subscribeTransferCompleteEvent(client))
       dispatch(subscribeExitFinalizedEvent(client))
     } catch (e) {
