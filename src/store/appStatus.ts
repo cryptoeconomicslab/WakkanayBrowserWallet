@@ -16,6 +16,7 @@ import { pushToast } from './toast'
 import { getL1Balance } from './l1Balance'
 import { getL2Balance } from './l2Balance'
 import { getTransactionHistories } from './transactionHistory'
+import { ActionType } from './types'
 
 export enum APP_STATUS_ACTION_TYPES {
   SET_APP_STATUS = 'SET_APP_STATUS',
@@ -52,18 +53,6 @@ const initialState: State = {
   syncingStatus: SYNCING_STATUS.LOADED
 }
 
-interface AppStatusAction {
-  type: APP_STATUS_ACTION_TYPES
-  payload?: any
-  error?: boolean
-}
-
-interface SyncingStatusAction {
-  type: SYNCING_STATUS_ACTION_TYPES
-  payload?: any
-  error?: boolean
-}
-
 export const setAppStatus = createAction<string>(
   APP_STATUS_ACTION_TYPES.SET_APP_STATUS
 )
@@ -75,14 +64,23 @@ export const setSyncingStatus = createAction<string>(
 )
 
 const reducer = createReducer(initialState, {
-  [setAppStatus.type]: (state: State, action: AppStatusAction) => {
+  [setAppStatus.type]: (
+    state: State,
+    action: ActionType<APP_STATUS_ACTION_TYPES>
+  ) => {
     state.status = action.payload
   },
-  [setAppError.type]: (state: State, action: AppStatusAction) => {
+  [setAppError.type]: (
+    state: State,
+    action: ActionType<APP_STATUS_ACTION_TYPES>
+  ) => {
     state.error = action.payload
     state.status = APP_STATUS.ERROR
   },
-  [setSyncingStatus.type]: (state: State, action: SyncingStatusAction) => {
+  [setSyncingStatus.type]: (
+    state: State,
+    action: ActionType<SYNCING_STATUS_ACTION_TYPES>
+  ) => {
     state.syncingStatus = action.payload
   }
 })

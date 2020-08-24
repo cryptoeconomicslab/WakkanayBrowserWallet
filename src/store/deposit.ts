@@ -5,6 +5,7 @@ import JSBI from 'jsbi'
 import clientWrapper from '../client'
 import { PETHContract } from '../contracts'
 import { getTokenByUnit } from '../constants/tokens'
+import { ActionType } from './types'
 
 export enum DEPOSIT_ACTION_TYPES {
   SET_DEPOSIT_PROGRESS = 'SET_DEPOSIT_PROGRESS',
@@ -28,12 +29,6 @@ const initialState: State = {
   error: null
 }
 
-interface DepositAction {
-  type: DEPOSIT_ACTION_TYPES
-  payload?: any
-  error?: boolean
-}
-
 export const setDepositProgress = createAction<string>(
   DEPOSIT_ACTION_TYPES.SET_DEPOSIT_PROGRESS
 )
@@ -43,10 +38,16 @@ export const setDepositError = createAction<Error>(
 )
 
 const reducer = createReducer(initialState, {
-  [setDepositProgress.type]: (state: State, action: DepositAction) => {
+  [setDepositProgress.type]: (
+    state: State,
+    action: ActionType<DEPOSIT_ACTION_TYPES>
+  ) => {
     state.depositProgress = action.payload
   },
-  [setDepositError.type]: (state: State, action: DepositAction) => {
+  [setDepositError.type]: (
+    state: State,
+    action: ActionType<DEPOSIT_ACTION_TYPES>
+  ) => {
     state.error = action.payload
     state.depositProgress = DEPOSIT_PROGRESS.ERROR
   }

@@ -7,6 +7,7 @@ import { TRANSACTION_HISTORY_PROGRESS } from './transactionHistory'
 import clientWrapper from '../client'
 import config from '../config'
 import validateTransfer from '../validators/transferValidator'
+import { ActionType } from './types'
 
 export enum TRANSFER_ACTION_TYPES {
   SET_TRANSFER_IS_SENDING = 'SET_TRANSFER_IS_SENDING',
@@ -44,12 +45,6 @@ const initialState: State = {
   error: null
 }
 
-interface TransferAction {
-  type: TRANSFER_ACTION_TYPES
-  payload?: any
-  error?: boolean
-}
-
 export const setTransferIsSending = createAction<string>(
   TRANSFER_ACTION_TYPES.SET_TRANSFER_IS_SENDING
 )
@@ -76,22 +71,40 @@ export const clearTransferState = createAction(
 )
 
 const reducer = createReducer(initialState, {
-  [setTransferredToken.type]: (state: State, action: TransferAction) => {
+  [setTransferredToken.type]: (
+    state: State,
+    action: ActionType<TRANSFER_ACTION_TYPES>
+  ) => {
     state.transferredToken = action.payload
   },
-  [setTransferredAmount.type]: (state: State, action: TransferAction) => {
+  [setTransferredAmount.type]: (
+    state: State,
+    action: ActionType<TRANSFER_ACTION_TYPES>
+  ) => {
     state.transferredAmount = action.payload
   },
-  [setRecepientAddress.type]: (state: State, action: TransferAction) => {
+  [setRecepientAddress.type]: (
+    state: State,
+    action: ActionType<TRANSFER_ACTION_TYPES>
+  ) => {
     state.recepientAddress = action.payload
   },
-  [setTransferPage.type]: (state: State, action: TransferAction) => {
+  [setTransferPage.type]: (
+    state: State,
+    action: ActionType<TRANSFER_ACTION_TYPES>
+  ) => {
     state.transferPage = action.payload
   },
-  [setTransferStatus.type]: (state: State, action: TransferAction) => {
+  [setTransferStatus.type]: (
+    state: State,
+    action: ActionType<TRANSFER_ACTION_TYPES>
+  ) => {
     state.status = action.payload
   },
-  [setTransferError.type]: (state: State, action: TransferAction) => {
+  [setTransferError.type]: (
+    state: State,
+    action: ActionType<TRANSFER_ACTION_TYPES>
+  ) => {
     state.error = action.payload
     state.status = TRANSACTION_HISTORY_PROGRESS.ERROR
   },

@@ -10,6 +10,7 @@ import { getTransactionHistories } from './transactionHistory'
 import clientWrapper from '../client'
 import { PETHContract } from '../contracts/'
 import { getTokenByUnit, Token } from '../constants/tokens'
+import { ActionType } from './types'
 
 export enum WITHDRAW_ACTION_TYPES {
   SET_WITHDRAW_PROGRESS = 'SET_WITHDRAW_PROGRESS',
@@ -33,12 +34,6 @@ const initialState: State = {
   error: null
 }
 
-interface WithdrawAction {
-  type: WITHDRAW_ACTION_TYPES
-  payload?: any
-  error?: boolean
-}
-
 export const setWithdrawProgress = createAction<string>(
   WITHDRAW_ACTION_TYPES.SET_WITHDRAW_PROGRESS
 )
@@ -47,10 +42,16 @@ export const setWithdrawError = createAction<Error>(
 )
 
 const reducer = createReducer(initialState, {
-  [setWithdrawProgress.type]: (state: State, action: WithdrawAction) => {
+  [setWithdrawProgress.type]: (
+    state: State,
+    action: ActionType<WITHDRAW_ACTION_TYPES>
+  ) => {
     state.status = action.payload
   },
-  [setWithdrawError.type]: (state: State, action: WithdrawAction) => {
+  [setWithdrawError.type]: (
+    state: State,
+    action: ActionType<WITHDRAW_ACTION_TYPES>
+  ) => {
     state.error = action.payload
     state.status = WITHDRAW_PROGRESS.ERROR
   }

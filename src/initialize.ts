@@ -62,8 +62,8 @@ async function registerPeth(client: LightClient) {
 async function instantiate(
   walletParams: WalletParams
 ): Promise<{
-  client: LightClient | null
-  wallet: Web3Wallet | null
+  client: LightClient | undefined
+  wallet: Web3Wallet | undefined
 }> {
   const networkName = process.env.ETH_NETWORK as EthNetworkName
   const kind = walletParams.kind
@@ -83,7 +83,7 @@ async function instantiate(
   // for magic link
   if (!wallet) {
     location.reload()
-    return { client: null, wallet: null }
+    return { client: undefined, wallet: undefined }
   }
 
   const address = wallet.getAddress()
@@ -171,7 +171,10 @@ async function instantiate(
 
 export default async function initialize(
   walletParams: WalletParams
-): Promise<{ client: LightClient | null; wallet: Web3Wallet | null }> {
+): Promise<{
+  client: LightClient | undefined
+  wallet: Web3Wallet | undefined
+}> {
   const { client, wallet } = await instantiate(walletParams)
   localStorage.setItem('loggedInWith', walletParams.kind)
   return { client, wallet }

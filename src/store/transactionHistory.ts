@@ -3,6 +3,7 @@ import { formatEther } from 'ethers/utils'
 import clientWrapper from '../client'
 import { getTokenByTokenContractAddress } from '../constants/tokens'
 import { pushToast } from './toast'
+import { ActionType } from './types'
 
 export enum TRANSACTION_HISTORY_ACTION_TYPES {
   SET_HISTORY_LIST = 'SET_HISTORY_LIST',
@@ -29,12 +30,6 @@ const initialState: State = {
   error: null
 }
 
-interface TransactionHistoryAction {
-  type: TRANSACTION_HISTORY_ACTION_TYPES
-  payload?: any
-  error?: boolean
-}
-
 export const setHistoryList = createAction<any[]>(
   TRANSACTION_HISTORY_ACTION_TYPES.SET_HISTORY_LIST
 )
@@ -46,19 +41,22 @@ export const setHistoryListError = createAction<Error>(
 )
 
 const reducer = createReducer(initialState, {
-  [setHistoryList.type]: (state: State, action: TransactionHistoryAction) => {
+  [setHistoryList.type]: (
+    state: State,
+    action: ActionType<TRANSACTION_HISTORY_ACTION_TYPES>
+  ) => {
     state.historyList = action.payload
     state.status = TRANSACTION_HISTORY_PROGRESS.LOADED
   },
   [setHistoryListStatus.type]: (
     state: State,
-    action: TransactionHistoryAction
+    action: ActionType<TRANSACTION_HISTORY_ACTION_TYPES>
   ) => {
     state.status = action.payload
   },
   [setHistoryListError.type]: (
     state: State,
-    action: TransactionHistoryAction
+    action: ActionType<TRANSACTION_HISTORY_ACTION_TYPES>
   ) => {
     state.error = action.payload
     state.status = TRANSACTION_HISTORY_PROGRESS.ERROR

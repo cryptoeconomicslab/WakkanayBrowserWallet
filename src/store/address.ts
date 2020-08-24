@@ -1,6 +1,7 @@
 import { Dispatch } from 'redux'
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import clientWrapper from '../client'
+import { ActionType } from './types'
 
 export enum GET_ADDRESS_ACTION_TYPES {
   SET_USER_ADDRESS = 'SET_USER_ADDRESS'
@@ -14,18 +15,15 @@ const initialState: State = {
   item: ''
 }
 
-interface AddressAction {
-  type: GET_ADDRESS_ACTION_TYPES
-  payload?: any
-  error?: boolean
-}
-
 export const setUserAddress = createAction<string>(
   GET_ADDRESS_ACTION_TYPES.SET_USER_ADDRESS
 )
 
 const reducer = createReducer(initialState, {
-  [setUserAddress.type]: (state: State, action: AddressAction) => {
+  [setUserAddress.type]: (
+    state: State,
+    action: ActionType<GET_ADDRESS_ACTION_TYPES>
+  ) => {
     state.item = action.payload
   }
 })

@@ -3,8 +3,9 @@ import { createAction, createReducer } from '@reduxjs/toolkit'
 import { formatUnits } from 'ethers/utils'
 import clientWrapper from '../client'
 import { getTokenByTokenContractAddress } from '../constants/tokens'
+import { Balance, BalanceList } from '../types/Balance'
 import { pushToast } from './toast'
-import { Balance, BalanceList } from './../types/Balance'
+import { ActionType } from './types'
 import { roundBalance } from '../utils'
 
 export enum L2_BALANCE_ACTION_TYPES {
@@ -32,12 +33,6 @@ const initialState: State = {
   error: null
 }
 
-interface L2BalanceAction {
-  type: L2_BALANCE_ACTION_TYPES
-  payload?: any
-  error?: boolean
-}
-
 export const setL2Balance = createAction<any>(
   L2_BALANCE_ACTION_TYPES.SET_L2_BALANCE
 )
@@ -49,14 +44,23 @@ export const setL2BalanceError = createAction<Error>(
 )
 
 const reducer = createReducer(initialState, {
-  [setL2Balance.type]: (state: State, action: L2BalanceAction) => {
+  [setL2Balance.type]: (
+    state: State,
+    action: ActionType<L2_BALANCE_ACTION_TYPES>
+  ) => {
     state.balanceList = action.payload
     state.status = L2_BALANCE_PROGRESS.LOADED
   },
-  [setL2BalanceStatus.type]: (state: State, action: L2BalanceAction) => {
+  [setL2BalanceStatus.type]: (
+    state: State,
+    action: ActionType<L2_BALANCE_ACTION_TYPES>
+  ) => {
     state.status = action.payload
   },
-  [setL2BalanceError.type]: (state: State, action: L2BalanceAction) => {
+  [setL2BalanceError.type]: (
+    state: State,
+    action: ActionType<L2_BALANCE_ACTION_TYPES>
+  ) => {
     state.error = action.payload
     state.status = L2_BALANCE_PROGRESS.ERROR
   }

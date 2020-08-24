@@ -1,6 +1,7 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import { pushToast } from './toast'
 import clientWrapper from '../client'
+import { ActionType } from './types'
 
 export enum PENDING_EXIT_LIST_ACTION_TYPES {
   SET_PENDING_EXIT_LIST = 'SET_PENDING_EXIT_LIST',
@@ -27,12 +28,6 @@ const initialState: State = {
   error: null
 }
 
-interface PendingExitListAction {
-  type: PENDING_EXIT_LIST_ACTION_TYPES
-  payload?: any
-  error?: boolean
-}
-
 export const setPendingExitList = createAction<any[]>(
   PENDING_EXIT_LIST_ACTION_TYPES.SET_PENDING_EXIT_LIST
 )
@@ -44,19 +39,22 @@ export const setPendingExitListError = createAction<Error>(
 )
 
 const reducer = createReducer(initialState, {
-  [setPendingExitList.type]: (state: State, action: PendingExitListAction) => {
+  [setPendingExitList.type]: (
+    state: State,
+    action: ActionType<PENDING_EXIT_LIST_ACTION_TYPES>
+  ) => {
     state.items = action.payload
     state.status = PENDING_EXIT_LIST_PROGRESS.LOADED
   },
   [setPendingExitListStatus.type]: (
     state: State,
-    action: PendingExitListAction
+    action: ActionType<PENDING_EXIT_LIST_ACTION_TYPES>
   ) => {
     state.status = action.payload
   },
   [setPendingExitListError.type]: (
     state: State,
-    action: PendingExitListAction
+    action: ActionType<PENDING_EXIT_LIST_ACTION_TYPES>
   ) => {
     state.error = action.payload
     state.status = PENDING_EXIT_LIST_PROGRESS.ERROR

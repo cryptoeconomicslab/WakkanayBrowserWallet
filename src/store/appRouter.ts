@@ -1,4 +1,5 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
+import { ActionType } from './types'
 
 export enum APP_ROUTER_ACTION_TYPES {
   ADD_ROUTE_HISTORY = 'ADD_ROUTE_HISTORY',
@@ -20,14 +21,11 @@ export const popRouteHistory = createAction(
   APP_ROUTER_ACTION_TYPES.POP_ROUTE_HISTORY
 )
 
-interface AppRouterAction {
-  type: APP_ROUTER_ACTION_TYPES
-  payload?: any
-  error?: boolean
-}
-
 const reducer = createReducer(initialState, {
-  [pushRouteHistory.type]: (state: State, action: AppRouterAction) => {
+  [pushRouteHistory.type]: (
+    state: State,
+    action: ActionType<APP_ROUTER_ACTION_TYPES>
+  ) => {
     if (
       state.routeHistory.length > 0 &&
       state.routeHistory[state.routeHistory.length - 1] === action.payload

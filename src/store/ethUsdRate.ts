@@ -2,11 +2,12 @@ import { Dispatch } from 'redux'
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { pushToast } from './toast'
+import { ActionType } from './types'
 
 const ETH_LATEST_PRICE_URL =
   'https://api.etherscan.io/api?module=stats&action=ethprice&apikey=ANJAFJARGHU6JKSBJ7G6YG4N3TSKUMV2PG'
 
-export enum ETH_USD_RATE_TYPES {
+export enum ETH_USD_RATE_ACTION_TYPES {
   SET_ETH_USD_RATE = 'SET_ETH_USD_RATE',
   SET_ETH_USD_RATE_STATUS = 'SET_ETH_USD_RATE_STATUS',
   SET_ETH_USD_RATE_ERROR = 'SET_ETH_USD_RATE_ERROR'
@@ -31,31 +32,34 @@ const initialState: State = {
   error: null
 }
 
-interface EthUsdRateAction {
-  type: ETH_USD_RATE_TYPES
-  payload?: any
-  error?: boolean
-}
-
 export const setEthUsdRate = createAction<number>(
-  ETH_USD_RATE_TYPES.SET_ETH_USD_RATE
+  ETH_USD_RATE_ACTION_TYPES.SET_ETH_USD_RATE
 )
 export const setEthUsdRateStatus = createAction<string>(
-  ETH_USD_RATE_TYPES.SET_ETH_USD_RATE_STATUS
+  ETH_USD_RATE_ACTION_TYPES.SET_ETH_USD_RATE_STATUS
 )
 export const setEthUsdRateError = createAction<Error>(
-  ETH_USD_RATE_TYPES.SET_ETH_USD_RATE_ERROR
+  ETH_USD_RATE_ACTION_TYPES.SET_ETH_USD_RATE_ERROR
 )
 
 const reducer = createReducer(initialState, {
-  [setEthUsdRate.type]: (state: State, action: EthUsdRateAction) => {
+  [setEthUsdRate.type]: (
+    state: State,
+    action: ActionType<ETH_USD_RATE_ACTION_TYPES>
+  ) => {
     state.rate = action.payload
     state.status = ETH_USD_RATE_PROGRESS.LOADED
   },
-  [setEthUsdRateStatus.type]: (state: State, action: EthUsdRateAction) => {
+  [setEthUsdRateStatus.type]: (
+    state: State,
+    action: ActionType<ETH_USD_RATE_ACTION_TYPES>
+  ) => {
     state.status = action.payload
   },
-  [setEthUsdRateError.type]: (state: State, action: EthUsdRateAction) => {
+  [setEthUsdRateError.type]: (
+    state: State,
+    action: ActionType<ETH_USD_RATE_ACTION_TYPES>
+  ) => {
     state.error = action.payload
     state.status = ETH_USD_RATE_PROGRESS.ERROR
   }

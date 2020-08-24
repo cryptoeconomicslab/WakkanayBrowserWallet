@@ -1,14 +1,14 @@
-import { ThunkAction } from 'redux-thunk'
 import { Dispatch } from 'redux'
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import { formatUnits } from 'ethers/utils'
+import { Balance as WalletBalance } from '@cryptoeconomicslab/wallet'
 import { Address } from '@cryptoeconomicslab/primitives'
 import clientWrapper from '../client'
 import TOKEN_LIST from '../constants/tokens'
 import { Balance, BalanceList } from './../types/Balance'
 import { roundBalance } from '../utils'
-import { AppState } from './'
 import { pushToast } from './toast'
+import { ActionType } from './types'
 
 export enum L1_BALANCE_ACTION_TYPES {
   SET_L1_BALANCE = 'SET_L1_BALANCE',
@@ -35,12 +35,6 @@ const initialState: State = {
   error: null
 }
 
-interface L1BalanceAction {
-  type: L1_BALANCE_ACTION_TYPES
-  payload?: any
-  error?: boolean
-}
-
 export const setL1Balance = createAction<any>(
   L1_BALANCE_ACTION_TYPES.SET_L1_BALANCE
 )
@@ -52,14 +46,23 @@ export const setL1BalanceError = createAction<Error>(
 )
 
 const reducer = createReducer(initialState, {
-  [setL1Balance.type]: (state: State, action: L1BalanceAction) => {
+  [setL1Balance.type]: (
+    state: State,
+    action: ActionType<L1_BALANCE_ACTION_TYPES>
+  ) => {
     state.balanceList = action.payload
     state.status = L1_BALANCE_PROGRESS.LOADED
   },
-  [setL1BalanceStatus.type]: (state: State, action: L1BalanceAction) => {
+  [setL1BalanceStatus.type]: (
+    state: State,
+    action: ActionType<L1_BALANCE_ACTION_TYPES>
+  ) => {
     state.status = action.payload
   },
-  [setL1BalanceError.type]: (state: State, action: L1BalanceAction) => {
+  [setL1BalanceError.type]: (
+    state: State,
+    action: ActionType<L1_BALANCE_ACTION_TYPES>
+  ) => {
     state.error = action.payload
     state.status = L1_BALANCE_PROGRESS.ERROR
   }
@@ -67,7 +70,7 @@ const reducer = createReducer(initialState, {
 
 export default reducer
 
-export const getL1Balance = (): ThunkAction<void, AppState, void, any> => {
+export const getL1Balance = () => {
   return async (dispatch: Dispatch, getState) => {
     try {
       if (getState().l1Balance.status === L1_BALANCE_PROGRESS.LOADING) {
@@ -80,7 +83,7 @@ export const getL1Balance = (): ThunkAction<void, AppState, void, any> => {
       if (!client || !wallet) return
       const balanceList: BalanceList = await TOKEN_LIST.reduce(
         async (map, token) => {
-          let balance
+          let balance: WalletBalance
           if (token.unit === 'ETH') {
             balance = await wallet.getL1Balance()
           } else {

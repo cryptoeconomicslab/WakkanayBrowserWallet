@@ -5,6 +5,7 @@
     "dev": "next src -p 5001",
     "build": "next build src",
     "start": "next start src -p $PORT",
+    "tsc": "tsc",
     "lint": "eslint --ext js,jsx,ts,tsx src",
     "lint:fix": "eslint --fix --ext js,jsx,ts,tsx src"
   },
