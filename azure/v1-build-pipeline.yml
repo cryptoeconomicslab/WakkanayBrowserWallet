@@ -4,10 +4,9 @@
 #######################################################
 
 trigger:
-  - master
-
-pr:
-  - master
+  branches:
+    include:
+      - refs/tags/kovan-v1.*
 
 pool:
   name: Hosted VS2017
@@ -30,15 +29,15 @@ steps:
 
   - task: DownloadSecureFile@1
     name: env
-    displayName: 'Download v0.wallet.$(ethNetworkName).env'
+    displayName: 'Download v1.wallet.$(ethNetworkName).env'
     inputs:
-      secureFile: v0.wallet.$(ethNetworkName).env
+      secureFile: v1.wallet.$(ethNetworkName).env
 
   - task: DownloadSecureFile@1
     name: config
-    displayName: 'Download v0.config.$(ethNetworkName).json'
+    displayName: 'Download v1.config.$(ethNetworkName).json'
     inputs:
-      secureFile: v0.config.$(ethNetworkName).json
+      secureFile: v1.config.$(ethNetworkName).json
 
   - script: |
       copy $(env.secureFilePath) .env
