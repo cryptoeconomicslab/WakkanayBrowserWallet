@@ -27,6 +27,7 @@ import {
   FW_NORMAL,
   FW_BLACK
 } from '../constants/fonts'
+import { useReactToast } from '../hooks'
 import { WALLET, HISTORY } from '../routes'
 import { pushRouteHistory, popRouteHistory } from '../store/appRouter'
 import {
@@ -34,8 +35,8 @@ import {
   SYNCING_STATUS,
   checkClientInitialized
 } from '../store/appStatus'
+import { logout } from '../store/logout'
 import { removeToast } from '../store/toast'
-import { useReactToast } from '../hooks'
 
 const Initial = ({
   checkClientInitialized,
@@ -44,6 +45,7 @@ const Initial = ({
   appStatus,
   toasts,
   removeToast,
+  logout,
   children
 }) => {
   const router = useRouter()
@@ -116,13 +118,7 @@ const Initial = ({
         <Box>{content}</Box>
         {appStatus.status === APP_STATUS.LOADED && (
           <div className="logoutButtonWrap">
-            <a
-              className="logoutButton"
-              onClick={() => {
-                localStorage.removeItem('loggedInWith')
-                location.reload()
-              }}
-            >
+            <a className="logoutButton" onClick={logout}>
               Logout
             </a>
           </div>
@@ -256,7 +252,8 @@ const mapDispatchToProps = {
   checkClientInitialized,
   pushRouteHistory,
   popRouteHistory,
-  removeToast
+  removeToast,
+  logout
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Initial)

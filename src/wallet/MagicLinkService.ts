@@ -13,6 +13,21 @@ function getNetworkObject(
     : (network as EthNetworkName)
 }
 
+function getMagicInstance(network: string): Magic {
+  const publishableKey = process.env.MAGIC_LOGIN_PUBLISHABLE_KEY || ''
+  return new Magic(publishableKey, {
+    network: getNetworkObject(network)
+  })
+}
+
+export async function logoutMagicLink(network: string): Promise<void> {
+  const magic = getMagicInstance(network)
+  const isLoggedIn = await magic.user.isLoggedIn()
+  if (isLoggedIn) {
+    await magic.user.logout()
+  }
+}
+
 /**
  * MagicLinkWallet is wallet implementation for MagicLink
  */
@@ -22,10 +37,8 @@ export class MagicLinkService {
     network: string
   ): Promise<Web3Wallet | undefined> {
     if (!process.browser) return
-    const publishableKey = process.env.MAGIC_LOGIN_PUBLISHABLE_KEY || ''
-    const magic = new Magic(publishableKey, {
-      network: getNetworkObject(network)
-    })
+
+    const magic = getMagicInstance(network)
     const isLoggedIn = await magic.user.isLoggedIn()
     if (isLoggedIn) {
       const provider = new ethers.providers.Web3Provider(magic.rpcProvider)
