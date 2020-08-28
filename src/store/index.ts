@@ -9,6 +9,7 @@ import deposit, { State as DepositState } from './deposit'
 import ethUsdRate, { State as EthUsdState } from './ethUsdRate'
 import l1Balance, { State as L1BalanceState } from './l1Balance'
 import l2Balance, { State as L2BalanceState } from './l2Balance'
+import { userLogout } from './logout'
 import history, { State as HistoryState } from './transactionHistory'
 import pendingExitList, {
   State as PendingExitListState
@@ -32,7 +33,7 @@ export interface AppState {
   withdrawState: WithdrawState
 }
 
-const state = combineReducers({
+const appReducer = combineReducers({
   address,
   appStatus,
   appRouter,
@@ -47,8 +48,15 @@ const state = combineReducers({
   withdrawState: withdraw
 })
 
-export default state
+const rootReducer = (state, action) => {
+  if (action.type === userLogout.type) {
+    state = undefined
+  }
+  return appReducer(state, action)
+}
+
+export default rootReducer
 
 export const makeStore = initialState => {
-  return createStore(state, initialState, applyMiddleware(thunk, logger))
+  return createStore(rootReducer, initialState, applyMiddleware(thunk, logger))
 }
