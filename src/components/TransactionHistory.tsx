@@ -1,64 +1,21 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
-import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
 import TransactionHistoryIcon from './TransactionHistoryIcon'
 import TransactionHistoryMessage from './TransactionHistoryMessage'
-import { TEXT, SUBTEXT } from '../constants/colors'
+import { SUBTEXT } from '../constants/colors'
 import { FZ_SMALL, FW_BOLD, FZ_MEDIUM } from '../constants/fonts'
-import { SYNCING_STATUS } from '../store/appStatus'
-import { getTransactionHistories } from '../store/transactionHistory'
+import {
+  getTransactionHistories,
+  TransactionHistory as TransactionHistoryItem
+} from '../store/transactionHistory'
 
-const BlockExplorerLinkWrapper = ({ history, children }) => {
-  return (
-    <div className="transaction__link-wrapper">
-      {history.message === ActionType.Send ||
-      history.message === ActionType.Receive ? (
-        <a
-          href={`${process.env.BLOCK_EXPLORER_URL}/transaction?blockNumber=${history.blockNumber}&depositContractAddress=${history.depositContractAddress}&start=${history.range.start}&end=${history.range.end}`}
-          className="transaction__link"
-          target="_blank"
-          rel="noreferrer"
-        >
-          {children}
-        </a>
-      ) : (
-        <>{children}</>
-      )}
-      <style jsx>{`
-        .transaction__link-wrapper {
-          display: flex;
-          width: 100%;
-        }
-        .transaction__link {
-          color: ${TEXT};
-          text-decoration: none;
-          display: flex;
-          width: 100%;
-        }
-        .transaction__link:hover {
-          text-decoration: underline;
-        }
-      `}</style>
-    </div>
-  )
-}
-
-const TransactionHistory = ({
-  historyList,
-  syncingStatus,
-  getTransactionHistories
-}) => {
-  useEffect(() => {
-    if (syncingStatus === SYNCING_STATUS.LOADED) {
-      getTransactionHistories()
-    }
-  }, [])
-
+const TransactionHistory = ({ historyList }) => {
   return (
     <ul>
       {historyList.length > 0 ? (
         <>
-          {historyList.map((history, i) => (
+          {historyList.map((history: TransactionHistoryItem, i: number) => (
+            // TODO: add Block Explorer link
             <li
               className="transaction"
               key={`${i}-${history.message}-${history.amount}-${history.unit}-${history.blockNumber}-${history.counterParty}`}
@@ -66,17 +23,15 @@ const TransactionHistory = ({
               <div className="transaction__item transaction__item--icon">
                 <TransactionHistoryIcon history={history} />
               </div>
-              <BlockExplorerLinkWrapper history={history}>
-                <div className="transaction__item transaction__item--amount">
-                  {history.amount} {history.unit}
-                </div>
-                <div className="transaction__item transaction__item--message">
-                  <TransactionHistoryMessage history={history} />
-                </div>
-                <div className="transaction__item transaction__item--time">
-                  at {history.blockNumber} block
-                </div>
-              </BlockExplorerLinkWrapper>
+              <div className="transaction__item transaction__item--amount">
+                {history.amount} {history.unit}
+              </div>
+              <div className="transaction__item transaction__item--message">
+                <TransactionHistoryMessage history={history} />
+              </div>
+              <div className="transaction__item transaction__item--time">
+                at {history.blockNumber} block
+              </div>
             </li>
           ))}
         </>

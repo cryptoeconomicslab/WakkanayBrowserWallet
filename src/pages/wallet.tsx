@@ -27,7 +27,7 @@ function Wallet({
 }) {
   return (
     <Layout>
-      <Link className="back" href={PAYMENT} passHref>
+      <Link href={PAYMENT} passHref>
         <a className="back">← Back</a>
       </Link>
 
