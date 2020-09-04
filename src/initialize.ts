@@ -72,8 +72,7 @@ async function instantiate(
   if (kind === WALLET_KIND.WALLET_METAMASK) {
     wallet = await MetamaskService.initialize(networkName)
   } else if (kind === WALLET_KIND.WALLET_MAGIC_LINK) {
-    if (!walletParams.email) throw new Error(`${kind} needs email parameter.`)
-    wallet = await MagicLinkService.initialize(walletParams.email, networkName)
+    wallet = await MagicLinkService.initialize(networkName, walletParams.email)
   } else if (kind === WALLET_KIND.WALLET_CONNECT) {
     wallet = await WalletConnectService.initilize(networkName)
   } else {

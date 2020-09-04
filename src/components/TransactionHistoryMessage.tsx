@@ -1,8 +1,13 @@
 import React from 'react'
 import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
+import { TransactionHistory } from '../store/transactionHistory'
 import { shortenAddress } from '../utils'
 
-const TransactionHistoryMessage = ({ history }) => {
+type Props = {
+  history: TransactionHistory
+}
+
+const TransactionHistoryMessage = ({ history }: Props) => {
   if (history.message === ActionType.Send) {
     return (
       <>{`${history.message} to ${shortenAddress(history.counterParty)}`}</>

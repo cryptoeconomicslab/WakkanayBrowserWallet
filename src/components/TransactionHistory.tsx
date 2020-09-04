@@ -9,7 +9,11 @@ import {
   TransactionHistory as TransactionHistoryItem
 } from '../store/transactionHistory'
 
-const TransactionHistory = ({ historyList }) => {
+type Props = {
+  historyList: TransactionHistoryItem[]
+}
+
+const TransactionHistory = ({ historyList }: Props) => {
   return (
     <ul>
       {historyList.length > 0 ? (

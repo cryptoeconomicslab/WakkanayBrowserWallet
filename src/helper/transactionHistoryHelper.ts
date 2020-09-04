@@ -67,6 +67,8 @@ export function mergeTransactionHistoryByChunkId(
 
   const histories = depositExitHistories
     .concat(sendReceiveHistories)
-    .sort((a, b) => (a.blockNumber > b.blockNumber ? 1 : -1))
+    .sort((a, b) => {
+      return Number(a.blockNumber) - Number(b.blockNumber)
+    })
   return histories
 }

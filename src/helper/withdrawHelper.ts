@@ -5,9 +5,11 @@ import { Exit } from '@cryptoeconomicslab/plasma'
  */
 export function findExit(
   exitList: Exit[],
-  range: { start: string; end: string },
+  ranges: { start: string; end: string }[],
   depositContractAddress: string
 ): Exit | null {
+  // @NOTE: State Update has only one range
+  const range = ranges[0]
   const queriedExit = exitList
     .filter(
       exit =>

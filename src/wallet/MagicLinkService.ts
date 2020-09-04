@@ -1,5 +1,6 @@
 import { ethers } from 'ethers'
 import { Magic, EthNetworkName } from 'magic-sdk'
+import { WALLET_KIND } from './kind'
 import { Web3Wallet } from './Web3Wallet'
 
 function getNetworkObject(
@@ -33,8 +34,8 @@ export async function logoutMagicLink(network: string): Promise<void> {
  */
 export class MagicLinkService {
   static async initialize(
-    email: string,
-    network: string
+    network: string,
+    email?: string
   ): Promise<Web3Wallet | undefined> {
     if (!process.browser) return
 
@@ -46,6 +47,11 @@ export class MagicLinkService {
       await provider.getNetwork()
       return new Web3Wallet(address, provider)
     } else {
+      if (!email) {
+        throw new Error(
+          `${WALLET_KIND.WALLET_MAGIC_LINK} needs email parameter.`
+        )
+      }
       await magic.auth.loginWithMagicLink({ email })
     }
   }
