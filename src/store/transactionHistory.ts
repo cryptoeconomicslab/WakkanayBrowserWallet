@@ -1,6 +1,6 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import clientWrapper from '../client'
-import { mergeTransactionHistoryByChunkId } from '../helper/transactionHistoryHelper'
+import { transformTransactionHistoryFrom } from '../helper/transactionHistoryHelper'
 import { pushToast } from './toast'
 import { ActionType } from './types'
 
@@ -86,7 +86,13 @@ export const getTransactionHistories = () => {
       const client = clientWrapper.client
       if (!client) return
       const userActions = await client.getAllUserActions()
-      const histories = mergeTransactionHistoryByChunkId(userActions)
+      const histories: TransactionHistory[] = []
+      for (let i = 0; i < userActions.length; i++) {
+        const transactionHistory = transformTransactionHistoryFrom(
+          userActions[i]
+        )
+        if (transactionHistory) histories.push(transactionHistory)
+      }
       dispatch(setHistoryList(histories))
     } catch (e) {
       // FIXME: temporary measures
