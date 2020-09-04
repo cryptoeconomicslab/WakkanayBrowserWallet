@@ -6,13 +6,20 @@ import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
 import clientWrapper from '../client'
 import { MAIN, MAIN_DARK } from '../constants/colors'
 import { findExit } from '../helper/withdrawHelper'
+import { TransactionHistory } from '../store/transactionHistory'
 import { completeWithdrawal } from '../store/withdraw'
+
+type Props = {
+  history: TransactionHistory
+  pendingExitList: Exit[]
+  completeWithdrawal: any
+}
 
 const TransactionHistoryIcon = ({
   history,
   pendingExitList,
   completeWithdrawal
-}) => {
+}: Props) => {
   const iconEl = (
     <>
       <div className="historyIcon__wrap">
@@ -43,20 +50,24 @@ const TransactionHistoryIcon = ({
   useEffect(() => {
     const foundExit = findExit(
       pendingExitList,
-      history.range,
+      history.ranges,
       history.depositContractAddress
     )
-    if (foundExit === null) return
-    setExit(foundExit)
-    const getIsWithdrawalComplete = async () => {
-      const client = clientWrapper.client
-      if (client) {
-        setIsWithdrawalCompletable(
-          await client.isWithdrawalCompletable(foundExit)
-        )
+    if (foundExit === null) {
+      setExit(null)
+      setIsWithdrawalCompletable(false)
+    } else {
+      setExit(foundExit)
+      const getIsWithdrawalComplete = async () => {
+        const client = clientWrapper.client
+        if (client) {
+          setIsWithdrawalCompletable(
+            await client.isWithdrawalCompletable(foundExit)
+          )
+        }
       }
+      getIsWithdrawalComplete()
     }
-    getIsWithdrawalComplete()
   }, [pendingExitList])
 
   return isWithdrawalCompletable ? (

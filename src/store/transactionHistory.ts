@@ -1,7 +1,6 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
-import { formatEther } from 'ethers/utils'
 import clientWrapper from '../client'
-import { getTokenByTokenContractAddress } from '../constants/tokens'
+import { transformTransactionHistoryFrom } from '../helper/transactionHistoryHelper'
 import { pushToast } from './toast'
 import { ActionType } from './types'
 
@@ -18,8 +17,19 @@ export const TRANSACTION_HISTORY_PROGRESS = {
   ERROR: 'ERROR'
 }
 
+export type TransactionHistory = {
+  chunkId: string
+  message: string
+  amount: string
+  unit: string
+  blockNumber: string
+  counterParty: string
+  depositContractAddress: string
+  ranges: { start: string; end: string }[]
+}
+
 export interface State {
-  historyList: any[]
+  historyList: TransactionHistory[]
   status: string
   error: Error | null
 }
@@ -30,7 +40,7 @@ const initialState: State = {
   error: null
 }
 
-export const setHistoryList = createAction<any[]>(
+export const setHistoryList = createAction<TransactionHistory[]>(
   TRANSACTION_HISTORY_ACTION_TYPES.SET_HISTORY_LIST
 )
 export const setHistoryListStatus = createAction<string>(
@@ -75,20 +85,14 @@ export const getTransactionHistories = () => {
       dispatch(setHistoryListStatus(TRANSACTION_HISTORY_PROGRESS.LOADING))
       const client = clientWrapper.client
       if (!client) return
-      const histories = (await client.getAllUserActions()).map(history => {
-        const token = getTokenByTokenContractAddress(history.tokenAddress)
-        if (token) {
-          return {
-            message: history.type,
-            amount: formatEther(history.amount.toString()),
-            unit: token.unit,
-            blockNumber: history.blockNumber.toString(),
-            counterParty: history.counterParty,
-            depositContractAddress: token.depositContractAddress,
-            range: { start: history.range.start, end: history.range.end }
-          }
-        }
-      })
+      const userActions = await client.getAllUserActions()
+      const histories: TransactionHistory[] = []
+      for (let i = 0; i < userActions.length; i++) {
+        const transactionHistory = transformTransactionHistoryFrom(
+          userActions[i]
+        )
+        if (transactionHistory) histories.push(transactionHistory)
+      }
       dispatch(setHistoryList(histories))
     } catch (e) {
       // FIXME: temporary measures
