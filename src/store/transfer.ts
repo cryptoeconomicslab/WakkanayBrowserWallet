@@ -10,7 +10,6 @@ import validateTransfer from '../validators/transferValidator'
 import { ActionType } from './types'
 
 export enum TRANSFER_ACTION_TYPES {
-  SET_TRANSFER_IS_SENDING = 'SET_TRANSFER_IS_SENDING',
   SET_TRANSFERRED_TOKEN = 'SET_TRANSFERRED_TOKEN',
   SET_TRANSFERRED_AMOUNT = 'SET_TRANSFERRED_AMOUNT',
   SET_RECEPIENT_ADDRESS = 'SET_RECEPIENT_ADDRESS',
@@ -45,9 +44,6 @@ const initialState: State = {
   error: null
 }
 
-export const setTransferIsSending = createAction<string>(
-  TRANSFER_ACTION_TYPES.SET_TRANSFER_IS_SENDING
-)
 export const setTransferredToken = createAction<string>(
   TRANSFER_ACTION_TYPES.SET_TRANSFERRED_TOKEN
 )

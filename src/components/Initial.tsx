@@ -30,13 +30,10 @@ import {
 import { useReactToast } from '../hooks'
 import { WALLET, HISTORY } from '../routes'
 import { pushRouteHistory, popRouteHistory } from '../store/appRouter'
-import {
-  APP_STATUS,
-  SYNCING_STATUS,
-  checkClientInitialized
-} from '../store/appStatus'
+import { checkClientInitialized } from '../store/appStatus'
 import { logout } from '../store/logout'
 import { removeToast } from '../store/toast'
+import { STATE_LOADING_STATUS } from '../store/types'
 
 const Initial = ({
   checkClientInitialized,
@@ -66,12 +63,12 @@ const Initial = ({
   }, [])
 
   const content =
-    appStatus.status === APP_STATUS.UNLOADED ||
-    appStatus.status === APP_STATUS.ERROR ? (
+    appStatus.status === STATE_LOADING_STATUS.UNLOADED ||
+    appStatus.status === STATE_LOADING_STATUS.ERROR ? (
       <div>
         <StartupModal />
       </div>
-    ) : appStatus.status === APP_STATUS.LOADED ? (
+    ) : appStatus.status === STATE_LOADING_STATUS.LOADED ? (
       children
     ) : (
       <p>loading...</p>
@@ -87,27 +84,29 @@ const Initial = ({
       </Head>
       <Header />
       <div className="container">
-        <Alert>
-          Please note that this wallet is the alpha version and there is a
-          possibility of losing your deposited funds. If you want to use testnet
-          token, you can get Kovan Ether (KETH) from{' '}
-          <a
-            href="https://faucet.kovan.network/"
-            className="alert__link"
-            target="_blank"
-            rel="noreferrer"
-          >
-            here
-          </a>
-          .
-        </Alert>
+        {true && (
+          <Alert>
+            Please note that this wallet is the alpha version and there is a
+            possibility of losing your deposited funds. If you want to use
+            testnet token, you can get Kovan Ether (KETH) from{' '}
+            <a
+              href="https://faucet.kovan.network/"
+              className="alert__link"
+              target="_blank"
+              rel="noreferrer"
+            >
+              here
+            </a>
+            .
+          </Alert>
+        )}
         <h2 className="headline">
           {router.pathname !== HISTORY ? 'Your Wallet' : 'Transaction History'}
         </h2>
         {!isWalletHidden && (
           <Box>
             <div className="wallet">
-              {appStatus.status !== APP_STATUS.LOADED ? (
+              {appStatus.status !== STATE_LOADING_STATUS.LOADED ? (
                 <span className="wallet__txt">No Wallet</span>
               ) : (
                 <Wallet />
@@ -116,14 +115,14 @@ const Initial = ({
           </Box>
         )}
         <Box>{content}</Box>
-        {appStatus.status === APP_STATUS.LOADED && (
+        {appStatus.status === STATE_LOADING_STATUS.LOADED && (
           <div className="logoutButtonWrap">
             <a className="logoutButton" onClick={logout}>
               Logout
             </a>
           </div>
         )}
-        {appStatus.syncingStatus === SYNCING_STATUS.LOADING && (
+        {appStatus.syncingStatus === STATE_LOADING_STATUS.LOADING && (
           <SyncingLoader />
         )}
       </div>

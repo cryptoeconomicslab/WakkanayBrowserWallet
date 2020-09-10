@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect'
-import { SYNCING_STATUS } from '../store/appStatus'
 import { TRANSFER_PROGRESS } from '../store/transfer'
+import { STATE_LOADING_STATUS } from '../store/types'
 
 const getTransferState = state => state.transferState.state
 const getTransferredToken = state => state.transferState.transferredToken
@@ -19,7 +19,7 @@ export const isAbleToTransfer = createSelector(
   (state, token, amount, address, syncingStatus) => {
     return (
       state === TRANSFER_PROGRESS.SENDING ||
-      syncingStatus === SYNCING_STATUS.LOADING ||
+      syncingStatus === STATE_LOADING_STATUS.LOADING ||
       !token ||
       !amount ||
       !address

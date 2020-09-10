@@ -14,7 +14,7 @@ import {
 } from '../constants/fonts'
 import TOKEN_LIST from '../constants/tokens'
 import { openModal, PAYMENT } from '../routes'
-import { SYNCING_STATUS } from '../store/appStatus'
+import { STATE_LOADING_STATUS } from '../store/types'
 
 const WalletTokenItem = ({
   l1Balance,
@@ -48,7 +48,7 @@ const WalletTokenItem = ({
                         token: tokenContractAddress
                       })
                     }}
-                    disabled={syncingStatus === SYNCING_STATUS.LOADING}
+                    disabled={syncingStatus === STATE_LOADING_STATUS.LOADING}
                   >
                     <img src="/withdraw-arrow.svg" className="btn__icon" />
                     Withdraw
@@ -60,7 +60,7 @@ const WalletTokenItem = ({
                     onClick={() => {
                       router.push(PAYMENT)
                     }}
-                    disabled={syncingStatus === SYNCING_STATUS.LOADING}
+                    disabled={syncingStatus === STATE_LOADING_STATUS.LOADING}
                   >
                     Send
                   </Button>
@@ -87,7 +87,7 @@ const WalletTokenItem = ({
                 onClick={() => {
                   openModal({ modal: 'deposit', token: tokenContractAddress })
                 }}
-                disabled={syncingStatus === SYNCING_STATUS.LOADING}
+                disabled={syncingStatus === STATE_LOADING_STATUS.LOADING}
               >
                 <img src="/deposit-arrow.svg" className="btn__icon" />
                 Deposit

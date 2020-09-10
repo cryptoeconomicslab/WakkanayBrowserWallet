@@ -12,7 +12,7 @@ import {
   getL1TotalBalance,
   getL2TotalBalance
 } from '../selectors/totalBalanceSelectors'
-import { SYNCING_STATUS } from '../store/appStatus'
+import { STATE_LOADING_STATUS } from '../store/types'
 import { shortenAddress } from '../utils'
 
 function Wallet({ address, l1TotalBalance, l2TotalBalance, syncingStatus }) {
@@ -31,7 +31,7 @@ function Wallet({ address, l1TotalBalance, l2TotalBalance, syncingStatus }) {
         ) : (
           <Button
             size="small"
-            disabled={syncingStatus === SYNCING_STATUS.LOADING}
+            disabled={syncingStatus === STATE_LOADING_STATUS.LOADING}
             onClick={() => {
               openModal({
                 modal: 'deposit',

@@ -7,13 +7,13 @@ import TokenSelector from '../TokenSelector'
 import Confirmation from '../Confirmation'
 import TokenInput from '../TokenInput'
 import config from '../../config'
-import { DEPOSIT_PROGRESS } from '../../store/deposit'
 import { SUBTEXT, ERROR } from '../../constants/colors'
 import { FZ_MEDIUM, FW_BLACK } from '../../constants/fonts'
 import TOKEN_LIST, {
   getTokenByTokenContractAddress,
   Token
 } from '../../constants/tokens'
+import { DEPOSIT_WITHDRAW_PROGRESS } from '../../store/types'
 
 const modalTexts = {
   deposit: {
@@ -74,11 +74,11 @@ const DepositWithdrawModal = ({
   return (
     <BaseModal
       title={modalTexts[type].title}
-      onClose={updateProgress(DEPOSIT_PROGRESS.INPUT)}
+      onClose={updateProgress(DEPOSIT_WITHDRAW_PROGRESS.INPUT)}
       render={({ close }) => (
         <>
           <div className="depositWithdrawModal">
-            {progress === DEPOSIT_PROGRESS.INPUT ? (
+            {progress === DEPOSIT_WITHDRAW_PROGRESS.INPUT ? (
               <>
                 <TokenSelector
                   onSelected={updateToken}
@@ -99,12 +99,12 @@ const DepositWithdrawModal = ({
                 <Button
                   size="full"
                   disabled={!tokenAmount || isInsufficientFunds()}
-                  onClick={updateProgress(DEPOSIT_PROGRESS.CONFIRM)}
+                  onClick={updateProgress(DEPOSIT_WITHDRAW_PROGRESS.CONFIRM)}
                 >
                   {modalTexts[type].inputButton}
                 </Button>
               </>
-            ) : progress === DEPOSIT_PROGRESS.CONFIRM ? (
+            ) : progress === DEPOSIT_WITHDRAW_PROGRESS.CONFIRM ? (
               <Confirmation
                 type={type}
                 tokenAmount={tokenAmount}
@@ -119,7 +119,7 @@ const DepositWithdrawModal = ({
                   setIsLoading(false)
                 }}
               />
-            ) : progress === DEPOSIT_PROGRESS.COMPLETE ? (
+            ) : progress === DEPOSIT_WITHDRAW_PROGRESS.COMPLETE ? (
               <div className="complete">
                 <img src="popper.svg" className="complete__img" />
                 <div className="complete__txt">
