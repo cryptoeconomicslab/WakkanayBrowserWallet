@@ -30,7 +30,7 @@ export enum SYNCING_STATUS_ACTION_TYPES {
 export interface State {
   status: string
   error: Error | null
-  syncingStatus: string
+  syncingStatus: STATE_LOADING_STATUS
 }
 
 const initialState: State = {

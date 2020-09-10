@@ -1,17 +1,23 @@
 import React from 'react'
 import SelectItem from './SelectItem'
+import { Token } from '../constants/tokens'
 
-const TokenSelectButton = props => {
-  return props.item ? (
+interface Props {
+  item: Token
+  padding: string
+}
+
+const TokenSelectButton = ({ item, padding }: Props) => {
+  return item ? (
     <SelectItem
-      img={props.item.imgSrc}
-      name={props.item.unit}
+      img={item.imgSrc}
+      name={item.unit}
       supplement={
-        props.item.amount !== undefined && props.item.amount !== null
-          ? `${props.item.amount} ${props.item.unit}`
+        item.balance !== undefined && item.balance !== null
+          ? `${item.balance} ${item.unit}`
           : undefined
       }
-      padding={props.padding}
+      padding={padding}
     />
   ) : null
 }

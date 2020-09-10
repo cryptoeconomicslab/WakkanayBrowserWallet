@@ -5,7 +5,7 @@ import clientWrapper from '../client'
 import { getTokenByTokenContractAddress } from '../constants/tokens'
 import { Balance, BalanceList } from '../types/Balance'
 import { pushToast } from './toast'
-import { ActionType } from './types'
+import { ActionType, STATE_LOADING_STATUS } from './types'
 import { roundBalance } from '../utils'
 
 export enum L2_BALANCE_ACTION_TYPES {
@@ -14,26 +14,19 @@ export enum L2_BALANCE_ACTION_TYPES {
   SET_L2_BALANCE_ERROR = 'SET_L2_BALANCE_ERROR'
 }
 
-export const L2_BALANCE_PROGRESS = {
-  UNLOADED: 'UNLOADED',
-  LOADING: 'LOADING',
-  LOADED: 'LOADED',
-  ERROR: 'ERROR'
-}
-
 export interface State {
-  balanceList: any
-  status: string
+  balanceList: BalanceList
+  status: STATE_LOADING_STATUS
   error: Error | null
 }
 
 const initialState: State = {
   balanceList: {},
-  status: L2_BALANCE_PROGRESS.UNLOADED,
+  status: STATE_LOADING_STATUS.UNLOADED,
   error: null
 }
 
-export const setL2Balance = createAction<any>(
+export const setL2Balance = createAction<BalanceList>(
   L2_BALANCE_ACTION_TYPES.SET_L2_BALANCE
 )
 export const setL2BalanceStatus = createAction<string>(
@@ -49,7 +42,7 @@ const reducer = createReducer(initialState, {
     action: ActionType<L2_BALANCE_ACTION_TYPES>
   ) => {
     state.balanceList = action.payload
-    state.status = L2_BALANCE_PROGRESS.LOADED
+    state.status = STATE_LOADING_STATUS.LOADED
   },
   [setL2BalanceStatus.type]: (
     state: State,
@@ -62,7 +55,7 @@ const reducer = createReducer(initialState, {
     action: ActionType<L2_BALANCE_ACTION_TYPES>
   ) => {
     state.error = action.payload
-    state.status = L2_BALANCE_PROGRESS.ERROR
+    state.status = STATE_LOADING_STATUS.ERROR
   }
 })
 
@@ -71,11 +64,11 @@ export default reducer
 export const getL2Balance = () => {
   return async (dispatch: Dispatch, getState) => {
     try {
-      if (getState().l2Balance.status === L2_BALANCE_PROGRESS.LOADING) {
+      if (getState().l2Balance.status === STATE_LOADING_STATUS.LOADING) {
         return
       }
 
-      dispatch(setL2BalanceStatus(L2_BALANCE_PROGRESS.LOADING))
+      dispatch(setL2BalanceStatus(STATE_LOADING_STATUS.LOADING))
       const client = clientWrapper.client
       if (!client) return
       const balanceList = await client.getBalance()

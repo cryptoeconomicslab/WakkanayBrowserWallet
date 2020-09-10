@@ -3,7 +3,7 @@ import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
 import { TransactionHistory } from '../store/transactionHistory'
 import { shortenAddress } from '../utils'
 
-type Props = {
+interface Props {
   history: TransactionHistory
 }
 

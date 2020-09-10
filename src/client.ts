@@ -15,9 +15,7 @@ class ClientWrapper {
     if (this._instance) return
 
     if (process.browser) {
-      const { client, wallet } = await initialize(walletParams)
-      this._instance = client
-      this._wallet = wallet
+      await initialize(walletParams)
     }
   }
 
@@ -27,6 +25,14 @@ class ClientWrapper {
   async start() {
     if (!this._instance) return
     await this._instance.start()
+  }
+
+  setClient(client: LightClient) {
+    this._instance = client
+  }
+
+  setWallet(wallet: Web3Wallet) {
+    this._wallet = wallet
   }
 
   /**

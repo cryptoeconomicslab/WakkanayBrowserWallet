@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { ActionCreatorWithPayload } from '@reduxjs/toolkit'
 import { useRouter } from 'next/router'
 import BaseModal from './BaseModal'
 import Message from './Message'
@@ -14,8 +15,16 @@ import TOKEN_LIST, {
   Token
 } from '../../constants/tokens'
 import { DEPOSIT_WITHDRAW_PROGRESS } from '../../store/types'
+import { BalanceList } from '../../types/Balance'
 
-const modalTexts = {
+interface ModalText {
+  title: string
+  inputButton: string
+  confirmTitle: string
+  confirmText: string
+  completeTitle: string
+}
+const modalTexts: { [key: string]: ModalText } = {
   deposit: {
     title: 'Deposit from Mainchain',
     inputButton: 'Deposit',
@@ -32,12 +41,12 @@ const modalTexts = {
   }
 }
 
-type Props = {
+interface Props {
   type: string
   progress: string
-  setProgress: any
-  action: any
-  balance: any
+  setProgress: ActionCreatorWithPayload<string, string>
+  action: (amount: string, addr: string) => Promise<void>
+  balance: BalanceList
 }
 
 const DepositWithdrawModal = ({
@@ -83,6 +92,7 @@ const DepositWithdrawModal = ({
                 <TokenSelector
                   onSelected={updateToken}
                   selectedToken={selectedTokenObj}
+                  tokenList={TOKEN_LIST}
                 />
                 <TokenInput
                   className="mts mbs"
@@ -107,7 +117,7 @@ const DepositWithdrawModal = ({
             ) : progress === DEPOSIT_WITHDRAW_PROGRESS.CONFIRM ? (
               <Confirmation
                 type={type}
-                tokenAmount={tokenAmount}
+                tokenAmount={tokenAmount ? tokenAmount : 0}
                 unit={selectedTokenObj.unit}
                 imgSrc={selectedTokenObj.imgSrc}
                 supplement={modalTexts[type].confirmText}
@@ -115,7 +125,7 @@ const DepositWithdrawModal = ({
                 onCancel={close}
                 onConfirm={async () => {
                   setIsLoading(true)
-                  await action(tokenAmount, token)
+                  await action(tokenAmount ? String(tokenAmount) : '0', token)
                   setIsLoading(false)
                 }}
               />

@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react'
 import { FZ_SMALL } from '../../constants/fonts'
 import { WARNING, WARNING_BACK } from '../../constants/colors'
 
-type Props = {
+interface Props {
   children: ReactNode
 }
 

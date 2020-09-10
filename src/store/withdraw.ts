@@ -18,7 +18,7 @@ export enum WITHDRAW_ACTION_TYPES {
 }
 
 export interface State {
-  status: string
+  status: DEPOSIT_WITHDRAW_PROGRESS
   error: Error | null
 }
 

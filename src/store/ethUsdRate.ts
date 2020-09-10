@@ -2,7 +2,7 @@ import { Dispatch } from 'redux'
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { pushToast } from './toast'
-import { ActionType } from './types'
+import { ActionType, STATE_LOADING_STATUS } from './types'
 
 const ETH_LATEST_PRICE_URL =
   'https://api.etherscan.io/api?module=stats&action=ethprice&apikey=ANJAFJARGHU6JKSBJ7G6YG4N3TSKUMV2PG'
@@ -12,23 +12,15 @@ export enum ETH_USD_RATE_ACTION_TYPES {
   SET_ETH_USD_RATE_STATUS = 'SET_ETH_USD_RATE_STATUS',
   SET_ETH_USD_RATE_ERROR = 'SET_ETH_USD_RATE_ERROR'
 }
-
-export const ETH_USD_RATE_PROGRESS = {
-  UNLOADED: 'UNLOADED',
-  LOADING: 'LOADING',
-  LOADED: 'LOADED',
-  ERROR: 'ERROR'
-}
-
 export interface State {
   rate: number
-  status: string
+  status: STATE_LOADING_STATUS
   error: Error | null
 }
 
 const initialState: State = {
   rate: 0,
-  status: ETH_USD_RATE_PROGRESS.UNLOADED,
+  status: STATE_LOADING_STATUS.UNLOADED,
   error: null
 }
 
@@ -48,7 +40,7 @@ const reducer = createReducer(initialState, {
     action: ActionType<ETH_USD_RATE_ACTION_TYPES>
   ) => {
     state.rate = action.payload
-    state.status = ETH_USD_RATE_PROGRESS.LOADED
+    state.status = STATE_LOADING_STATUS.LOADED
   },
   [setEthUsdRateStatus.type]: (
     state: State,
@@ -61,7 +53,7 @@ const reducer = createReducer(initialState, {
     action: ActionType<ETH_USD_RATE_ACTION_TYPES>
   ) => {
     state.error = action.payload
-    state.status = ETH_USD_RATE_PROGRESS.ERROR
+    state.status = STATE_LOADING_STATUS.ERROR
   }
 })
 
@@ -70,11 +62,11 @@ export default reducer
 export const getEthUsdRate = () => {
   return async (dispatch: Dispatch, getState) => {
     try {
-      if (getState().ethUsdRate.status === ETH_USD_RATE_PROGRESS.LOADING) {
+      if (getState().ethUsdRate.status === STATE_LOADING_STATUS.LOADING) {
         return
       }
 
-      dispatch(setEthUsdRateStatus(ETH_USD_RATE_PROGRESS.LOADING))
+      dispatch(setEthUsdRateStatus(STATE_LOADING_STATUS.LOADING))
       const res = await axios.get(ETH_LATEST_PRICE_URL)
       if (res.data && res.data.result && res.data.result.ethusd) {
         dispatch(setEthUsdRate(res.data.result.ethusd))

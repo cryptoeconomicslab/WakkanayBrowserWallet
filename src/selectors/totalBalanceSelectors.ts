@@ -1,11 +1,12 @@
 import { createSelector } from 'reselect'
+import { AppState } from './../store'
 import { BalanceList } from '../types/Balance'
 import { roundBalance } from '../utils'
 
 // selector
-const getL1Balance = state => state.l1Balance.balanceList
-const getL2Balance = state => state.l2Balance.balanceList
-const getEthUsdRate = state => state.ethUsdRate.rate
+const getL1Balance = (state: AppState) => state.l1Balance.balanceList
+const getL2Balance = (state: AppState) => state.l2Balance.balanceList
+const getEthUsdRate = (state: AppState) => state.ethUsdRate.rate
 
 const calcTotalBalance = (balance: BalanceList, ethUsdRate: number) => {
   let total = 0

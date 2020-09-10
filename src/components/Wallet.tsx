@@ -12,10 +12,23 @@ import {
   getL1TotalBalance,
   getL2TotalBalance
 } from '../selectors/totalBalanceSelectors'
+import { AppState } from '../store'
 import { STATE_LOADING_STATUS } from '../store/types'
 import { shortenAddress } from '../utils'
 
-function Wallet({ address, l1TotalBalance, l2TotalBalance, syncingStatus }) {
+interface Props {
+  address: string
+  l1TotalBalance: number
+  l2TotalBalance: number
+  syncingStatus: STATE_LOADING_STATUS
+}
+
+const Wallet = ({
+  address,
+  l1TotalBalance,
+  l2TotalBalance,
+  syncingStatus
+}: Props) => {
   const [copied, setCopied] = useState(false)
 
   const updateCopy = currentCopied => () => {
@@ -119,7 +132,7 @@ function Wallet({ address, l1TotalBalance, l2TotalBalance, syncingStatus }) {
   )
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state: AppState) => ({
   address: state.address.item,
   syncingStatus: state.appStatus.syncingStatus,
   l1TotalBalance: getL1TotalBalance(state),

@@ -7,7 +7,7 @@ import {
   TEXT
 } from '../../constants/colors'
 
-type Props = {
+interface Props {
   title: string
   render: any
   onClose: any

@@ -13,7 +13,7 @@ export enum DEPOSIT_ACTION_TYPES {
 }
 
 export interface State {
-  depositProgress: string
+  depositProgress: DEPOSIT_WITHDRAW_PROGRESS
   error: Error | null
 }
 

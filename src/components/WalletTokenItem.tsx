@@ -14,7 +14,16 @@ import {
 } from '../constants/fonts'
 import TOKEN_LIST from '../constants/tokens'
 import { openModal, PAYMENT } from '../routes'
+import { AppState } from '../store'
 import { STATE_LOADING_STATUS } from '../store/types'
+
+interface Props {
+  l1Balance: number
+  l2Balance: number
+  tokenContractAddress: string
+  unit: string
+  syncingStatus: STATE_LOADING_STATUS
+}
 
 const WalletTokenItem = ({
   l1Balance,
@@ -22,7 +31,7 @@ const WalletTokenItem = ({
   tokenContractAddress,
   unit,
   syncingStatus
-}) => {
+}: Props) => {
   const router = useRouter()
   const { imgSrc, imgAspect } = _.find(TOKEN_LIST, { unit })
   return (
@@ -169,7 +178,7 @@ const WalletTokenItem = ({
   )
 }
 
-const mapStateToProps = state => ({
-  syncingStatus: state.appStatus.syncingStatus
+const mapStateToProps = ({ appStatus }: AppState) => ({
+  syncingStatus: appStatus.syncingStatus
 })
 export default connect(mapStateToProps)(WalletTokenItem)

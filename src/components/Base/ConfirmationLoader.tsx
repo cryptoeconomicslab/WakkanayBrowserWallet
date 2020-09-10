@@ -3,9 +3,10 @@ import { css } from '@emotion/core'
 import BeatLoader from 'react-spinners/BeatLoader'
 import { Black } from '../../constants/colors'
 
-type Props = {
+interface Props {
   isLoading: boolean
 }
+
 const override = css`
   text-align: center;
 `

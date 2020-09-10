@@ -17,14 +17,24 @@ import {
   getL1TotalBalance,
   getL2TotalBalance
 } from '../selectors/totalBalanceSelectors'
+import { AppState } from '../store'
+import { BalanceList } from '../types/Balance'
 
-function Wallet({
+interface Props {
+  address: string
+  l1BalanceList: BalanceList
+  l2BalanceList: BalanceList
+  l1TotalBalance: number
+  l2TotalBalance: number
+}
+
+const Wallet = ({
   address,
   l1BalanceList,
   l2BalanceList,
   l1TotalBalance,
   l2TotalBalance
-}) {
+}: Props) => {
   return (
     <Layout>
       <Link href={PAYMENT} passHref>
@@ -101,11 +111,11 @@ function Wallet({
   )
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state: AppState) => ({
   address: state.address.item,
   l1BalanceList: state.l1Balance.balanceList,
   l2BalanceList: state.l2Balance.balanceList,
   l1TotalBalance: getL1TotalBalance(state),
   l2TotalBalance: getL2TotalBalance(state)
 })
-export default connect(mapStateToProps, undefined)(Wallet)
+export default connect(mapStateToProps)(Wallet)

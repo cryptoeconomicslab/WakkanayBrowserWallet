@@ -4,16 +4,16 @@ export interface ActionType<T> {
   error?: boolean
 }
 
-export const STATE_LOADING_STATUS = {
-  UNLOADED: 'UNLOADED',
-  LOADING: 'LOADING',
-  LOADED: 'LOADED',
-  ERROR: 'ERROR'
+export enum STATE_LOADING_STATUS {
+  UNLOADED = 'UNLOADED',
+  LOADING = 'LOADING',
+  LOADED = 'LOADED',
+  ERROR = 'ERROR'
 }
 
-export const DEPOSIT_WITHDRAW_PROGRESS = {
-  INPUT: 'INPUT',
-  CONFIRM: 'CONFIRM',
-  COMPLETE: 'COMPLETE',
-  ERROR: 'ERROR'
+export enum DEPOSIT_WITHDRAW_PROGRESS {
+  INPUT = 'INPUT',
+  CONFIRM = 'CONFIRM',
+  COMPLETE = 'COMPLETE',
+  ERROR = 'ERROR'
 }

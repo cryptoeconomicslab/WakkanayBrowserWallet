@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 import { White } from '../../constants/colors'
 
-type Props = {
+interface Props {
   children: ReactNode
 }
 

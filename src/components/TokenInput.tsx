@@ -4,6 +4,7 @@ import classnames from 'classnames'
 import Input from './Base/Input'
 import { BACKGROUND, PLACEHOLDER, SUBTEXT, MAIN } from '../constants/colors'
 import { FZ_MEDIUM, FW_BOLD, FZ_SMALL } from '../constants/fonts'
+import { AppState } from '../store'
 import { roundBalance } from '../utils'
 
 const TokenInput = props => {
@@ -77,7 +78,7 @@ const TokenInput = props => {
   )
 }
 
-const mapStateToProps = ({ ethUsdRate }) => ({
+const mapStateToProps = ({ ethUsdRate }: AppState) => ({
   ethUsdRate: ethUsdRate.rate
 })
 export default connect(mapStateToProps)(TokenInput)

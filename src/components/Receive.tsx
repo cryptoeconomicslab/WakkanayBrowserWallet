@@ -11,8 +11,13 @@ import {
   MAIN_DARK
 } from '../constants/colors'
 import { FW_NORMAL, FW_BLACK, FZ_MEDIUM, FW_BOLD } from '../constants/fonts'
+import { AppState } from '../store'
 
-const Receive = ({ address }) => {
+interface Props {
+  address: string
+}
+
+const Receive = ({ address }: Props) => {
   const [copied, setCopied] = useState(false)
 
   const updateCopy = currentCopied => () => {
@@ -93,7 +98,7 @@ const Receive = ({ address }) => {
   )
 }
 
-const mapStateToProps = state => ({
-  address: state.address.item
+const mapStateToProps = ({ address }: AppState) => ({
+  address: address.item
 })
 export default connect(mapStateToProps)(Receive)
