@@ -84,7 +84,7 @@ const Initial = ({
       </Head>
       <Header />
       <div className="container">
-        {true && (
+        {process.env.ETH_NETWORK === 'kovan' && (
           <Alert>
             Please note that this wallet is the alpha version and there is a
             possibility of losing your deposited funds. If you want to use
