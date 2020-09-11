@@ -6,7 +6,7 @@ import { withdraw, setWithdrawProgress } from '../store/withdraw'
 import { BalanceList } from '../types/Balance'
 import DepositWithdrawModal from './Base/DepositWithdrawModal'
 
-interface Props {
+type Props = {
   balanceList: BalanceList
   progress: string
   withdraw: (amount: string, addr: string) => Promise<void>
@@ -18,7 +18,7 @@ const WithdrawModal = ({
   progress,
   withdraw,
   setProgress
-}: Props) => {
+}: Props): JSX.Element => {
   return (
     <DepositWithdrawModal
       type={'withdraw'}

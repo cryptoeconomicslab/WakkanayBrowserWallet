@@ -10,7 +10,7 @@ import { AppState } from '../store'
 import { TransactionHistory } from '../store/transactionHistory'
 import { completeWithdrawal } from '../store/withdraw'
 
-interface Props {
+type Props = {
   history: TransactionHistory
   pendingExitList: Exit[]
   completeWithdrawal: (exit: Exit) => Promise<void>
@@ -20,7 +20,7 @@ const TransactionHistoryIcon = ({
   history,
   pendingExitList,
   completeWithdrawal
-}: Props) => {
+}: Props): JSX.Element => {
   const iconEl = (
     <>
       <div className="historyIcon__wrap">

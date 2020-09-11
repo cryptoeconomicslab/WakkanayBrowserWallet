@@ -1,6 +1,7 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import clientWrapper from '../client'
 import { transformTransactionHistoryFrom } from '../helper/transactionHistoryHelper'
+import { AppState } from '../store'
 import { pushToast } from './toast'
 import { ActionType, STATE_LOADING_STATUS } from './types'
 
@@ -69,7 +70,7 @@ const reducer = createReducer(initialState, {
 export default reducer
 
 export const getTransactionHistories = () => {
-  return async (dispatch, getState) => {
+  return async (dispatch, getState: () => AppState) => {
     try {
       if (getState().history.status === STATE_LOADING_STATUS.LOADING) {
         return

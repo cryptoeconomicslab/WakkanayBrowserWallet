@@ -2,12 +2,12 @@ import React from 'react'
 import SelectItem from './SelectItem'
 import { Token } from '../constants/tokens'
 
-interface Props {
+type Props = {
   item: Token
   padding: string
 }
 
-const TokenSelectButton = ({ item, padding }: Props) => {
+const TokenSelectButton = ({ item, padding }: Props): JSX.Element | null => {
   return item ? (
     <SelectItem
       img={item.imgSrc}

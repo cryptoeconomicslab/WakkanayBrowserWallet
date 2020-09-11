@@ -1,19 +1,29 @@
 import React, { useState } from 'react'
+import { connect } from 'react-redux'
+import Input from './Base/Input'
+import Button from './Base/Button'
 import {
   initializeMetamaskWallet,
   initializeMagicLinkWallet,
   initializeWalletConnect
 } from '../store/appStatus'
-import { connect } from 'react-redux'
 import { FZ_MEDIUM } from '../constants/fonts'
-import Input from './Base/Input'
-import Button from './Base/Button'
 import { BORDER, White, PLACEHOLDER } from '../constants/colors'
 
-const StartUpModal = props => {
+type Props = {
+  initializeMetamaskWallet: () => Promise<void>
+  initializeMagicLinkWallet: (email: string) => Promise<void>
+  initializeWalletConnect: () => Promise<void>
+}
+
+const StartUpModal = ({
+  initializeMetamaskWallet,
+  initializeMagicLinkWallet,
+  initializeWalletConnect
+}: Props): JSX.Element => {
   const [email, setEmail] = useState('')
 
-  const updateEmail = e => {
+  const updateEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value.trim())
   }
 
@@ -32,20 +42,20 @@ const StartUpModal = props => {
           onChange={updateEmail}
         />
         <Button
-          full
+          size="full"
           disabled={!email}
-          onClick={() => props.initializeMagicLinkWallet(email)}
+          onClick={initializeMagicLinkWallet}
         >
           Create Wallet
         </Button>
         <div className="spacer">
           <div className="spacer__txt">or</div>
         </div>
-        <Button full onClick={props.initializeMetamaskWallet}>
+        <Button size="full" onClick={initializeMetamaskWallet}>
           Connect to MetaMask
         </Button>
         {process.env.ETH_NETWORK === 'homestead' && (
-          <Button full onClick={props.initializeWalletConnect}>
+          <Button size="full" onClick={initializeWalletConnect}>
             Connect to WalletConnect compatible wallet
           </Button>
         )}

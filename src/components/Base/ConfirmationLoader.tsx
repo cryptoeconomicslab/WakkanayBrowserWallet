@@ -3,14 +3,14 @@ import { css } from '@emotion/core'
 import BeatLoader from 'react-spinners/BeatLoader'
 import { Black } from '../../constants/colors'
 
-interface Props {
+type Props = {
   isLoading: boolean
 }
 
 const override = css`
   text-align: center;
 `
-const ConfirmationLoader = ({ isLoading }: Props) => (
+const ConfirmationLoader = ({ isLoading }: Props): JSX.Element => (
   <div>
     <BeatLoader
       css={override}

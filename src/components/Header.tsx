@@ -10,12 +10,12 @@ import { State as AppStatusState } from '../store/appStatus'
 import { STATE_LOADING_STATUS } from '../store/types'
 import { HISTORY, PAYMENT } from '../routes'
 
-interface Props {
+type Props = {
   appRouter: AppRouterState
   appStatus: AppStatusState
 }
 
-const Header = ({ appRouter, appStatus }: Props) => {
+const Header = ({ appRouter, appStatus }: Props): JSX.Element => {
   const router = useRouter()
 
   const LinkWrap = ({ children }) =>

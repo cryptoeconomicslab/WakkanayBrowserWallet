@@ -3,7 +3,18 @@ import classnames from 'classnames'
 import { BACKGROUND, Black } from '../../constants/colors'
 import { FZ_MEDIUM, FW_BOLD } from '../../constants/fonts'
 
-const Input = props => {
+type Props = {
+  full: boolean
+  placeholder: string
+  type?: string
+  className?: string
+  value?: any
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onFocus?: () => void
+  onBlur?: () => void
+}
+
+const Input = (props: Props): JSX.Element => {
   const { full, className } = props
   return (
     <>

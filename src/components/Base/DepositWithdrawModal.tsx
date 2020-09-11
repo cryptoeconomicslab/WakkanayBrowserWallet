@@ -17,7 +17,7 @@ import TOKEN_LIST, {
 import { DEPOSIT_WITHDRAW_PROGRESS } from '../../store/types'
 import { BalanceList } from '../../types/Balance'
 
-interface ModalText {
+type ModalText = {
   title: string
   inputButton: string
   confirmTitle: string
@@ -41,7 +41,7 @@ const modalTexts: { [key: string]: ModalText } = {
   }
 }
 
-interface Props {
+type Props = {
   type: string
   progress: string
   setProgress: ActionCreatorWithPayload<string, string>
@@ -55,7 +55,7 @@ const DepositWithdrawModal = ({
   setProgress,
   action,
   balance
-}: Props) => {
+}: Props): JSX.Element => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [tokenAmount, setTokenAmount] = useState<number | undefined>(undefined)
@@ -84,7 +84,7 @@ const DepositWithdrawModal = ({
     <BaseModal
       title={modalTexts[type].title}
       onClose={updateProgress(DEPOSIT_WITHDRAW_PROGRESS.INPUT)}
-      render={({ close }) => (
+      render={(close: () => void) => (
         <>
           <div className="depositWithdrawModal">
             {progress === DEPOSIT_WITHDRAW_PROGRESS.INPUT ? (
@@ -135,7 +135,7 @@ const DepositWithdrawModal = ({
                 <div className="complete__txt">
                   {modalTexts[type].completeTitle}
                 </div>
-                <Button full border onClick={close}>
+                <Button size="full" border onClick={close}>
                   Close
                 </Button>
               </div>
@@ -146,7 +146,7 @@ const DepositWithdrawModal = ({
                   <br />
                   Please try again later.
                 </Message>
-                <Button full border onClick={close}>
+                <Button size="full" border onClick={close}>
                   Close
                 </Button>
               </>

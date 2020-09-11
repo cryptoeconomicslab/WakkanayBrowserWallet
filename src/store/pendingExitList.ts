@@ -1,6 +1,7 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
-import { pushToast } from './toast'
 import clientWrapper from '../client'
+import { AppState } from '../store'
+import { pushToast } from './toast'
 import { ActionType, STATE_LOADING_STATUS } from './types'
 
 export enum PENDING_EXIT_LIST_ACTION_TYPES {
@@ -57,7 +58,7 @@ const reducer = createReducer(initialState, {
 export default reducer
 
 export const getPendingExitList = () => {
-  return async (dispatch, getState) => {
+  return async (dispatch, getState: () => AppState) => {
     try {
       if (getState().pendingExitList.status === STATE_LOADING_STATUS.LOADING) {
         return

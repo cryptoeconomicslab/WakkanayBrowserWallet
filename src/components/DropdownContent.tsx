@@ -4,12 +4,12 @@ import { TEXT, SUBTEXT, BACKGROUND, White } from '../constants/colors'
 import { Token } from '../constants/tokens'
 import { Z_DROPDOWN } from '../constants/zindex'
 
-interface Props {
+type Props = {
   onSelect: (item: Token) => void
   tokenList: Token[]
 }
 
-const DropdownContent = ({ onSelect, tokenList }: Props) => {
+const DropdownContent = ({ onSelect, tokenList }: Props): JSX.Element => {
   const selectItem = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     item: Token

@@ -47,7 +47,7 @@ import { logout } from '../store/logout'
 import { removeToast } from '../store/toast'
 import { STATE_LOADING_STATUS } from '../store/types'
 
-interface Props {
+type Props = {
   checkClientInitialized: () => Promise<void>
   pushRouteHistory: ActionCreatorWithPayload<string, string>
   popRouteHistory: ActionCreatorWithoutPayload<APP_ROUTER_ACTION_TYPES>
@@ -67,7 +67,7 @@ const Initial = ({
   removeToast,
   logout,
   children
-}: Props) => {
+}: Props): JSX.Element => {
   const router = useRouter()
   useReactToast({ toasts: toasts, onDisappearToast: removeToast })
   const isWalletHidden =

@@ -3,7 +3,7 @@ import { SMALL, MEDIUM } from '../constants/fonts'
 import { Token } from '../constants/tokens'
 import Dropdown from './Dropdown'
 
-interface Props {
+type Props = {
   onSelected: (selectedTokenContractAddress: string) => void
   selectedToken: Token
   tokenList: Token[]
@@ -19,7 +19,7 @@ const TokenSelector = ({
   width,
   tokenList,
   selectedToken
-}: Props) => {
+}: Props): JSX.Element => {
   return (
     <div className="tokenSelector">
       <Dropdown

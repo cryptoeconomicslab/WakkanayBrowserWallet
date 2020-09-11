@@ -13,15 +13,15 @@ import {
 import { shortenAddress, roundBalance } from '../utils'
 import { AppState } from '../store'
 
-interface Props {
+type Props = {
   type: string
   tokenAmount: number
   unit: string
   imgSrc: string
   supplement: string
   isLoading: boolean
-  onCancel: any
-  onConfirm: any
+  onCancel: () => void
+  onConfirm: () => Promise<void>
   address: string
   ethUsdRate: number
 }
@@ -39,7 +39,7 @@ const Confirmation = ({
   /* Redux */
   address,
   ethUsdRate
-}: Props) => {
+}: Props): JSX.Element => {
   return (
     <div className="confirmation">
       <div className="confirmation__title">You will {type}</div>
@@ -62,7 +62,7 @@ const Confirmation = ({
       </div>
       <div className="confirmation__btns">
         <Button
-          full
+          size="full"
           className="confirmation__btn"
           onClick={onConfirm}
           disabled={isLoading}
@@ -74,7 +74,7 @@ const Confirmation = ({
           )}
         </Button>
         <Button
-          full
+          size="full"
           border
           className="confirmation__btn"
           onClick={onCancel}

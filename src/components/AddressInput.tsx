@@ -6,7 +6,7 @@ import { BACKGROUND, MAIN } from '../constants/colors'
 import { AppState } from '../store'
 import Input from './Base/Input'
 
-interface Props {
+type Props = {
   className: string
   handleAddress: ActionCreatorWithPayload<string, string>
   recepientAddress: string
@@ -16,7 +16,7 @@ const AddressInput = ({
   className,
   handleAddress,
   recepientAddress
-}: Props) => {
+}: Props): JSX.Element => {
   const [focused, setFocused] = useState(false)
   return (
     <>

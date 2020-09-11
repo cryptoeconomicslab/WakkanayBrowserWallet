@@ -10,11 +10,11 @@ import {
   TransactionHistory as TransactionHistoryItem
 } from '../store/transactionHistory'
 
-interface Props {
+type Props = {
   historyList: TransactionHistoryItem[]
 }
 
-const TransactionHistory = ({ historyList }: Props) => {
+const TransactionHistory = ({ historyList }: Props): JSX.Element => {
   return (
     <ul>
       {historyList.length > 0 ? (

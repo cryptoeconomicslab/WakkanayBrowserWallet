@@ -5,6 +5,7 @@ import { Balance as WalletBalance } from '@cryptoeconomicslab/wallet'
 import { Address } from '@cryptoeconomicslab/primitives'
 import clientWrapper from '../client'
 import TOKEN_LIST from '../constants/tokens'
+import { AppState } from '../store'
 import { Balance, BalanceList } from './../types/Balance'
 import { roundBalance } from '../utils'
 import { pushToast } from './toast'
@@ -64,7 +65,7 @@ const reducer = createReducer(initialState, {
 export default reducer
 
 export const getL1Balance = () => {
-  return async (dispatch: Dispatch, getState) => {
+  return async (dispatch: Dispatch, getState: () => AppState) => {
     try {
       if (getState().l1Balance.status === STATE_LOADING_STATUS.LOADING) {
         return

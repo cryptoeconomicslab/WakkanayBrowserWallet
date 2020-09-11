@@ -34,7 +34,7 @@ const Wallet = ({
   l2BalanceList,
   l1TotalBalance,
   l2TotalBalance
-}: Props) => {
+}: Props): JSX.Element => {
   return (
     <Layout>
       <Link href={PAYMENT} passHref>

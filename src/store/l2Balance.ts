@@ -3,6 +3,7 @@ import { createAction, createReducer } from '@reduxjs/toolkit'
 import { formatUnits } from 'ethers/utils'
 import clientWrapper from '../client'
 import { getTokenByTokenContractAddress } from '../constants/tokens'
+import { AppState } from '../store'
 import { Balance, BalanceList } from '../types/Balance'
 import { pushToast } from './toast'
 import { ActionType, STATE_LOADING_STATUS } from './types'
@@ -62,7 +63,7 @@ const reducer = createReducer(initialState, {
 export default reducer
 
 export const getL2Balance = () => {
-  return async (dispatch: Dispatch, getState) => {
+  return async (dispatch: Dispatch, getState: () => AppState) => {
     try {
       if (getState().l2Balance.status === STATE_LOADING_STATUS.LOADING) {
         return

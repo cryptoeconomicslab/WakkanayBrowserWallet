@@ -9,6 +9,7 @@ import LightClient, {
 import { BigNumber } from '@cryptoeconomicslab/primitives'
 import clientWrapper from '../client'
 import { WALLET_KIND } from '../wallet'
+import { AppState } from './'
 import { getAddress } from './address'
 import { getEthUsdRate } from './ethUsdRate'
 import { getPendingExitList } from './pendingExitList'
@@ -73,7 +74,7 @@ const reducer = createReducer(initialState, {
 
 export default reducer
 
-export const initialGetters = (dispatch, getState) => {
+export const initialGetters = (dispatch, getState: () => AppState) => {
   if (getState().appStatus.syncingStatus === STATE_LOADING_STATUS.LOADED) {
     dispatch(getEthUsdRate())
     dispatch(getAddress())
@@ -83,7 +84,7 @@ export const initialGetters = (dispatch, getState) => {
     dispatch(getPendingExitList())
   }
 }
-const subscribedEventGetters = (dispatch, getState) => {
+const subscribedEventGetters = (dispatch, getState: () => AppState) => {
   if (getState().appStatus.syncingStatus === STATE_LOADING_STATUS.LOADED) {
     dispatch(getL1Balance())
     dispatch(getL2Balance())
@@ -110,7 +111,7 @@ const initializeClientWrapper = async (
 }
 
 export const checkClientInitialized = () => {
-  return async (dispatch, getState) => {
+  return async (dispatch, getState: () => AppState) => {
     if (!process.browser) {
       dispatch(setAppStatus(STATE_LOADING_STATUS.UNLOADED))
       return
@@ -143,7 +144,7 @@ export const checkClientInitialized = () => {
 }
 
 export const initializeMetamaskWallet = () => {
-  return async (dispatch, getState) => {
+  return async (dispatch, getState: () => AppState) => {
     try {
       dispatch(setAppStatus(STATE_LOADING_STATUS.LOADING))
       initializeClientWrapper(dispatch, getState, WALLET_KIND.WALLET_METAMASK)
@@ -157,7 +158,7 @@ export const initializeMetamaskWallet = () => {
 }
 
 export const initializeWalletConnect = () => {
-  return async (dispatch, getState) => {
+  return async (dispatch, getState: () => AppState) => {
     try {
       dispatch(setAppStatus(STATE_LOADING_STATUS.LOADING))
       initializeClientWrapper(dispatch, getState, WALLET_KIND.WALLET_CONNECT)
@@ -171,7 +172,7 @@ export const initializeWalletConnect = () => {
 }
 
 export const initializeMagicLinkWallet = (email: string) => {
-  return async (dispatch, getState) => {
+  return async (dispatch, getState: () => AppState) => {
     try {
       dispatch(setAppStatus(STATE_LOADING_STATUS.LOADING))
       initializeClientWrapper(
@@ -190,7 +191,7 @@ export const initializeMagicLinkWallet = (email: string) => {
 }
 
 const subscribeDepositEvent = (client: LightClient) => {
-  return (dispatch, getState) => {
+  return (dispatch, getState: () => AppState) => {
     client.subscribeDepositEvent((userAction: UserAction) => {
       console.info(
         `subscribe deposit event { userAction: ${JSON.stringify(userAction)}) }`
@@ -215,7 +216,7 @@ const subscribeSyncStartedEvent = (client: LightClient) => {
 }
 
 const subscribeSyncFinishedEvent = (client: LightClient) => {
-  return (dispatch, getState) => {
+  return (dispatch, getState: () => AppState) => {
     client.subscribeSyncBlockFinished((blockNumber: BigNumber) => {
       console.info(`sync new state: ${blockNumber.data}`)
       dispatch(setSyncingStatus(STATE_LOADING_STATUS.LOADED))
@@ -231,7 +232,7 @@ const subscribeSyncFinishedEvent = (client: LightClient) => {
 }
 
 const subscribeTransferCompleteEvent = (client: LightClient) => {
-  return (dispatch: Dispatch, getState) => {
+  return (dispatch: Dispatch, getState: () => AppState) => {
     client.subscribeTransferComplete((stateUpdate: StateUpdate) => {
       console.info(
         `%c transfer complete for range: %c (${stateUpdate.range.start.data}, ${stateUpdate.range.end.data})`,
@@ -244,7 +245,7 @@ const subscribeTransferCompleteEvent = (client: LightClient) => {
 }
 
 const subscribeExitFinalizedEvent = (client: LightClient) => {
-  return (dispatch: Dispatch, getState) => {
+  return (dispatch: Dispatch, getState: () => AppState) => {
     client.subscribeExitFinalized(async (exit: Exit) => {
       console.info(`completed withdrawal: ${exit}`)
       subscribedEventGetters(dispatch, getState)

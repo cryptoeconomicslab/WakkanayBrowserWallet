@@ -1,4 +1,4 @@
-export interface ActionType<T> {
+export type ActionType<T> = {
   type: T
   payload?: any
   error?: boolean

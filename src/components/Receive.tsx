@@ -13,14 +13,14 @@ import {
 import { FW_NORMAL, FW_BLACK, FZ_MEDIUM, FW_BOLD } from '../constants/fonts'
 import { AppState } from '../store'
 
-interface Props {
+type Props = {
   address: string
 }
 
-const Receive = ({ address }: Props) => {
+const Receive = ({ address }: Props): JSX.Element => {
   const [copied, setCopied] = useState(false)
 
-  const updateCopy = currentCopied => () => {
+  const updateCopy = (currentCopied: boolean) => () => {
     setCopied(currentCopied)
   }
 

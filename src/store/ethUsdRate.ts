@@ -1,6 +1,7 @@
 import { Dispatch } from 'redux'
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import axios from 'axios'
+import { AppState } from './'
 import { pushToast } from './toast'
 import { ActionType, STATE_LOADING_STATUS } from './types'
 
@@ -60,7 +61,7 @@ const reducer = createReducer(initialState, {
 export default reducer
 
 export const getEthUsdRate = () => {
-  return async (dispatch: Dispatch, getState) => {
+  return async (dispatch: Dispatch, getState: () => AppState) => {
     try {
       if (getState().ethUsdRate.status === STATE_LOADING_STATUS.LOADING) {
         return

@@ -2,11 +2,11 @@ import React, { ReactNode } from 'react'
 import { FZ_SMALL } from '../../constants/fonts'
 import { WARNING, WARNING_BACK } from '../../constants/colors'
 
-interface Props {
+type Props = {
   children: ReactNode
 }
 
-const Alert = ({ children }: Props) => (
+const Alert = ({ children }: Props): JSX.Element => (
   <>
     <div className="attention">
       <img src="/icon-info.svg" className="attention__icon" />

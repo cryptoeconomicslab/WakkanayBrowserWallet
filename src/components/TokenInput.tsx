@@ -7,7 +7,15 @@ import { FZ_MEDIUM, FW_BOLD, FZ_SMALL } from '../constants/fonts'
 import { AppState } from '../store'
 import { roundBalance } from '../utils'
 
-const TokenInput = props => {
+type Props = {
+  className: string
+  value: string | number | undefined
+  unit: string
+  handleAmount: any
+  ethUsdRate: number
+}
+
+const TokenInput = (props: Props): JSX.Element => {
   const {
     /* component */
     className,
@@ -38,7 +46,7 @@ const TokenInput = props => {
           onBlur={() => {
             setFocused(false)
           }}
-          onChange={e => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             if (!e.target.value.match(/^[e0-9.+]+$/) && e.target.value) {
               return
             }
@@ -47,7 +55,7 @@ const TokenInput = props => {
         />
         <div className="input__unit">{unit}</div>
         <div className="input__balance">
-          = {roundBalance(ethUsdRate * (value || 0))} USD
+          = {roundBalance(ethUsdRate * (Number(value) || 0))} USD
         </div>
       </div>
       <style jsx>{`

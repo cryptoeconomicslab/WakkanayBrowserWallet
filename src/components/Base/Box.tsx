@@ -1,11 +1,11 @@
 import React, { ReactNode } from 'react'
 import { White } from '../../constants/colors'
 
-interface Props {
+type Props = {
   children: ReactNode
 }
 
-const Box = ({ children }: Props) => (
+const Box = ({ children }: Props): JSX.Element => (
   <div className="box">
     {children}
     <style jsx>{`

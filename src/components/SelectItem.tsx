@@ -2,14 +2,19 @@ import React from 'react'
 import { FZ_DEFAULT, FW_BOLD } from '../constants/fonts'
 import { TEXT, PLACEHOLDER } from '../constants/colors'
 
-interface Props {
+type Props = {
   img: string
   name: string
   padding: string
   supplement?: string
 }
 
-const SectionItem = ({ img, name, supplement, padding }: Props) => {
+const SectionItem = ({
+  img,
+  name,
+  supplement,
+  padding
+}: Props): JSX.Element => {
   return (
     <div className="item">
       <div className="item__label">

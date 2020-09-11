@@ -24,7 +24,7 @@ import Button from './Base/Button'
 import SectionTitle from './SectionTitle'
 import TokenInput from './TokenInput'
 
-interface Props {
+type Props = {
   l2Balance: BalanceList
   isAbleToTransfer: boolean
   transferredToken: string
@@ -50,7 +50,7 @@ const Send = ({
   setTransferredAmount,
   setRecepientAddress,
   transfer
-}: Props) => {
+}: Props): JSX.Element => {
   const transferredTokenObj: Token =
     getTokenByTokenContractAddress(transferredToken) === undefined
       ? TOKEN_LIST[0]
@@ -78,7 +78,7 @@ const Send = ({
       />
       <AddressInput className="mbs" handleAddress={setRecepientAddress} />
       <Button
-        full
+        size="full"
         onClick={() => {
           transfer(transferredAmount, transferredToken, recepientAddress)
         }}

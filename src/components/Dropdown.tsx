@@ -5,14 +5,19 @@ import { Token } from '../constants/tokens'
 import DropdownContent from './DropdownContent'
 import TokenSelectButton from './TokenSelectButton'
 
-interface Props {
+type Props = {
   onSelected: (selectedTokenContractAddress: string) => void
   width: string
   selectedItem: Token
   tokenList: Token[]
 }
 
-const Dropdown = ({ onSelected, width, selectedItem, tokenList }: Props) => {
+const Dropdown = ({
+  onSelected,
+  width,
+  selectedItem,
+  tokenList
+}: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false)
 
   const selectItem = (item: Token) => {

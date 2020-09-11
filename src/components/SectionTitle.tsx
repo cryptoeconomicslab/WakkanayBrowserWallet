@@ -2,11 +2,11 @@ import React, { ReactNode } from 'react'
 import { FW_BLACK, FZ_MEDIUM } from '../constants/fonts'
 import { SUBTEXT } from '../constants/colors'
 
-interface Props {
+type Props = {
   children: ReactNode
 }
 
-const SectionTitle = ({ children }: Props) => {
+const SectionTitle = ({ children }: Props): JSX.Element => {
   return (
     <div className="section-title">
       {children}

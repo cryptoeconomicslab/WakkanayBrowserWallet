@@ -1,7 +1,12 @@
-import { combineReducers, createStore, applyMiddleware } from 'redux'
+import {
+  combineReducers,
+  createStore,
+  applyMiddleware,
+  AnyAction,
+  CombinedState
+} from 'redux'
 import logger from 'redux-logger'
 import thunk from 'redux-thunk'
-
 import address, { State as AddressState } from './address'
 import appStatus, { State as AppStatusState } from './appStatus'
 import appRouter, { State as AppRouterState } from './appRouter'
@@ -48,7 +53,10 @@ const appReducer = combineReducers({
   withdrawState: withdraw
 })
 
-const rootReducer = (state, action) => {
+const rootReducer = (
+  state: AppState | undefined,
+  action: AnyAction
+): CombinedState<AppState> => {
   if (action.type === userLogout.type) {
     state = undefined
   }

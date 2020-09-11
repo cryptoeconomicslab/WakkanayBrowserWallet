@@ -16,7 +16,7 @@ import { AppState } from '../store'
 import { STATE_LOADING_STATUS } from '../store/types'
 import { shortenAddress } from '../utils'
 
-interface Props {
+type Props = {
   address: string
   l1TotalBalance: number
   l2TotalBalance: number
@@ -28,7 +28,7 @@ const Wallet = ({
   l1TotalBalance,
   l2TotalBalance,
   syncingStatus
-}: Props) => {
+}: Props): JSX.Element => {
   const [copied, setCopied] = useState(false)
 
   const updateCopy = currentCopied => () => {

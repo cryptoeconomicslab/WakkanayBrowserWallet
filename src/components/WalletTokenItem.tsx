@@ -17,7 +17,7 @@ import { openModal, PAYMENT } from '../routes'
 import { AppState } from '../store'
 import { STATE_LOADING_STATUS } from '../store/types'
 
-interface Props {
+type Props = {
   l1Balance: number
   l2Balance: number
   tokenContractAddress: string
@@ -31,7 +31,7 @@ const WalletTokenItem = ({
   tokenContractAddress,
   unit,
   syncingStatus
-}: Props) => {
+}: Props): JSX.Element => {
   const router = useRouter()
   const { imgSrc, imgAspect } = _.find(TOKEN_LIST, { unit })
   return (

@@ -1,12 +1,12 @@
 import React, { ReactNode } from 'react'
 import { MAIN } from '../../constants/colors'
 
-interface Props {
+type Props = {
   children: ReactNode
   color?: string
 }
 
-const Message = ({ children, color }: Props) => (
+const Message = ({ children, color }: Props): JSX.Element => (
   <p>
     {children}
     <style jsx>{`
