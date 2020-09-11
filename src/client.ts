@@ -2,7 +2,19 @@ import LightClient from '@cryptoeconomicslab/plasma-light-client'
 import initialize from './initialize'
 import { Web3Wallet, WALLET_KIND } from './wallet'
 
-class ClientWrapper {
+export interface IClientWrapper {
+  client: LightClient | undefined
+  wallet: Web3Wallet | undefined
+  initializeClient(walletParams: {
+    kind: WALLET_KIND
+    email?: string
+  }): Promise<void>
+  start(): Promise<void>
+  setClient(client: LightClient): void
+  setWallet(wallet: Web3Wallet): void
+}
+
+class ClientWrapper implements IClientWrapper {
   private _instance?: LightClient
   private _wallet?: Web3Wallet
 
@@ -15,7 +27,7 @@ class ClientWrapper {
     if (this._instance) return
 
     if (process.browser) {
-      await initialize(walletParams)
+      await initialize(this, walletParams)
     }
   }
 

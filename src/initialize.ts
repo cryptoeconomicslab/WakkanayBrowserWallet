@@ -13,7 +13,7 @@ import {
 } from '@cryptoeconomicslab/eth-contract'
 import * as Sentry from '@sentry/browser'
 import { CaptureConsole } from '@sentry/integrations'
-import clientWrapper from './client'
+import { IClientWrapper } from './client'
 import config from './config'
 import EthNetworkName from './types/EthNetworkName'
 import {
@@ -60,7 +60,10 @@ async function registerPeth(client: LightClient) {
   }
 }
 
-async function instantiate(walletParams: WalletParams): Promise<void> {
+async function instantiate(
+  clientWrapper: IClientWrapper,
+  walletParams: WalletParams
+): Promise<void> {
   const networkName = process.env.ETH_NETWORK as EthNetworkName
   const kind = walletParams.kind
 
@@ -166,8 +169,9 @@ async function instantiate(walletParams: WalletParams): Promise<void> {
 }
 
 export default async function initialize(
+  clientWrapper: IClientWrapper,
   walletParams: WalletParams
 ): Promise<void> {
-  await instantiate(walletParams)
+  await instantiate(clientWrapper, walletParams)
   localStorage.setItem('loggedInWith', walletParams.kind)
 }
