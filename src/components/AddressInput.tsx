@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
+import { ActionCreatorWithPayload } from '@reduxjs/toolkit'
 import { connect } from 'react-redux'
 import classnames from 'classnames'
 import { BACKGROUND, MAIN } from '../constants/colors'
+import { AppState } from '../store'
 import Input from './Base/Input'
 
 type Props = {
   className: string
-  handleAddress: any
+  handleAddress: ActionCreatorWithPayload<string, string>
   recepientAddress: string
 }
 
@@ -14,7 +16,7 @@ const AddressInput = ({
   className,
   handleAddress,
   recepientAddress
-}: Props) => {
+}: Props): JSX.Element => {
   const [focused, setFocused] = useState(false)
   return (
     <>
@@ -61,7 +63,7 @@ const AddressInput = ({
   )
 }
 
-const mapStateToProps = ({ transferState }) => ({
+const mapStateToProps = ({ transferState }: AppState) => ({
   recepientAddress: transferState.recepientAddress
 })
 export default connect(mapStateToProps)(AddressInput)

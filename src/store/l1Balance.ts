@@ -5,10 +5,11 @@ import { Balance as WalletBalance } from '@cryptoeconomicslab/wallet'
 import { Address } from '@cryptoeconomicslab/primitives'
 import clientWrapper from '../client'
 import TOKEN_LIST from '../constants/tokens'
+import { AppState } from '../store'
 import { Balance, BalanceList } from './../types/Balance'
 import { roundBalance } from '../utils'
 import { pushToast } from './toast'
-import { ActionType } from './types'
+import { ActionType, STATE_LOADING_STATUS } from './types'
 
 export enum L1_BALANCE_ACTION_TYPES {
   SET_L1_BALANCE = 'SET_L1_BALANCE',
@@ -16,26 +17,19 @@ export enum L1_BALANCE_ACTION_TYPES {
   SET_L1_BALANCE_ERROR = 'SET_L1_BALANCE_ERROR'
 }
 
-export const L1_BALANCE_PROGRESS = {
-  UNLOADED: 'UNLOADED',
-  LOADING: 'LOADING',
-  LOADED: 'LOADED',
-  ERROR: 'ERROR'
-}
-
 export interface State {
-  balanceList: any
-  status: string
+  balanceList: BalanceList
+  status: STATE_LOADING_STATUS
   error: Error | null
 }
 
 const initialState: State = {
   balanceList: {},
-  status: L1_BALANCE_PROGRESS.UNLOADED,
+  status: STATE_LOADING_STATUS.UNLOADED,
   error: null
 }
 
-export const setL1Balance = createAction<any>(
+export const setL1Balance = createAction<BalanceList>(
   L1_BALANCE_ACTION_TYPES.SET_L1_BALANCE
 )
 export const setL1BalanceStatus = createAction<string>(
@@ -51,7 +45,7 @@ const reducer = createReducer(initialState, {
     action: ActionType<L1_BALANCE_ACTION_TYPES>
   ) => {
     state.balanceList = action.payload
-    state.status = L1_BALANCE_PROGRESS.LOADED
+    state.status = STATE_LOADING_STATUS.LOADED
   },
   [setL1BalanceStatus.type]: (
     state: State,
@@ -64,20 +58,20 @@ const reducer = createReducer(initialState, {
     action: ActionType<L1_BALANCE_ACTION_TYPES>
   ) => {
     state.error = action.payload
-    state.status = L1_BALANCE_PROGRESS.ERROR
+    state.status = STATE_LOADING_STATUS.ERROR
   }
 })
 
 export default reducer
 
 export const getL1Balance = () => {
-  return async (dispatch: Dispatch, getState) => {
+  return async (dispatch: Dispatch, getState: () => AppState) => {
     try {
-      if (getState().l1Balance.status === L1_BALANCE_PROGRESS.LOADING) {
+      if (getState().l1Balance.status === STATE_LOADING_STATUS.LOADING) {
         return
       }
 
-      dispatch(setL1BalanceStatus(L1_BALANCE_PROGRESS.LOADING))
+      dispatch(setL1BalanceStatus(STATE_LOADING_STATUS.LOADING))
       const client = clientWrapper.client
       const wallet = clientWrapper.wallet
       if (!client || !wallet) return

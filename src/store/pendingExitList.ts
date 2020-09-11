@@ -1,19 +1,13 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
-import { pushToast } from './toast'
 import clientWrapper from '../client'
-import { ActionType } from './types'
+import { AppState } from '../store'
+import { pushToast } from './toast'
+import { ActionType, STATE_LOADING_STATUS } from './types'
 
 export enum PENDING_EXIT_LIST_ACTION_TYPES {
   SET_PENDING_EXIT_LIST = 'SET_PENDING_EXIT_LIST',
   SET_PENDING_EXIT_LIST_STATUS = 'SET_PENDING_EXIT_LIST_STATUS',
   SET_PENDING_EXIT_LIST_ERROR = 'SET_PENDING_EXIT_LIST_ERROR'
-}
-
-export const PENDING_EXIT_LIST_PROGRESS = {
-  UNLOADED: 'UNLOADED',
-  LOADING: 'LOADING',
-  LOADED: 'LOADED',
-  ERROR: 'ERROR'
 }
 
 export interface State {
@@ -24,7 +18,7 @@ export interface State {
 
 const initialState: State = {
   items: [],
-  status: PENDING_EXIT_LIST_PROGRESS.UNLOADED,
+  status: STATE_LOADING_STATUS.UNLOADED,
   error: null
 }
 
@@ -44,7 +38,7 @@ const reducer = createReducer(initialState, {
     action: ActionType<PENDING_EXIT_LIST_ACTION_TYPES>
   ) => {
     state.items = action.payload
-    state.status = PENDING_EXIT_LIST_PROGRESS.LOADED
+    state.status = STATE_LOADING_STATUS.LOADED
   },
   [setPendingExitListStatus.type]: (
     state: State,
@@ -57,22 +51,20 @@ const reducer = createReducer(initialState, {
     action: ActionType<PENDING_EXIT_LIST_ACTION_TYPES>
   ) => {
     state.error = action.payload
-    state.status = PENDING_EXIT_LIST_PROGRESS.ERROR
+    state.status = STATE_LOADING_STATUS.ERROR
   }
 })
 
 export default reducer
 
 export const getPendingExitList = () => {
-  return async (dispatch, getState) => {
+  return async (dispatch, getState: () => AppState) => {
     try {
-      if (
-        getState().pendingExitList.status === PENDING_EXIT_LIST_PROGRESS.LOADING
-      ) {
+      if (getState().pendingExitList.status === STATE_LOADING_STATUS.LOADING) {
         return
       }
 
-      dispatch(setPendingExitListStatus(PENDING_EXIT_LIST_PROGRESS.LOADING))
+      dispatch(setPendingExitListStatus(STATE_LOADING_STATUS.LOADING))
       const client = clientWrapper.client
       if (!client) return
       const pendingExitList = await client.getPendingWithdrawals()

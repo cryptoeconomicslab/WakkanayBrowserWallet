@@ -36,7 +36,7 @@ export default class PETHContract {
    * @name unwrap
    * @param amount amount of wei.
    */
-  async unwrap(amount: JSBI) {
+  async unwrap(amount: JSBI): Promise<void> {
     const bigNumberifiedAmount = new BigNumber(amount.toString())
     await this.connection.unwrap(bigNumberifiedAmount)
   }

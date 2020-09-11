@@ -9,11 +9,11 @@ import {
 
 type Props = {
   title: string
-  render: any
-  onClose: any
+  render: (close: () => void) => JSX.Element
+  onClose: () => void
 }
 
-const BaseModal = ({ title, render, onClose }: Props) => {
+const BaseModal = ({ title, render, onClose }: Props): JSX.Element => {
   const close = () => {
     Router.push(Router.route)
     if (onClose) onClose()
@@ -24,7 +24,7 @@ const BaseModal = ({ title, render, onClose }: Props) => {
       <ClickOutside className="modal" onClickOutside={close}>
         <div className="modal__contents">
           <h2 className="modal__title">{title}</h2>
-          <div className="modal__body">{render({ close })}</div>
+          <div className="modal__body">{render(close)}</div>
         </div>
       </ClickOutside>
       <style jsx>{`

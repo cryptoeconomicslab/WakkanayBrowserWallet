@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { ActionCreatorWithPayload } from '@reduxjs/toolkit'
 import { useRouter } from 'next/router'
 import BaseModal from './BaseModal'
 import Message from './Message'
@@ -7,15 +8,23 @@ import TokenSelector from '../TokenSelector'
 import Confirmation from '../Confirmation'
 import TokenInput from '../TokenInput'
 import config from '../../config'
-import { DEPOSIT_PROGRESS } from '../../store/deposit'
 import { SUBTEXT, ERROR } from '../../constants/colors'
 import { FZ_MEDIUM, FW_BLACK } from '../../constants/fonts'
 import TOKEN_LIST, {
   getTokenByTokenContractAddress,
   Token
 } from '../../constants/tokens'
+import { DEPOSIT_WITHDRAW_PROGRESS } from '../../store/types'
+import { BalanceList } from '../../types/Balance'
 
-const modalTexts = {
+type ModalText = {
+  title: string
+  inputButton: string
+  confirmTitle: string
+  confirmText: string
+  completeTitle: string
+}
+const modalTexts: { [key: string]: ModalText } = {
   deposit: {
     title: 'Deposit from Mainchain',
     inputButton: 'Deposit',
@@ -35,9 +44,9 @@ const modalTexts = {
 type Props = {
   type: string
   progress: string
-  setProgress: any
-  action: any
-  balance: any
+  setProgress: ActionCreatorWithPayload<string, string>
+  action: (amount: string, addr: string) => Promise<void>
+  balance: BalanceList
 }
 
 const DepositWithdrawModal = ({
@@ -46,7 +55,7 @@ const DepositWithdrawModal = ({
   setProgress,
   action,
   balance
-}: Props) => {
+}: Props): JSX.Element => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [tokenAmount, setTokenAmount] = useState<number | undefined>(undefined)
@@ -74,15 +83,16 @@ const DepositWithdrawModal = ({
   return (
     <BaseModal
       title={modalTexts[type].title}
-      onClose={updateProgress(DEPOSIT_PROGRESS.INPUT)}
-      render={({ close }) => (
+      onClose={updateProgress(DEPOSIT_WITHDRAW_PROGRESS.INPUT)}
+      render={(close: () => void) => (
         <>
           <div className="depositWithdrawModal">
-            {progress === DEPOSIT_PROGRESS.INPUT ? (
+            {progress === DEPOSIT_WITHDRAW_PROGRESS.INPUT ? (
               <>
                 <TokenSelector
                   onSelected={updateToken}
                   selectedToken={selectedTokenObj}
+                  tokenList={TOKEN_LIST}
                 />
                 <TokenInput
                   className="mts mbs"
@@ -99,15 +109,15 @@ const DepositWithdrawModal = ({
                 <Button
                   size="full"
                   disabled={!tokenAmount || isInsufficientFunds()}
-                  onClick={updateProgress(DEPOSIT_PROGRESS.CONFIRM)}
+                  onClick={updateProgress(DEPOSIT_WITHDRAW_PROGRESS.CONFIRM)}
                 >
                   {modalTexts[type].inputButton}
                 </Button>
               </>
-            ) : progress === DEPOSIT_PROGRESS.CONFIRM ? (
+            ) : progress === DEPOSIT_WITHDRAW_PROGRESS.CONFIRM ? (
               <Confirmation
                 type={type}
-                tokenAmount={tokenAmount}
+                tokenAmount={tokenAmount ? tokenAmount : 0}
                 unit={selectedTokenObj.unit}
                 imgSrc={selectedTokenObj.imgSrc}
                 supplement={modalTexts[type].confirmText}
@@ -115,17 +125,17 @@ const DepositWithdrawModal = ({
                 onCancel={close}
                 onConfirm={async () => {
                   setIsLoading(true)
-                  await action(tokenAmount, token)
+                  await action(tokenAmount ? String(tokenAmount) : '0', token)
                   setIsLoading(false)
                 }}
               />
-            ) : progress === DEPOSIT_PROGRESS.COMPLETE ? (
+            ) : progress === DEPOSIT_WITHDRAW_PROGRESS.COMPLETE ? (
               <div className="complete">
                 <img src="popper.svg" className="complete__img" />
                 <div className="complete__txt">
                   {modalTexts[type].completeTitle}
                 </div>
-                <Button full border onClick={close}>
+                <Button size="full" border onClick={close}>
                   Close
                 </Button>
               </div>
@@ -136,7 +146,7 @@ const DepositWithdrawModal = ({
                   <br />
                   Please try again later.
                 </Message>
-                <Button full border onClick={close}>
+                <Button size="full" border onClick={close}>
                   Close
                 </Button>
               </>

@@ -8,6 +8,7 @@ export type Token = {
   imgSrc: string
   imgAspect: number
   hidden: boolean
+  balance?: number
 }
 
 const TOKEN_LIST: Token[] = [

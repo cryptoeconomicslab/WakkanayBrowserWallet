@@ -2,7 +2,7 @@ import React from 'react'
 import Layout from '../components/Layout'
 import TransactionHistory from '../components/TransactionHistory'
 
-const History = () => {
+const History = (): JSX.Element => {
   return (
     <Layout>
       <TransactionHistory />

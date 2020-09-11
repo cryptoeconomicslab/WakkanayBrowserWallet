@@ -10,27 +10,20 @@ import { getTransactionHistories } from './transactionHistory'
 import clientWrapper from '../client'
 import { PETHContract } from '../contracts/'
 import { getTokenByUnit, Token } from '../constants/tokens'
-import { ActionType } from './types'
+import { ActionType, DEPOSIT_WITHDRAW_PROGRESS } from './types'
 
 export enum WITHDRAW_ACTION_TYPES {
   SET_WITHDRAW_PROGRESS = 'SET_WITHDRAW_PROGRESS',
   SET_WITHDRAW_ERROR = 'SET_WITHDRAW_ERROR'
 }
 
-export const WITHDRAW_PROGRESS = {
-  INPUT: 'INPUT',
-  CONFIRM: 'CONFIRM',
-  COMPLETE: 'COMPLETE',
-  ERROR: 'ERROR'
-}
-
 export interface State {
-  status: string
+  status: DEPOSIT_WITHDRAW_PROGRESS
   error: Error | null
 }
 
 const initialState: State = {
-  status: WITHDRAW_PROGRESS.INPUT,
+  status: DEPOSIT_WITHDRAW_PROGRESS.INPUT,
   error: null
 }
 
@@ -53,7 +46,7 @@ const reducer = createReducer(initialState, {
     action: ActionType<WITHDRAW_ACTION_TYPES>
   ) => {
     state.error = action.payload
-    state.status = WITHDRAW_PROGRESS.ERROR
+    state.status = DEPOSIT_WITHDRAW_PROGRESS.ERROR
   }
 })
 
@@ -71,11 +64,11 @@ export const withdraw = (amount: string, tokenContractAddress: string) => {
       const client = clientWrapper.client
       if (!client) return
       await client.startWithdrawal(amountWei, tokenContractAddress)
-      dispatch(setWithdrawProgress(WITHDRAW_PROGRESS.COMPLETE))
       dispatch(getL1Balance())
       dispatch(getL2Balance())
       dispatch(getTransactionHistories())
       dispatch(getPendingExitList())
+      dispatch(setWithdrawProgress(DEPOSIT_WITHDRAW_PROGRESS.COMPLETE))
     } catch (e) {
       console.error(e)
       dispatch(setWithdrawError(e))

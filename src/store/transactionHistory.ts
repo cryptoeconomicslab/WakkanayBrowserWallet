@@ -1,20 +1,14 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import clientWrapper from '../client'
 import { transformTransactionHistoryFrom } from '../helper/transactionHistoryHelper'
+import { AppState } from '../store'
 import { pushToast } from './toast'
-import { ActionType } from './types'
+import { ActionType, STATE_LOADING_STATUS } from './types'
 
 export enum TRANSACTION_HISTORY_ACTION_TYPES {
   SET_HISTORY_LIST = 'SET_HISTORY_LIST',
   SET_HISTORY_LIST_STATUS = 'SET_HISTORY_LIST_STATUS',
   SET_HISTORY_LIST_ERROR = 'SET_HISTORY_LIST_ERROR'
-}
-
-export const TRANSACTION_HISTORY_PROGRESS = {
-  UNLOADED: 'UNLOADED',
-  LOADING: 'LOADING',
-  LOADED: 'LOADED',
-  ERROR: 'ERROR'
 }
 
 export type TransactionHistory = {
@@ -30,13 +24,13 @@ export type TransactionHistory = {
 
 export interface State {
   historyList: TransactionHistory[]
-  status: string
+  status: STATE_LOADING_STATUS
   error: Error | null
 }
 
 const initialState: State = {
   historyList: [],
-  status: TRANSACTION_HISTORY_PROGRESS.UNLOADED,
+  status: STATE_LOADING_STATUS.UNLOADED,
   error: null
 }
 
@@ -56,7 +50,7 @@ const reducer = createReducer(initialState, {
     action: ActionType<TRANSACTION_HISTORY_ACTION_TYPES>
   ) => {
     state.historyList = action.payload
-    state.status = TRANSACTION_HISTORY_PROGRESS.LOADED
+    state.status = STATE_LOADING_STATUS.LOADED
   },
   [setHistoryListStatus.type]: (
     state: State,
@@ -69,20 +63,20 @@ const reducer = createReducer(initialState, {
     action: ActionType<TRANSACTION_HISTORY_ACTION_TYPES>
   ) => {
     state.error = action.payload
-    state.status = TRANSACTION_HISTORY_PROGRESS.ERROR
+    state.status = STATE_LOADING_STATUS.ERROR
   }
 })
 
 export default reducer
 
 export const getTransactionHistories = () => {
-  return async (dispatch, getState) => {
+  return async (dispatch, getState: () => AppState) => {
     try {
-      if (getState().history.status === TRANSACTION_HISTORY_PROGRESS.LOADING) {
+      if (getState().history.status === STATE_LOADING_STATUS.LOADING) {
         return
       }
 
-      dispatch(setHistoryListStatus(TRANSACTION_HISTORY_PROGRESS.LOADING))
+      dispatch(setHistoryListStatus(STATE_LOADING_STATUS.LOADING))
       const client = clientWrapper.client
       if (!client) return
       const userActions = await client.getAllUserActions()

@@ -13,6 +13,7 @@ import {
 } from '@cryptoeconomicslab/eth-contract'
 import * as Sentry from '@sentry/browser'
 import { CaptureConsole } from '@sentry/integrations'
+import { IClientWrapper } from './client'
 import config from './config'
 import EthNetworkName from './types/EthNetworkName'
 import {
@@ -60,11 +61,9 @@ async function registerPeth(client: LightClient) {
 }
 
 async function instantiate(
+  clientWrapper: IClientWrapper,
   walletParams: WalletParams
-): Promise<{
-  client: LightClient | undefined
-  wallet: Web3Wallet | undefined
-}> {
+): Promise<void> {
   const networkName = process.env.ETH_NETWORK as EthNetworkName
   const kind = walletParams.kind
 
@@ -82,7 +81,7 @@ async function instantiate(
   // for magic link
   if (!wallet) {
     location.reload()
-    return { client: undefined, wallet: undefined }
+    return
   }
 
   const address = wallet.getAddress()
@@ -165,16 +164,14 @@ async function instantiate(
 
   await registerPeth(client)
 
-  return { client, wallet }
+  clientWrapper.setClient(client)
+  clientWrapper.setWallet(wallet)
 }
 
 export default async function initialize(
+  clientWrapper: IClientWrapper,
   walletParams: WalletParams
-): Promise<{
-  client: LightClient | undefined
-  wallet: Web3Wallet | undefined
-}> {
-  const { client, wallet } = await instantiate(walletParams)
+): Promise<void> {
+  await instantiate(clientWrapper, walletParams)
   localStorage.setItem('loggedInWith', walletParams.kind)
-  return { client, wallet }
 }

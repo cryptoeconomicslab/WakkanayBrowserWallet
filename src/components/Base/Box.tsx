@@ -5,7 +5,7 @@ type Props = {
   children: ReactNode
 }
 
-const Box = ({ children }: Props) => (
+const Box = ({ children }: Props): JSX.Element => (
   <div className="box">
     {children}
     <style jsx>{`

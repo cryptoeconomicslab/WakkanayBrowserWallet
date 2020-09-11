@@ -4,6 +4,7 @@ import TransactionHistoryIcon from './TransactionHistoryIcon'
 import TransactionHistoryMessage from './TransactionHistoryMessage'
 import { SUBTEXT } from '../constants/colors'
 import { FZ_SMALL, FW_BOLD, FZ_MEDIUM } from '../constants/fonts'
+import { AppState } from '../store'
 import {
   getTransactionHistories,
   TransactionHistory as TransactionHistoryItem
@@ -13,7 +14,7 @@ type Props = {
   historyList: TransactionHistoryItem[]
 }
 
-const TransactionHistory = ({ historyList }: Props) => {
+const TransactionHistory = ({ historyList }: Props): JSX.Element => {
   return (
     <ul>
       {historyList.length > 0 ? (
@@ -86,7 +87,7 @@ const TransactionHistory = ({ historyList }: Props) => {
   )
 }
 
-const mapStateToProps = ({ appStatus, history }) => ({
+const mapStateToProps = ({ appStatus, history }: AppState) => ({
   syncingStatus: appStatus.syncingStatus,
   historyList: history.historyList
 })

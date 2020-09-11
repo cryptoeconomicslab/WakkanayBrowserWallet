@@ -3,14 +3,12 @@ import { createAction, createReducer } from '@reduxjs/toolkit'
 import { utils } from 'ethers'
 import JSBI from 'jsbi'
 import { pushToast } from './toast'
-import { TRANSACTION_HISTORY_PROGRESS } from './transactionHistory'
 import clientWrapper from '../client'
 import config from '../config'
 import validateTransfer from '../validators/transferValidator'
 import { ActionType } from './types'
 
 export enum TRANSFER_ACTION_TYPES {
-  SET_TRANSFER_IS_SENDING = 'SET_TRANSFER_IS_SENDING',
   SET_TRANSFERRED_TOKEN = 'SET_TRANSFERRED_TOKEN',
   SET_TRANSFERRED_AMOUNT = 'SET_TRANSFERRED_AMOUNT',
   SET_RECEPIENT_ADDRESS = 'SET_RECEPIENT_ADDRESS',
@@ -20,11 +18,11 @@ export enum TRANSFER_ACTION_TYPES {
   CLEAR_TRANSFER_STATE = 'CLEAR_TRANSFER_STATE'
 }
 
-export const TRANSFER_PROGRESS = {
-  INITIAL: 'INITIAL',
-  SENDING: 'SENDING',
-  COMPLETE: 'COMPLETE',
-  ERROR: 'ERROR'
+export enum TRANSFER_PROGRESS {
+  INITIAL = 'INITIAL',
+  SENDING = 'SENDING',
+  COMPLETE = 'COMPLETE',
+  ERROR = 'ERROR'
 }
 
 export interface State {
@@ -32,7 +30,7 @@ export interface State {
   transferredAmount: string
   recepientAddress: string
   transferPage: string
-  status: string
+  status: TRANSFER_PROGRESS
   error: Error | null
 }
 
@@ -45,9 +43,6 @@ const initialState: State = {
   error: null
 }
 
-export const setTransferIsSending = createAction<string>(
-  TRANSFER_ACTION_TYPES.SET_TRANSFER_IS_SENDING
-)
 export const setTransferredToken = createAction<string>(
   TRANSFER_ACTION_TYPES.SET_TRANSFERRED_TOKEN
 )
@@ -106,7 +101,7 @@ const reducer = createReducer(initialState, {
     action: ActionType<TRANSFER_ACTION_TYPES>
   ) => {
     state.error = action.payload
-    state.status = TRANSACTION_HISTORY_PROGRESS.ERROR
+    state.status = TRANSFER_PROGRESS.ERROR
   },
   [clearTransferState.type]: () => {
     return initialState

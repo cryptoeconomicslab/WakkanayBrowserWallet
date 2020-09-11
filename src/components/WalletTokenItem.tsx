@@ -14,7 +14,16 @@ import {
 } from '../constants/fonts'
 import TOKEN_LIST from '../constants/tokens'
 import { openModal, PAYMENT } from '../routes'
-import { SYNCING_STATUS } from '../store/appStatus'
+import { AppState } from '../store'
+import { STATE_LOADING_STATUS } from '../store/types'
+
+type Props = {
+  l1Balance: number
+  l2Balance: number
+  tokenContractAddress: string
+  unit: string
+  syncingStatus: STATE_LOADING_STATUS
+}
 
 const WalletTokenItem = ({
   l1Balance,
@@ -22,7 +31,7 @@ const WalletTokenItem = ({
   tokenContractAddress,
   unit,
   syncingStatus
-}) => {
+}: Props): JSX.Element => {
   const router = useRouter()
   const { imgSrc, imgAspect } = _.find(TOKEN_LIST, { unit })
   return (
@@ -48,7 +57,7 @@ const WalletTokenItem = ({
                         token: tokenContractAddress
                       })
                     }}
-                    disabled={syncingStatus === SYNCING_STATUS.LOADING}
+                    disabled={syncingStatus === STATE_LOADING_STATUS.LOADING}
                   >
                     <img src="/withdraw-arrow.svg" className="btn__icon" />
                     Withdraw
@@ -60,7 +69,7 @@ const WalletTokenItem = ({
                     onClick={() => {
                       router.push(PAYMENT)
                     }}
-                    disabled={syncingStatus === SYNCING_STATUS.LOADING}
+                    disabled={syncingStatus === STATE_LOADING_STATUS.LOADING}
                   >
                     Send
                   </Button>
@@ -87,7 +96,7 @@ const WalletTokenItem = ({
                 onClick={() => {
                   openModal({ modal: 'deposit', token: tokenContractAddress })
                 }}
-                disabled={syncingStatus === SYNCING_STATUS.LOADING}
+                disabled={syncingStatus === STATE_LOADING_STATUS.LOADING}
               >
                 <img src="/deposit-arrow.svg" className="btn__icon" />
                 Deposit
@@ -169,7 +178,7 @@ const WalletTokenItem = ({
   )
 }
 
-const mapStateToProps = state => ({
-  syncingStatus: state.appStatus.syncingStatus
+const mapStateToProps = ({ appStatus }: AppState) => ({
+  syncingStatus: appStatus.syncingStatus
 })
 export default connect(mapStateToProps)(WalletTokenItem)

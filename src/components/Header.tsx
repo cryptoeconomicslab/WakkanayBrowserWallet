@@ -4,10 +4,18 @@ import { MAIN, Main, MAIN_DARK, White } from '../constants/colors'
 import { FW_NORMAL, FZ_MEDIUM } from '../constants/fonts'
 import { useRouter } from 'next/router'
 import { connect } from 'react-redux'
-import { APP_STATUS } from '../store/appStatus'
+import { AppState } from '../store'
+import { State as AppRouterState } from '../store/appRouter'
+import { State as AppStatusState } from '../store/appStatus'
+import { STATE_LOADING_STATUS } from '../store/types'
 import { HISTORY, PAYMENT } from '../routes'
 
-const Header = ({ appRouter, appStatus }) => {
+type Props = {
+  appRouter: AppRouterState
+  appStatus: AppStatusState
+}
+
+const Header = ({ appRouter, appStatus }: Props): JSX.Element => {
   const router = useRouter()
 
   const LinkWrap = ({ children }) =>
@@ -34,7 +42,7 @@ const Header = ({ appRouter, appStatus }) => {
               <img src="/logo.svg" width="158" />
             </Link>
           </h1>
-          {appStatus.status === APP_STATUS.LOADED && (
+          {appStatus.status === STATE_LOADING_STATUS.LOADED && (
             <Link href={HISTORY} passHref>
               <a className="historyButton">
                 <img
@@ -50,7 +58,7 @@ const Header = ({ appRouter, appStatus }) => {
       ) : (
         <>
           <div />
-          {appStatus.status === APP_STATUS.LOADED && (
+          {appStatus.status === STATE_LOADING_STATUS.LOADED && (
             <LinkWrap>
               <a className="historyButton fill">
                 <img
@@ -117,9 +125,9 @@ const Header = ({ appRouter, appStatus }) => {
   )
 }
 
-const mapStateToProps = state => ({
-  appRouter: state.appRouter,
-  appStatus: state.appStatus
+const mapStateToProps = ({ appRouter, appStatus }: AppState) => ({
+  appRouter: appRouter,
+  appStatus: appStatus
 })
 
 export default connect(mapStateToProps)(Header)

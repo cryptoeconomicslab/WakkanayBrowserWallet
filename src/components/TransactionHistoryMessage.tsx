@@ -7,7 +7,7 @@ type Props = {
   history: TransactionHistory
 }
 
-const TransactionHistoryMessage = ({ history }: Props) => {
+const TransactionHistoryMessage = ({ history }: Props): JSX.Element => {
   if (history.message === ActionType.Send) {
     return (
       <>{`${history.message} to ${shortenAddress(history.counterParty)}`}</>

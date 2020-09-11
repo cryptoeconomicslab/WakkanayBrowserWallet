@@ -1,9 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { ActionCreatorWithPayload } from '@reduxjs/toolkit'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 library.add(faSignOutAlt)
 import { isAbleToTransfer } from '../selectors/transferSelector'
+import { AppState } from '../store'
 import {
   setTransferredToken,
   setTransferredAmount,
@@ -15,22 +17,48 @@ import TOKEN_LIST, {
   getTokenByTokenContractAddress,
   Token
 } from '../constants/tokens'
+import { BalanceList } from '../types/Balance'
 import TokenSelector from './TokenSelector'
 import AddressInput from './AddressInput'
 import Button from './Base/Button'
 import SectionTitle from './SectionTitle'
 import TokenInput from './TokenInput'
 
-const Send = props => {
+type Props = {
+  l2Balance: BalanceList
+  isAbleToTransfer: boolean
+  transferredToken: string
+  transferredAmount: string
+  recepientAddress: string
+  setTransferredToken: ActionCreatorWithPayload<string, string>
+  setTransferredAmount: ActionCreatorWithPayload<string, string>
+  setRecepientAddress: ActionCreatorWithPayload<string, string>
+  transfer: (
+    amount: string,
+    tokenContractAddress: string,
+    recipientAddress: string
+  ) => Promise<void>
+}
+
+const Send = ({
+  l2Balance,
+  isAbleToTransfer,
+  transferredToken,
+  transferredAmount,
+  recepientAddress,
+  setTransferredToken,
+  setTransferredAmount,
+  setRecepientAddress,
+  transfer
+}: Props): JSX.Element => {
   const transferredTokenObj: Token =
-    getTokenByTokenContractAddress(props.transferredToken) === undefined
+    getTokenByTokenContractAddress(transferredToken) === undefined
       ? TOKEN_LIST[0]
-      : (getTokenByTokenContractAddress(props.transferredToken) as Token)
-  const tokensWithCurrentAmount = TOKEN_LIST.map(token => ({
+      : (getTokenByTokenContractAddress(transferredToken) as Token)
+  const tokenList = TOKEN_LIST.map(token => ({
     ...token,
-    amount: props.l2Balance[token.unit]
-      ? props.l2Balance[token.unit].amount /
-        10 ** props.l2Balance[token.unit].decimals
+    amount: l2Balance[token.unit]
+      ? l2Balance[token.unit].amount / 10 ** l2Balance[token.unit].decimals
       : 0
   }))
 
@@ -38,27 +66,23 @@ const Send = props => {
     <div className="send-section" id="send">
       <SectionTitle>Send Token</SectionTitle>
       <TokenSelector
-        items={tokensWithCurrentAmount}
-        onSelected={props.setTransferredToken}
+        tokenList={tokenList}
+        onSelected={setTransferredToken}
         selectedToken={transferredTokenObj}
       />
       <TokenInput
         className="mts mbs"
-        value={props.transferredAmount}
+        value={transferredAmount}
         unit={transferredTokenObj.unit}
-        handleAmount={props.setTransferredAmount}
+        handleAmount={setTransferredAmount}
       />
-      <AddressInput className="mbs" handleAddress={props.setRecepientAddress} />
+      <AddressInput className="mbs" handleAddress={setRecepientAddress} />
       <Button
-        full
+        size="full"
         onClick={() => {
-          props.transfer(
-            props.transferredAmount,
-            props.transferredToken,
-            props.recepientAddress
-          )
+          transfer(transferredAmount, transferredToken, recepientAddress)
         }}
-        disabled={props.isAbleToTransfer}
+        disabled={isAbleToTransfer}
       >
         Send
       </Button>
@@ -76,14 +100,12 @@ const Send = props => {
   )
 }
 
-const mapStateToProps = state => ({
-  address: state.address.item,
+const mapStateToProps = (state: AppState) => ({
   l2Balance: state.l2Balance.balanceList,
   isAbleToTransfer: isAbleToTransfer(state),
   transferredToken: state.transferState.transferredToken,
   transferredAmount: state.transferState.transferredAmount,
-  recepientAddress: state.transferState.recepientAddress,
-  transferPage: state.transferState.transferPage
+  recepientAddress: state.transferState.recepientAddress
 })
 
 const mapDispatchToProps = {

@@ -1,9 +1,24 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { ActionCreatorWithPayload } from '@reduxjs/toolkit'
 import DepositWithdrawModal from './Base/DepositWithdrawModal'
+import { BalanceList } from '../types/Balance'
+import { AppState } from '../store'
 import { deposit, setDepositProgress } from '../store/deposit'
 
-const DepositModal = ({ balanceList, progress, deposit, setProgress }) => {
+type Props = {
+  balanceList: BalanceList
+  progress: string
+  deposit: (amount: string, addr: string) => Promise<void>
+  setProgress: ActionCreatorWithPayload<string, string>
+}
+
+const DepositModal = ({
+  balanceList,
+  progress,
+  deposit,
+  setProgress
+}: Props): JSX.Element => {
   return (
     <DepositWithdrawModal
       type={'deposit'}
@@ -18,7 +33,7 @@ const DepositModal = ({ balanceList, progress, deposit, setProgress }) => {
 const mapStateToProps = ({
   l1Balance: { balanceList },
   depositState: { depositProgress }
-}) => ({
+}: AppState) => ({
   balanceList,
   progress: depositProgress
 })

@@ -6,7 +6,7 @@ type Props = {
   color?: string
 }
 
-const Message = ({ children, color }: Props) => (
+const Message = ({ children, color }: Props): JSX.Element => (
   <p>
     {children}
     <style jsx>{`

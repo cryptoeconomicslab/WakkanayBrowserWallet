@@ -1,20 +1,27 @@
+import React, { useState } from 'react'
 import ClickOutside from 'react-click-outside'
 import { BACKGROUND } from '../constants/colors'
-import React, { useState } from 'react'
+import { Token } from '../constants/tokens'
 import DropdownContent from './DropdownContent'
+import TokenSelectButton from './TokenSelectButton'
+
+type Props = {
+  onSelected: (selectedTokenContractAddress: string) => void
+  width: string
+  selectedItem: Token
+  tokenList: Token[]
+}
 
 const Dropdown = ({
-  onselect,
-  topButtonName,
-  items,
-  renderItem,
+  onSelected,
   width,
-  selectedItem
-}) => {
+  selectedItem,
+  tokenList
+}: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false)
 
-  const selectItem = item => {
-    onselect(item.tokenContractAddress)
+  const selectItem = (item: Token) => {
+    onSelected(item.tokenContractAddress)
     setIsOpen(false)
   }
 
@@ -26,14 +33,12 @@ const Dropdown = ({
             className="dropdown-button"
             onClick={() => setIsOpen(!isOpen)}
           >
-            <div className="top-button-name">{topButtonName(selectedItem)}</div>
+            <div className="top-button-name">
+              <TokenSelectButton item={selectedItem} padding="0.5rem 0.5rem" />
+            </div>
           </button>
           {isOpen && (
-            <DropdownContent
-              onSelect={selectItem}
-              renderItem={renderItem}
-              items={items}
-            />
+            <DropdownContent onSelect={selectItem} tokenList={tokenList} />
           )}
         </div>
       </ClickOutside>

@@ -1,5 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, ReactNode } from 'react'
 import { connect } from 'react-redux'
+import {
+  ActionCreatorWithPayload,
+  ActionCreatorWithoutPayload
+} from '@reduxjs/toolkit'
 import Router, { useRouter } from 'next/router'
 import Head from 'next/head'
 import Alert from './Base/Alert'
@@ -29,14 +33,30 @@ import {
 } from '../constants/fonts'
 import { useReactToast } from '../hooks'
 import { WALLET, HISTORY } from '../routes'
-import { pushRouteHistory, popRouteHistory } from '../store/appRouter'
+import { AppState } from '../store'
 import {
-  APP_STATUS,
-  SYNCING_STATUS,
-  checkClientInitialized
+  pushRouteHistory,
+  popRouteHistory,
+  APP_ROUTER_ACTION_TYPES
+} from '../store/appRouter'
+import {
+  checkClientInitialized,
+  State as AppStatusState
 } from '../store/appStatus'
 import { logout } from '../store/logout'
 import { removeToast } from '../store/toast'
+import { STATE_LOADING_STATUS } from '../store/types'
+
+type Props = {
+  checkClientInitialized: () => Promise<void>
+  pushRouteHistory: ActionCreatorWithPayload<string, string>
+  popRouteHistory: ActionCreatorWithoutPayload<APP_ROUTER_ACTION_TYPES>
+  appStatus: AppStatusState
+  toasts: string[]
+  removeToast: ActionCreatorWithPayload<string, string>
+  logout: () => Promise<void>
+  children: ReactNode
+}
 
 const Initial = ({
   checkClientInitialized,
@@ -47,7 +67,7 @@ const Initial = ({
   removeToast,
   logout,
   children
-}) => {
+}: Props): JSX.Element => {
   const router = useRouter()
   useReactToast({ toasts: toasts, onDisappearToast: removeToast })
   const isWalletHidden =
@@ -66,12 +86,12 @@ const Initial = ({
   }, [])
 
   const content =
-    appStatus.status === APP_STATUS.UNLOADED ||
-    appStatus.status === APP_STATUS.ERROR ? (
+    appStatus.status === STATE_LOADING_STATUS.UNLOADED ||
+    appStatus.status === STATE_LOADING_STATUS.ERROR ? (
       <div>
         <StartupModal />
       </div>
-    ) : appStatus.status === APP_STATUS.LOADED ? (
+    ) : appStatus.status === STATE_LOADING_STATUS.LOADED ? (
       children
     ) : (
       <p>loading...</p>
@@ -87,27 +107,29 @@ const Initial = ({
       </Head>
       <Header />
       <div className="container">
-        <Alert>
-          Please note that this wallet is the alpha version and there is a
-          possibility of losing your deposited funds. If you want to use testnet
-          token, you can get Kovan Ether (KETH) from{' '}
-          <a
-            href="https://faucet.kovan.network/"
-            className="alert__link"
-            target="_blank"
-            rel="noreferrer"
-          >
-            here
-          </a>
-          .
-        </Alert>
+        {process.env.ETH_NETWORK === 'kovan' && (
+          <Alert>
+            Please note that this wallet is the alpha version and there is a
+            possibility of losing your deposited funds. If you want to use
+            testnet token, you can get Kovan Ether (KETH) from{' '}
+            <a
+              href="https://faucet.kovan.network/"
+              className="alert__link"
+              target="_blank"
+              rel="noreferrer"
+            >
+              here
+            </a>
+            .
+          </Alert>
+        )}
         <h2 className="headline">
           {router.pathname !== HISTORY ? 'Your Wallet' : 'Transaction History'}
         </h2>
         {!isWalletHidden && (
           <Box>
             <div className="wallet">
-              {appStatus.status !== APP_STATUS.LOADED ? (
+              {appStatus.status !== STATE_LOADING_STATUS.LOADED ? (
                 <span className="wallet__txt">No Wallet</span>
               ) : (
                 <Wallet />
@@ -116,14 +138,14 @@ const Initial = ({
           </Box>
         )}
         <Box>{content}</Box>
-        {appStatus.status === APP_STATUS.LOADED && (
+        {appStatus.status === STATE_LOADING_STATUS.LOADED && (
           <div className="logoutButtonWrap">
             <a className="logoutButton" onClick={logout}>
               Logout
             </a>
           </div>
         )}
-        {appStatus.syncingStatus === SYNCING_STATUS.LOADING && (
+        {appStatus.syncingStatus === STATE_LOADING_STATUS.LOADING && (
           <SyncingLoader />
         )}
       </div>
@@ -243,9 +265,9 @@ const Initial = ({
   )
 }
 
-const mapStateToProps = state => ({
-  appStatus: state.appStatus,
-  toasts: state.toast.toasts
+const mapStateToProps = ({ appStatus, toast }: AppState) => ({
+  appStatus: appStatus,
+  toasts: toast.toasts
 })
 
 const mapDispatchToProps = {

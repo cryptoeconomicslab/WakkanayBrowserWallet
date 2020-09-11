@@ -2,7 +2,19 @@ import React from 'react'
 import { FZ_DEFAULT, FW_BOLD } from '../constants/fonts'
 import { TEXT, PLACEHOLDER } from '../constants/colors'
 
-const SectionItem = ({ img, name, supplement, padding }) => {
+type Props = {
+  img: string
+  name: string
+  padding: string
+  supplement?: string
+}
+
+const SectionItem = ({
+  img,
+  name,
+  supplement,
+  padding
+}: Props): JSX.Element => {
   return (
     <div className="item">
       <div className="item__label">
@@ -15,7 +27,7 @@ const SectionItem = ({ img, name, supplement, padding }) => {
       <style jsx>{`
         .item {
           width: 100%;
-          padding: ${padding || 0};
+          padding: ${padding};
           display: flex;
           align-items: center;
           justify-content: space-between;

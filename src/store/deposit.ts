@@ -5,27 +5,20 @@ import JSBI from 'jsbi'
 import clientWrapper from '../client'
 import { PETHContract } from '../contracts'
 import { getTokenByUnit } from '../constants/tokens'
-import { ActionType } from './types'
+import { ActionType, DEPOSIT_WITHDRAW_PROGRESS } from './types'
 
 export enum DEPOSIT_ACTION_TYPES {
   SET_DEPOSIT_PROGRESS = 'SET_DEPOSIT_PROGRESS',
   SET_DEPOSIT_ERROR = 'SET_DEPOSIT_ERROR'
 }
 
-export const DEPOSIT_PROGRESS = {
-  INPUT: 'INPUT',
-  CONFIRM: 'CONFIRM',
-  COMPLETE: 'COMPLETE',
-  ERROR: 'ERROR'
-}
-
 export interface State {
-  depositProgress: string
+  depositProgress: DEPOSIT_WITHDRAW_PROGRESS
   error: Error | null
 }
 
 const initialState: State = {
-  depositProgress: DEPOSIT_PROGRESS.INPUT,
+  depositProgress: DEPOSIT_WITHDRAW_PROGRESS.INPUT,
   error: null
 }
 
@@ -49,7 +42,7 @@ const reducer = createReducer(initialState, {
     action: ActionType<DEPOSIT_ACTION_TYPES>
   ) => {
     state.error = action.payload
-    state.depositProgress = DEPOSIT_PROGRESS.ERROR
+    state.depositProgress = DEPOSIT_WITHDRAW_PROGRESS.ERROR
   }
 })
 
@@ -77,7 +70,7 @@ export const deposit = (amount: string, addr: string) => {
         console.info(`wrapped PETH: ${amount}`)
       }
       await client.deposit(amountWei, addr)
-      dispatch(setDepositProgress(DEPOSIT_PROGRESS.COMPLETE))
+      dispatch(setDepositProgress(DEPOSIT_WITHDRAW_PROGRESS.COMPLETE))
     } catch (e) {
       console.error(e)
       dispatch(setDepositError(e))

@@ -6,7 +6,7 @@ type Props = {
   children: ReactNode
 }
 
-const Alert = ({ children }: Props) => (
+const Alert = ({ children }: Props): JSX.Element => (
   <>
     <div className="attention">
       <img src="/icon-info.svg" className="attention__icon" />

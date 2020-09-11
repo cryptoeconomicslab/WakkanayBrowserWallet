@@ -5,22 +5,20 @@ import { FZ_MEDIUM, FW_BLACK, FZ_SMALL } from '../../constants/fonts'
 
 type Props = {
   children: ReactNode
+  size: string
   className?: string
-  full?: any
   border?: any
-  size?: any
   onClick?: any
   disabled?: boolean
 }
 
-const Button = (props: Props) => {
-  const { full, size, className, border, children } = props
+const Button = (props: Props): JSX.Element => {
+  const { size, className, border, children } = props
   return (
     <button
       {...props}
       className={`${classnames(className, {
         button: true,
-        full,
         [size]: true,
         border
       })}`}

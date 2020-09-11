@@ -6,20 +6,21 @@ import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
 import clientWrapper from '../client'
 import { MAIN, MAIN_DARK } from '../constants/colors'
 import { findExit } from '../helper/withdrawHelper'
+import { AppState } from '../store'
 import { TransactionHistory } from '../store/transactionHistory'
 import { completeWithdrawal } from '../store/withdraw'
 
 type Props = {
   history: TransactionHistory
   pendingExitList: Exit[]
-  completeWithdrawal: any
+  completeWithdrawal: (exit: Exit) => Promise<void>
 }
 
 const TransactionHistoryIcon = ({
   history,
   pendingExitList,
   completeWithdrawal
-}: Props) => {
+}: Props): JSX.Element => {
   const iconEl = (
     <>
       <div className="historyIcon__wrap">
@@ -70,7 +71,7 @@ const TransactionHistoryIcon = ({
     }
   }, [pendingExitList])
 
-  return isWithdrawalCompletable ? (
+  return isWithdrawalCompletable && exit ? (
     <>
       <div
         className="historyIcon__btn"
@@ -118,7 +119,7 @@ const TransactionHistoryIcon = ({
   )
 }
 
-const mapStateToProps = ({ pendingExitList }) => ({
+const mapStateToProps = ({ pendingExitList }: AppState) => ({
   pendingExitList: pendingExitList.items
 })
 const mapDispatchToProps = {

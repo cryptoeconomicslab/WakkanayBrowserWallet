@@ -3,7 +3,7 @@ import Layout from '../components/Layout'
 import Send from '../components/Send'
 import Receive from '../components/Receive'
 
-const Payment = () => {
+const Payment = (): JSX.Element => {
   return (
     <Layout>
       <Send />

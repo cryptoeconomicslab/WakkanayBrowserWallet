@@ -2,7 +2,6 @@ import React from 'react'
 import { connect } from 'react-redux'
 import Button from './Base/Button'
 import ConfirmationLoader from './Base/ConfirmationLoader'
-import { shortenAddress, roundBalance } from '../utils'
 import { SUBTEXT, BACKGROUND, TEXT } from '../constants/colors'
 import {
   FZ_HEADLINE,
@@ -11,6 +10,21 @@ import {
   FW_BOLD,
   FZ_SMALL
 } from '../constants/fonts'
+import { shortenAddress, roundBalance } from '../utils'
+import { AppState } from '../store'
+
+type Props = {
+  type: string
+  tokenAmount: number
+  unit: string
+  imgSrc: string
+  supplement: string
+  isLoading: boolean
+  onCancel: () => void
+  onConfirm: () => Promise<void>
+  address: string
+  ethUsdRate: number
+}
 
 const Confirmation = ({
   /* Component */
@@ -23,9 +37,9 @@ const Confirmation = ({
   onConfirm,
   isLoading,
   /* Redux */
-  ethUsdRate,
-  address
-}) => {
+  address,
+  ethUsdRate
+}: Props): JSX.Element => {
   return (
     <div className="confirmation">
       <div className="confirmation__title">You will {type}</div>
@@ -48,7 +62,7 @@ const Confirmation = ({
       </div>
       <div className="confirmation__btns">
         <Button
-          full
+          size="full"
           className="confirmation__btn"
           onClick={onConfirm}
           disabled={isLoading}
@@ -60,7 +74,7 @@ const Confirmation = ({
           )}
         </Button>
         <Button
-          full
+          size="full"
           border
           className="confirmation__btn"
           onClick={onCancel}
@@ -143,7 +157,7 @@ const Confirmation = ({
   )
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state: AppState) => ({
   ethUsdRate: state.ethUsdRate.rate,
   address: state.address.item
 })

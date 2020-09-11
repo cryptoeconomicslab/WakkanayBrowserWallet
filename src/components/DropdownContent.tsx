@@ -1,9 +1,19 @@
-import { TEXT, SUBTEXT, BACKGROUND, White } from '../constants/colors'
 import React from 'react'
+import TokenSelectButton from './TokenSelectButton'
+import { TEXT, SUBTEXT, BACKGROUND, White } from '../constants/colors'
+import { Token } from '../constants/tokens'
 import { Z_DROPDOWN } from '../constants/zindex'
 
-const DropdownContent = ({ onSelect, items, renderItem }) => {
-  const selectItem = (e, item) => {
+type Props = {
+  onSelect: (item: Token) => void
+  tokenList: Token[]
+}
+
+const DropdownContent = ({ onSelect, tokenList }: Props): JSX.Element => {
+  const selectItem = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    item: Token
+  ) => {
     e.preventDefault()
     onSelect(item)
   }
@@ -11,13 +21,13 @@ const DropdownContent = ({ onSelect, items, renderItem }) => {
   return (
     <>
       <div className="dropdown-content">
-        {items.map(item => (
+        {tokenList.map(item => (
           <div
             key={item.unit}
             className="dropdown-item"
             onClick={e => selectItem(e, item)}
           >
-            {renderItem ? renderItem(item) : item.unit}
+            <TokenSelectButton item={item} padding="0.5rem 0.5rem" />
           </div>
         ))}
       </div>

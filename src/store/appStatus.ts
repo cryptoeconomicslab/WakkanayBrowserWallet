@@ -9,6 +9,7 @@ import LightClient, {
 import { BigNumber } from '@cryptoeconomicslab/primitives'
 import clientWrapper from '../client'
 import { WALLET_KIND } from '../wallet'
+import { AppState } from './'
 import { getAddress } from './address'
 import { getEthUsdRate } from './ethUsdRate'
 import { getPendingExitList } from './pendingExitList'
@@ -16,7 +17,7 @@ import { pushToast } from './toast'
 import { getL1Balance } from './l1Balance'
 import { getL2Balance } from './l2Balance'
 import { getTransactionHistories } from './transactionHistory'
-import { ActionType } from './types'
+import { ActionType, STATE_LOADING_STATUS } from './types'
 
 export enum APP_STATUS_ACTION_TYPES {
   SET_APP_STATUS = 'SET_APP_STATUS',
@@ -27,30 +28,16 @@ export enum SYNCING_STATUS_ACTION_TYPES {
   SET_SYNCING_STATUS = 'SET_SYNCING_STATUS'
 }
 
-export const APP_STATUS = {
-  UNLOADED: 'UNLOADED',
-  LOADING: 'LOADING',
-  LOADED: 'LOADED',
-  ERROR: 'ERROR'
-}
-
-export const SYNCING_STATUS = {
-  UNLOADED: 'UNLOADED',
-  LOADING: 'LOADING',
-  LOADED: 'LOADED',
-  ERROR: 'ERROR'
-}
-
 export interface State {
   status: string
   error: Error | null
-  syncingStatus: string
+  syncingStatus: STATE_LOADING_STATUS
 }
 
 const initialState: State = {
-  status: APP_STATUS.UNLOADED,
+  status: STATE_LOADING_STATUS.UNLOADED,
   error: null,
-  syncingStatus: SYNCING_STATUS.LOADED
+  syncingStatus: STATE_LOADING_STATUS.LOADED
 }
 
 export const setAppStatus = createAction<string>(
@@ -75,7 +62,7 @@ const reducer = createReducer(initialState, {
     action: ActionType<APP_STATUS_ACTION_TYPES>
   ) => {
     state.error = action.payload
-    state.status = APP_STATUS.ERROR
+    state.status = STATE_LOADING_STATUS.ERROR
   },
   [setSyncingStatus.type]: (
     state: State,
@@ -87,8 +74,8 @@ const reducer = createReducer(initialState, {
 
 export default reducer
 
-export const initialGetters = (dispatch, getState) => {
-  if (getState().appStatus.syncingStatus === SYNCING_STATUS.LOADED) {
+export const initialGetters = (dispatch, getState: () => AppState) => {
+  if (getState().appStatus.syncingStatus === STATE_LOADING_STATUS.LOADED) {
     dispatch(getEthUsdRate())
     dispatch(getAddress())
     dispatch(getL1Balance())
@@ -97,8 +84,8 @@ export const initialGetters = (dispatch, getState) => {
     dispatch(getPendingExitList())
   }
 }
-const subscribedEventGetters = (dispatch, getState) => {
-  if (getState().appStatus.syncingStatus === SYNCING_STATUS.LOADED) {
+const subscribedEventGetters = (dispatch, getState: () => AppState) => {
+  if (getState().appStatus.syncingStatus === STATE_LOADING_STATUS.LOADED) {
     dispatch(getL1Balance())
     dispatch(getL2Balance())
     dispatch(getTransactionHistories())
@@ -117,36 +104,36 @@ const initializeClientWrapper = async (
   })
   dispatch(subscribeEvents())
   clientWrapper.start().then(() => {
-    dispatch(setSyncingStatus(SYNCING_STATUS.LOADED))
+    dispatch(setSyncingStatus(STATE_LOADING_STATUS.LOADED))
     initialGetters(dispatch, getState)
   })
   initialGetters(dispatch, getState)
 }
 
 export const checkClientInitialized = () => {
-  return async (dispatch, getState) => {
+  return async (dispatch, getState: () => AppState) => {
     if (!process.browser) {
-      dispatch(setAppStatus(APP_STATUS.UNLOADED))
+      dispatch(setAppStatus(STATE_LOADING_STATUS.UNLOADED))
       return
     }
 
     try {
-      dispatch(setAppStatus(APP_STATUS.LOADING))
+      dispatch(setAppStatus(STATE_LOADING_STATUS.LOADING))
       setupContext({ coder: EthCoder })
       const client = clientWrapper.client
       if (client) {
         dispatch(subscribeEvents())
         initialGetters(dispatch, getState)
-        dispatch(setAppStatus(APP_STATUS.LOADED))
+        dispatch(setAppStatus(STATE_LOADING_STATUS.LOADED))
         return
       }
 
       const loggedInWith = localStorage.getItem('loggedInWith')
       if (loggedInWith) {
         initializeClientWrapper(dispatch, getState, loggedInWith as WALLET_KIND)
-        dispatch(setAppStatus(APP_STATUS.LOADED))
+        dispatch(setAppStatus(STATE_LOADING_STATUS.LOADED))
       } else {
-        dispatch(setAppStatus(APP_STATUS.UNLOADED))
+        dispatch(setAppStatus(STATE_LOADING_STATUS.UNLOADED))
       }
     } catch (e) {
       console.error(e)
@@ -157,11 +144,11 @@ export const checkClientInitialized = () => {
 }
 
 export const initializeMetamaskWallet = () => {
-  return async (dispatch, getState) => {
+  return async (dispatch, getState: () => AppState) => {
     try {
-      dispatch(setAppStatus(APP_STATUS.LOADING))
+      dispatch(setAppStatus(STATE_LOADING_STATUS.LOADING))
       initializeClientWrapper(dispatch, getState, WALLET_KIND.WALLET_METAMASK)
-      dispatch(setAppStatus(APP_STATUS.LOADED))
+      dispatch(setAppStatus(STATE_LOADING_STATUS.LOADED))
     } catch (e) {
       console.error(e)
       dispatch(pushToast({ message: e.message, type: 'error' }))
@@ -171,11 +158,11 @@ export const initializeMetamaskWallet = () => {
 }
 
 export const initializeWalletConnect = () => {
-  return async (dispatch, getState) => {
+  return async (dispatch, getState: () => AppState) => {
     try {
-      dispatch(setAppStatus(APP_STATUS.LOADING))
+      dispatch(setAppStatus(STATE_LOADING_STATUS.LOADING))
       initializeClientWrapper(dispatch, getState, WALLET_KIND.WALLET_CONNECT)
-      dispatch(setAppStatus(APP_STATUS.LOADED))
+      dispatch(setAppStatus(STATE_LOADING_STATUS.LOADED))
     } catch (e) {
       console.error(e)
       dispatch(pushToast({ message: e.message, type: 'error' }))
@@ -185,16 +172,16 @@ export const initializeWalletConnect = () => {
 }
 
 export const initializeMagicLinkWallet = (email: string) => {
-  return async (dispatch, getState) => {
+  return async (dispatch, getState: () => AppState) => {
     try {
-      dispatch(setAppStatus(APP_STATUS.LOADING))
+      dispatch(setAppStatus(STATE_LOADING_STATUS.LOADING))
       initializeClientWrapper(
         dispatch,
         getState,
         WALLET_KIND.WALLET_MAGIC_LINK,
         email
       )
-      dispatch(setAppStatus(APP_STATUS.LOADED))
+      dispatch(setAppStatus(STATE_LOADING_STATUS.LOADED))
     } catch (e) {
       console.error(e)
       dispatch(pushToast({ message: e.message, type: 'error' }))
@@ -204,7 +191,7 @@ export const initializeMagicLinkWallet = (email: string) => {
 }
 
 const subscribeDepositEvent = (client: LightClient) => {
-  return (dispatch, getState) => {
+  return (dispatch, getState: () => AppState) => {
     client.subscribeDepositEvent((userAction: UserAction) => {
       console.info(
         `subscribe deposit event { userAction: ${JSON.stringify(userAction)}) }`
@@ -218,34 +205,34 @@ const subscribeSyncStartedEvent = (client: LightClient) => {
   return dispatch => {
     client.subscribeSyncBlockStarted((blockNumber: BigNumber) => {
       console.info(`syncing... ${blockNumber.data}`)
-      dispatch(setSyncingStatus(SYNCING_STATUS.LOADING))
+      dispatch(setSyncingStatus(STATE_LOADING_STATUS.LOADING))
     })
 
     client.subscribeSyncBlocksStarted(({ from, to }) => {
       console.info(`syncing... from ${from.data} to ${to.data}`)
-      dispatch(setSyncingStatus(SYNCING_STATUS.LOADING))
+      dispatch(setSyncingStatus(STATE_LOADING_STATUS.LOADING))
     })
   }
 }
 
 const subscribeSyncFinishedEvent = (client: LightClient) => {
-  return (dispatch, getState) => {
+  return (dispatch, getState: () => AppState) => {
     client.subscribeSyncBlockFinished((blockNumber: BigNumber) => {
       console.info(`sync new state: ${blockNumber.data}`)
-      dispatch(setSyncingStatus(SYNCING_STATUS.LOADED))
+      dispatch(setSyncingStatus(STATE_LOADING_STATUS.LOADED))
       subscribedEventGetters(dispatch, getState)
     })
 
     client.subscribeSyncBlocksFinished(({ from, to }) => {
       console.info(`sync new state: from ${from.data} to ${to.data}`)
-      dispatch(setSyncingStatus(SYNCING_STATUS.LOADED))
+      dispatch(setSyncingStatus(STATE_LOADING_STATUS.LOADED))
       subscribedEventGetters(dispatch, getState)
     })
   }
 }
 
 const subscribeTransferCompleteEvent = (client: LightClient) => {
-  return (dispatch: Dispatch, getState) => {
+  return (dispatch: Dispatch, getState: () => AppState) => {
     client.subscribeTransferComplete((stateUpdate: StateUpdate) => {
       console.info(
         `%c transfer complete for range: %c (${stateUpdate.range.start.data}, ${stateUpdate.range.end.data})`,
@@ -258,7 +245,7 @@ const subscribeTransferCompleteEvent = (client: LightClient) => {
 }
 
 const subscribeExitFinalizedEvent = (client: LightClient) => {
-  return (dispatch: Dispatch, getState) => {
+  return (dispatch: Dispatch, getState: () => AppState) => {
     client.subscribeExitFinalized(async (exit: Exit) => {
       console.info(`completed withdrawal: ${exit}`)
       subscribedEventGetters(dispatch, getState)
