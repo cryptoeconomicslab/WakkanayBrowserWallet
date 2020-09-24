@@ -1,8 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { ActionType } from '@cryptoeconomicslab/plasma-light-client'
 import TransactionHistoryIcon from './TransactionHistoryIcon'
 import TransactionHistoryMessage from './TransactionHistoryMessage'
-import { SUBTEXT } from '../constants/colors'
+import { TEXT, SUBTEXT } from '../constants/colors'
 import { FZ_SMALL, FW_BOLD, FZ_MEDIUM } from '../constants/fonts'
 import {
   getTransactionHistories,
@@ -13,6 +14,47 @@ type Props = {
   historyList: TransactionHistoryItem[]
 }
 
+function BlockExplorerWrap({
+  history,
+  children
+}: {
+  history: TransactionHistoryItem
+  children: React.ReactNode
+}) {
+  if (
+    history.message === ActionType.Send ||
+    history.message === ActionType.Receive
+  ) {
+    return (
+      <a
+        href={`${process.env.BLOCK_EXPLORER_URL}/chunk?blockNumber=${history.blockNumber}&chunkId=${history.chunkId}`}
+        className="transaction__link"
+        target="_blank"
+        rel="noreferrer"
+      >
+        {children}
+        <style jsx>{`
+          .transaction__link-wrapper {
+            display: flex;
+            width: 100%;
+          }
+          .transaction__link {
+            color: ${TEXT};
+            text-decoration: none;
+            display: flex;
+            width: 100%;
+          }
+          .transaction__link:hover {
+            text-decoration: underline;
+          }
+        `}</style>
+      </a>
+    )
+  }
+
+  return <>{children}</>
+}
+
 const TransactionHistory = ({ historyList }: Props) => {
   return (
     <ul>
@@ -20,23 +62,25 @@ const TransactionHistory = ({ historyList }: Props) => {
         <>
           {historyList.map((history: TransactionHistoryItem, i: number) => (
             // TODO: add Block Explorer link
-            <li
-              className="transaction"
+            <BlockExplorerWrap
+              history={history}
               key={`${i}-${history.message}-${history.amount}-${history.unit}-${history.blockNumber}-${history.counterParty}`}
             >
-              <div className="transaction__item transaction__item--icon">
-                <TransactionHistoryIcon history={history} />
-              </div>
-              <div className="transaction__item transaction__item--amount">
-                {history.amount} {history.unit}
-              </div>
-              <div className="transaction__item transaction__item--message">
-                <TransactionHistoryMessage history={history} />
-              </div>
-              <div className="transaction__item transaction__item--time">
-                at {history.blockNumber} block
-              </div>
-            </li>
+              <li className="transaction">
+                <div className="transaction__item transaction__item--icon">
+                  <TransactionHistoryIcon history={history} />
+                </div>
+                <div className="transaction__item transaction__item--amount">
+                  {history.amount} {history.unit}
+                </div>
+                <div className="transaction__item transaction__item--message">
+                  <TransactionHistoryMessage history={history} />
+                </div>
+                <div className="transaction__item transaction__item--time">
+                  at {history.blockNumber} block
+                </div>
+              </li>
+            </BlockExplorerWrap>
           ))}
         </>
       ) : (
