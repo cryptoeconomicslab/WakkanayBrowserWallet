@@ -12,10 +12,11 @@ const TransactionHistoryMessage = ({ history }: Props) => {
     return (
       <>{`${history.message} to ${shortenAddress(history.counterParty)}`}</>
     )
-  } else if (history.message === ActionType.Receive) {
-    return (
-      <>{`${history.message} from ${shortenAddress(history.counterParty)}`}</>
-    )
+    // FIXME: show receive address after updated aggregator
+    // } else if (history.message === ActionType.Receive) {
+    //   return (
+    //     <>{`${history.message} from ${shortenAddress(history.counterParty)}`}</>
+    //   )
   } else {
     return <>{history.message}</>
   }
